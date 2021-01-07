@@ -35,9 +35,9 @@
 
 Semaphore::Semaphore (const char *debugName, int initialValue)
 {
-    name = debugName;
-    value = initialValue;
-    queue = new List;
+	name = debugName;
+	value = initialValue;
+	queue = new List;
 }
 
 //----------------------------------------------------------------------
@@ -48,7 +48,7 @@ Semaphore::Semaphore (const char *debugName, int initialValue)
 
 Semaphore::~Semaphore ()
 {
-    delete queue;
+	delete queue;
 }
 
 //----------------------------------------------------------------------
@@ -61,20 +61,20 @@ Semaphore::~Semaphore ()
 //      when it is called.
 //----------------------------------------------------------------------
 
-void
+	void
 Semaphore::P ()
 {
-    IntStatus oldLevel = interrupt->SetLevel (IntOff);	// disable interrupts
+	IntStatus oldLevel = interrupt->SetLevel (IntOff);	// disable interrupts
 
-    while (value == 0)
-      {				// semaphore not available
-	  queue->Append ((void *) currentThread);	// so go to sleep
-	  currentThread->Sleep ();
-      }
-    value--;			// semaphore available, 
-    // consume its value
+	while (value == 0)
+	{				// semaphore not available
+		queue->Append ((void *) currentThread);	// so go to sleep
+		currentThread->Sleep ();
+	}
+	value--;			// semaphore available, 
+	// consume its value
 
-    (void) interrupt->SetLevel (oldLevel);	// re-enable interrupts
+	(void) interrupt->SetLevel (oldLevel);	// re-enable interrupts
 }
 
 //----------------------------------------------------------------------
@@ -85,17 +85,17 @@ Semaphore::P ()
 //      are disabled when it is called.
 //----------------------------------------------------------------------
 
-void
+	void
 Semaphore::V ()
 {
-    Thread *thread;
-    IntStatus oldLevel = interrupt->SetLevel (IntOff);
+	Thread *thread;
+	IntStatus oldLevel = interrupt->SetLevel (IntOff);
 
-    thread = (Thread *) queue->Remove ();
-    if (thread != NULL)		// make thread ready, consuming the V immediately
-	scheduler->ReadyToRun (thread);
-    value++;
-    (void) interrupt->SetLevel (oldLevel);
+	thread = (Thread *) queue->Remove ();
+	if (thread != NULL)		// make thread ready, consuming the V immediately
+		scheduler->ReadyToRun (thread);
+	value++;
+	(void) interrupt->SetLevel (oldLevel);
 }
 
 // Dummy functions -- so we can compile our later assignments 
@@ -108,11 +108,11 @@ Lock::Lock (const char *debugName)
 Lock::~Lock ()
 {
 }
-void
+	void
 Lock::Acquire ()
 {
 }
-void
+	void
 Lock::Release ()
 {
 }
@@ -124,17 +124,17 @@ Condition::Condition (const char *debugName)
 Condition::~Condition ()
 {
 }
-void
+	void
 Condition::Wait (Lock * conditionLock)
 {
-    ASSERT (FALSE);
+	ASSERT (FALSE);
 }
 
-void
+	void
 Condition::Signal (Lock * conditionLock)
 {
 }
-void
+	void
 Condition::Broadcast (Lock * conditionLock)
 {
 }

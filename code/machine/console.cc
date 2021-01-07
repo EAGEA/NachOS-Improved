@@ -54,6 +54,7 @@ Console::Console(char *readFile, char *writeFile, VoidFunctionPtr readAvail,
     handlerArg = callArg;
     putBusy = FALSE;
     incoming = EOF;
+	eof = false ;
 
     // start polling for incoming packets
     interrupt->Schedule(ConsoleReadPoll, (int)this, ConsoleTime, ConsoleReadInt);
@@ -120,21 +121,6 @@ Console::WriteDone()
 }
 
 //----------------------------------------------------------------------
-// Console::GetChar()
-// 	Read a character from the input buffer, if there is any there.
-//	Either return the character, or EOF if none buffered.
-//----------------------------------------------------------------------
-
-char
-Console::GetChar()
-{
-   char ch = incoming;
-
-   incoming = EOF;
-   return ch;
-}
-
-//----------------------------------------------------------------------
 // Console::PutChar()
 // 	Write a character to the simulated display, schedule an interrupt 
 //	to occur in the future, and return.
@@ -149,3 +135,47 @@ Console::PutChar(char ch)
     interrupt->Schedule(ConsoleWriteDone, (int)this, ConsoleTime,
 					ConsoleWriteInt);
 }
+
+//----------------------------------------------------------------------
+// Console::GetChar()
+// 	Read a character from the input buffer, if there is any there.
+//	Either return the character, or EOF if none buffered.
+//----------------------------------------------------------------------
+
+int
+Console::GetChar()
+{
+   int ch = incoming;
+
+   incoming = EOF;
+
+   if (ch == EOF)
+   {
+		eof = true ;
+   }
+
+   return ch;
+}
+
+//----------------------------------------------------------------------
+// Console::PutString()
+// 	Write a sequence of character to the simulated display, schedule 
+// 	an interrupt to occur in the future, and return.
+//----------------------------------------------------------------------
+
+void
+Console::PutString(const char string[])
+{
+    ASSERT(putBusy == FALSE);
+    WriteFile(writeFileNo, string, (strlen(string)) * sizeof(char));
+    putBusy = TRUE;
+    interrupt->Schedule(ConsoleWriteDone, (int)this, ConsoleTime,
+					ConsoleWriteInt);
+}
+
+/* Return true if EOF reached previously.
+*/
+int feof()
+{
+	return eof ;
+}	

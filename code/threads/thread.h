@@ -55,6 +55,9 @@
 // WATCH OUT IF THIS ISN'T BIG ENOUGH!!!!!
 #define StackSize	(4 * 1024)	// in words
 
+// Size of a string used in the syscall "PutString".
+#define MAX_STRING_SIZE	(4 * 1024)	// in words
+
 
 // Thread state
 enum ThreadStatus

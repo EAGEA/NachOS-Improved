@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include "utils.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -39,7 +40,6 @@ UpdatePC ()
     pc += 4;
     machine->WriteRegister (NextPCReg, pc);
 }
-
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -69,18 +69,73 @@ ExceptionHandler (ExceptionType which)
 {
     int type = machine->ReadRegister (2);
 
-    if ((which == SyscallException) && (type == SC_Halt))
-      {
-	  DEBUG ('a', "Shutdown, initiated by user program.\n");
-	  interrupt->Halt ();
-      }
-    else
-      {
-	  printf ("Unexpected user mode exception %d %d\n", which, type);
-	  ASSERT (FALSE);
-      }
-
-    // LB: Do not forget to increment the pc before returning!
-    UpdatePC ();
-    // End of addition
+	if (which == SyscallException) 
+	{
+		switch (type) 
+		{
+			case SC_Exit: 
+				{
+					DEBUG('a', "The program ended correctly.\n") ;
+					interrupt->Halt() ;
+					break;
+				}
+			case SC_Halt: 
+				{
+					DEBUG('a', "Shutdown, initiated by user program.\n");
+					interrupt->Halt();
+					break;
+				}
+			case SC_PutChar: 
+				{
+					char c = machine->ReadRegister(4) ;
+					synchConsole->SynchPutChar(c) ;
+					break;
+				}
+			case SC_GetChar: 
+				{
+					char c = synchConsole->SynchGetChar() ;
+					machine->WriteRegister(2, c) ;
+					break;
+				}
+			case SC_PutString: 
+				{
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					CopyStringFromMachine(from, string, size) ;
+					synchConsole->SynchPutString(string) ; 
+					break;
+				}
+			case SC_GetString: 
+				{
+					int to = machine->ReadRegister(4) ;
+					unsigned size = machine->ReadRegister(5) ;
+					char string[size] ;
+					synchConsole->SynchGetString(string, size) ; 
+					CopyStringToMachine(string, to, size) ;
+					break;
+				}
+			case SC_PutInt: 
+				{
+					int i = machine->ReadRegister(4) ;
+					synchConsole->SynchPutInt(i) ;
+					break;
+				}
+			case SC_GetInt: 
+				{
+					int to = machine->ReadRegister(4) ;
+					int i ;
+				   	synchConsole->SynchGetInt(&i) ;
+					machine->WriteMem(to, sizeof(int), i) ;
+					break;
+				}
+			default:	
+				{
+					printf("Unexpected user mode exception %d %d\n", which, type);
+					ASSERT(FALSE);
+				}
+		}
+	}
+	// LB: Do not forget to increment the pc before returning!
+	UpdatePC();
 }

@@ -47,14 +47,19 @@ class Console {
 				// and return immediately.  "writeHandler" 
 				// is called when the I/O completes. 
 
-    char GetChar();	   	// Poll the console input.  If a char is 
+    int GetChar();	   	// Poll the console input.  If a char is 
 				// available, return it.  Otherwise, return EOF.
     				// "readHandler" is called whenever there is 
 				// a char to be gotten
+				 
+    void PutString(const char string[]);	// Write "string" to the console display, 
+				// and return immediately.  "writeHandler" 
+				// is called when the I/O completes. 
 
 // internal emulation routines -- DO NOT call these. 
     void WriteDone();	 	// internal routines to signal I/O completion
     void CheckCharAvail();
+	int feof() ;
 
   private:
     int readFileNo;			// UNIX file emulating the keyboard 
@@ -70,6 +75,7 @@ class Console {
     char incoming;    			// Contains the character to be read,
 					// if there is one available. 
 					// Otherwise contains EOF.
+	bool eof;       // Set to true once the stream reach the EOF. 
 };
 
 #endif // CONSOLE_H
