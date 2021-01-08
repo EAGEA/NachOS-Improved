@@ -1,0 +1,471 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+A	test/matmult.c	/^int A[Dim][Dim];$/;"	v
+A	test/sort.c	/^int A[1024];			\/* size of physical memory; with code, we'll run out of space! *\/$/;"	v
+ASSOC	bin/disasm.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+ASSOC	bin/main.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+Abort	machine/sysdep.cc	/^Abort()$/;"	f
+Acquire	threads/synch.cc	/^Lock::Acquire ()$/;"	f	class:Lock
+Add	filesys/directory.cc	/^Directory::Add(const char *name, int newSector)$/;"	f	class:Directory
+AddrSpace	userprog/addrspace.cc	/^AddrSpace::AddrSpace (OpenFile * executable)$/;"	f	class:AddrSpace
+AllocBoundedArray	machine/sysdep.cc	/^AllocBoundedArray(int size)$/;"	f
+Allocate	filesys/filehdr.cc	/^FileHeader::Allocate(BitMap *freeMap, int fileSize)$/;"	f	class:FileHeader
+Append	threads/list.cc	/^List::Append (void *item)$/;"	f	class:List
+Append	threads/synchlist.cc	/^SynchList::Append (void *item)$/;"	f	class:SynchList
+AssignNameToSocket	machine/sysdep.cc	/^AssignNameToSocket(const char *socketName, int sockID)$/;"	f
+B	test/matmult.c	/^int B[Dim][Dim];$/;"	v
+BitMap	userprog/bitmap.cc	/^BitMap::BitMap (int nitems)$/;"	f	class:BitMap
+Broadcast	threads/synch.cc	/^Condition::Broadcast (Lock * conditionLock)$/;"	f	class:Condition
+ByteToSector	filesys/filehdr.cc	/^FileHeader::ByteToSector(int offset)$/;"	f	class:FileHeader
+C	test/matmult.c	/^int C[Dim][Dim];$/;"	v
+CallOnUserAbort	machine/sysdep.cc	/^CallOnUserAbort(VoidNoArgFunctionPtr func)$/;"	f
+ChangeLevel	machine/interrupt.cc	/^Interrupt::ChangeLevel(IntStatus old, IntStatus now)$/;"	f	class:Interrupt
+CheckCharAvail	machine/console.cc	/^Console::CheckCharAvail()$/;"	f	class:Console
+CheckEndian	machine/machine.cc	/^void CheckEndian()$/;"	f	file:
+CheckIfDue	machine/interrupt.cc	/^Interrupt::CheckIfDue(bool advanceClock)$/;"	f	class:Interrupt
+CheckOverflow	threads/thread.cc	/^Thread::CheckOverflow ()$/;"	f	class:Thread
+CheckPktAvail	machine/network.cc	/^Network::CheckPktAvail()$/;"	f	class:Network
+Cleanup	threads/system.cc	/^Cleanup ()$/;"	f
+Clear	userprog/bitmap.cc	/^BitMap::Clear (int which)$/;"	f	class:BitMap
+Close	machine/sysdep.cc	/^Close(int fd)$/;"	f
+CloseSocket	machine/sysdep.cc	/^CloseSocket(int sockID)$/;"	f
+ComputeLatency	machine/disk.cc	/^Disk::ComputeLatency(int newSector, bool writing)$/;"	f	class:Disk
+Condition	threads/synch.cc	/^Condition::Condition (const char *debugName)$/;"	f	class:Condition
+Console	machine/console.cc	/^Console::Console(char *readFile, char *writeFile, VoidFunctionPtr readAvail, $/;"	f	class:Console
+ConsoleReadPoll	machine/console.cc	/^static void ConsoleReadPoll(int c) $/;"	f	file:
+ConsoleTest	userprog/progtest.cc	/^ConsoleTest (char *in, char *out)$/;"	f
+ConsoleWriteDone	machine/console.cc	/^static void ConsoleWriteDone(int c)$/;"	f	file:
+ContentSize	filesys/fstest.cc	113;"	d	file:
+Contents	filesys/fstest.cc	112;"	d	file:
+Copy	filesys/fstest.cc	/^Copy(const char *from, const char *to)$/;"	f
+CopyStringFromMachine	userprog/synchconsole.cc	/^void CopyStringFromMachine(int from, char *to, unsigned size)$/;"	f
+CopyStringFromMachine	userprog/utils.cc	/^void CopyStringFromMachine(int from, char *to, unsigned size)$/;"	f
+CopyStringToMachine	userprog/synchconsole.cc	/^void CopyStringToMachine(char *from, int to, unsigned size)$/;"	f
+CopyStringToMachine	userprog/utils.cc	/^void CopyStringToMachine(char *from, int to, unsigned size)$/;"	f
+Create	filesys/filesys.cc	/^FileSystem::Create(const char *name, int initialSize)$/;"	f	class:FileSystem
+DEBUG	threads/utility.cc	/^DEBUG (char flag, const char *format, ...)$/;"	f
+DeAssignNameToSocket	machine/sysdep.cc	/^DeAssignNameToSocket(const char *socketName)$/;"	f
+DeallocBoundedArray	machine/sysdep.cc	/^DeallocBoundedArray(char *ptr, int size)$/;"	f
+Deallocate	filesys/filehdr.cc	/^FileHeader::Deallocate(BitMap *freeMap)$/;"	f	class:FileHeader
+DebugInit	threads/utility.cc	/^DebugInit (const char *flagList)$/;"	f
+DebugIsEnabled	threads/utility.cc	/^DebugIsEnabled (char flag)$/;"	f
+Debugger	machine/machine.cc	/^void Machine::Debugger()$/;"	f	class:Machine
+Decode	machine/mipssim.cc	/^Instruction::Decode()$/;"	f	class:Instruction
+Delay	machine/sysdep.cc	/^Delay(int seconds)$/;"	f
+DelayedLoad	machine/mipssim.cc	/^Machine::DelayedLoad(int nextReg, int nextValue)$/;"	f	class:Machine
+Dim	test/matmult.c	12;"	d	file:
+Directory	filesys/directory.cc	/^Directory::Directory(int size)$/;"	f	class:Directory
+DirectoryFileSize	filesys/filesys.cc	65;"	d	file:
+DirectorySector	filesys/filesys.cc	58;"	d	file:
+Disk	machine/disk.cc	/^Disk::Disk(const char* name, VoidFunctionPtr callWhenDone, int callArg)$/;"	f	class:Disk
+DiskDone	machine/disk.cc	/^static void DiskDone(int arg) { ((Disk *)arg)->HandleInterrupt(); }$/;"	f	file:
+DiskRequestDone	filesys/synchdisk.cc	/^DiskRequestDone (int arg)$/;"	f	file:
+DiskSize	machine/disk.cc	26;"	d	file:
+DumpState	machine/interrupt.cc	/^Interrupt::DumpState()$/;"	f	class:Interrupt
+DumpState	machine/machine.cc	/^Machine::DumpState()$/;"	f	class:Machine
+Enable	machine/interrupt.cc	/^Interrupt::Enable()$/;"	f	class:Interrupt
+ExceptionHandler	userprog/exception.cc	/^ExceptionHandler (ExceptionType which)$/;"	f
+Exit	machine/sysdep.cc	/^Exit(int exitCode)$/;"	f
+FAST	bin/execute.c	14;"	d	file:
+FetchFrom	filesys/directory.cc	/^Directory::FetchFrom(OpenFile *file)$/;"	f	class:Directory
+FetchFrom	filesys/filehdr.cc	/^FileHeader::FetchFrom(int sector)$/;"	f	class:FileHeader
+FetchFrom	userprog/bitmap.cc	/^BitMap::FetchFrom (OpenFile * file)$/;"	f	class:BitMap
+FileLength	filesys/filehdr.cc	/^FileHeader::FileLength()$/;"	f	class:FileHeader
+FileName	filesys/fstest.cc	111;"	d	file:
+FileRead	filesys/fstest.cc	/^FileRead()$/;"	f	file:
+FileSize	filesys/fstest.cc	114;"	d	file:
+FileSystem	filesys/filesys.cc	/^FileSystem::FileSystem(bool format)$/;"	f	class:FileSystem
+FileWrite	filesys/fstest.cc	/^FileWrite()$/;"	f	file:
+Find	filesys/directory.cc	/^Directory::Find(const char *name)$/;"	f	class:Directory
+Find	userprog/bitmap.cc	/^BitMap::Find ()$/;"	f	class:BitMap
+FindIndex	filesys/directory.cc	/^Directory::FindIndex(const char *name)$/;"	f	class:Directory
+FindNextToRun	threads/scheduler.cc	/^Scheduler::FindNextToRun ()$/;"	f	class:Scheduler
+Finish	threads/thread.cc	/^Thread::Finish ()$/;"	f	class:Thread
+Fork	threads/thread.cc	/^Thread::Fork (VoidFunctionPtr func, int arg)$/;"	f	class:Thread
+FreeMapFileSize	filesys/filesys.cc	63;"	d	file:
+FreeMapSector	filesys/filesys.cc	57;"	d	file:
+Get	network/post.cc	/^MailBox::Get(PacketHeader *pktHdr, MailHeader *mailHdr, char *data) $/;"	f	class:MailBox
+GetChar	machine/console.cc	/^Console::GetChar()$/;"	f	class:Console
+GetNextUserThread	userprog/userthread.cc	/^int GetNextUserThread() $/;"	f
+HI	bin/execute.c	/^int HI, LO;			\/* mul\/div machine registers *\/$/;"	v
+Halt	machine/interrupt.cc	/^Interrupt::Halt()$/;"	f	class:Interrupt
+HandleInterrupt	machine/disk.cc	/^Disk::HandleInterrupt ()$/;"	f	class:Disk
+IM	bin/execute.c	/^IM(i)$/;"	f
+IOCPARM_MASK	bin/system.c	89;"	d	file:
+Idle	machine/interrupt.cc	/^Interrupt::Idle()$/;"	f	class:Interrupt
+IncomingPacket	network/post.cc	/^PostOffice::IncomingPacket()$/;"	f	class:PostOffice
+InitRegisters	userprog/addrspace.cc	/^AddrSpace::InitRegisters ()$/;"	f	class:AddrSpace
+InitSocketName	machine/sysdep.cc	/^InitSocketName(struct sockaddr_un *uname, const char *name)$/;"	f	file:
+Initialize	threads/system.cc	/^Initialize (int argc, char **argv)$/;"	f
+Interrupt	machine/interrupt.cc	/^Interrupt::Interrupt()$/;"	f	class:Interrupt
+InterruptEnable	threads/thread.cc	/^InterruptEnable ()$/;"	f	file:
+IsEmpty	threads/list.cc	/^List::IsEmpty ()$/;"	f	class:List
+LINESIZE	bin/disasm.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+LINESIZE	bin/main.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+LO	bin/execute.c	/^int HI, LO;			\/* mul\/div machine registers *\/$/;"	v
+LOADSECTION	bin/disasm.c	69;"	d	file:
+LOADSECTION	bin/main.c	112;"	d	file:
+LRD	bin/disasm.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+LRD	bin/main.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+Length	filesys/openfile.cc	/^OpenFile::Length() $/;"	f	class:OpenFile
+List	filesys/directory.cc	/^Directory::List()$/;"	f	class:Directory
+List	filesys/filesys.cc	/^FileSystem::List()$/;"	f	class:FileSystem
+List	threads/list.cc	/^List::List ()$/;"	f	class:List
+ListElement	threads/list.cc	/^ListElement::ListElement (void *itemPtr, long long sortKey)$/;"	f	class:ListElement
+Lock	threads/synch.cc	/^Lock::Lock (const char *debugName)$/;"	f	class:Lock
+Lseek	machine/sysdep.cc	/^Lseek(int fd, int offset, int whence)$/;"	f
+MAIN	bin/coff2flat.c	15;"	d	file:
+MAIN	bin/coff2flat.c	17;"	d	file:
+MAIN	bin/coff2noff.c	23;"	d	file:
+MAIN	bin/coff2noff.c	25;"	d	file:
+MAIN	bin/out.c	7;"	d	file:
+MAIN	bin/out.c	9;"	d	file:
+MAIN	threads/main.cc	49;"	d	file:
+MAIN	threads/main.cc	51;"	d	file:
+MAXDATA	bin/out.c	34;"	d	file:
+MAXRELOCS	bin/out.c	31;"	d	file:
+MAXSCNS	bin/out.c	43;"	d	file:
+MAXSSPACE	bin/out.c	45;"	d	file:
+MAXSYMS	bin/out.c	44;"	d	file:
+Machine	machine/machine.cc	/^Machine::Machine(bool debug)$/;"	f	class:Machine
+MagicNumber	machine/disk.cc	23;"	d	file:
+MagicSize	machine/disk.cc	24;"	d	file:
+Mail	network/post.cc	/^Mail::Mail(PacketHeader pktH, MailHeader mailH, char *msgData)$/;"	f	class:Mail
+MailBox	network/post.cc	/^MailBox::MailBox()$/;"	f	class:MailBox
+MailTest	network/nettest.cc	/^MailTest(int farAddr)$/;"	f
+Mapcar	threads/list.cc	/^List::Mapcar (VoidFunctionPtr func)$/;"	f	class:List
+Mapcar	threads/synchlist.cc	/^SynchList::Mapcar (VoidFunctionPtr func)$/;"	f	class:SynchList
+Mark	userprog/bitmap.cc	/^BitMap::Mark (int which)$/;"	f	class:BitMap
+ModuloDiff	machine/disk.cc	/^Disk::ModuloDiff(int to, int from)$/;"	f	class:Disk
+Mult	machine/mipssim.cc	/^Mult(int a, int b, bool signedArith, int* hiPtr, int* loPtr)$/;"	f	file:
+NH	bin/execute.c	465;"	d	file:
+NNN	bin/execute.c	466;"	d	file:
+NNNN	bin/execute.c	555;"	d	file:
+NROWS	bin/disasm.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+NROWS	bin/main.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+NULL	bin/d.c	11;"	d	file:
+Network	machine/network.cc	/^Network::Network(NetworkAddress addr, double reliability,$/;"	f	class:Network
+NetworkReadPoll	machine/network.cc	/^static void NetworkReadPoll(int arg)$/;"	f	file:
+NetworkSendDone	machine/network.cc	/^static void NetworkSendDone(int arg)$/;"	f	file:
+NumClear	userprog/bitmap.cc	/^BitMap::NumClear ()$/;"	f	class:BitMap
+NumDirEntries	filesys/filesys.cc	64;"	d	file:
+OneInstruction	machine/mipssim.cc	/^Machine::OneInstruction(Instruction *instr)$/;"	f	class:Machine
+OneTick	machine/interrupt.cc	/^Interrupt::OneTick()$/;"	f	class:Interrupt
+Open	filesys/filesys.cc	/^FileSystem::Open(const char *name)$/;"	f	class:FileSystem
+OpenFile	filesys/openfile.cc	/^OpenFile::OpenFile(int sector)$/;"	f	class:OpenFile
+OpenForReadWrite	machine/sysdep.cc	/^OpenForReadWrite(const char *name, bool crashOnError)$/;"	f
+OpenForWrite	machine/sysdep.cc	/^OpenForWrite(const char *name)$/;"	f
+OpenSocket	machine/sysdep.cc	/^OpenSocket()$/;"	f
+P	threads/synch.cc	/^Semaphore::P ()$/;"	f	class:Semaphore
+PacketSent	network/post.cc	/^PostOffice::PacketSent()$/;"	f	class:PostOffice
+PendingInterrupt	machine/interrupt.cc	/^PendingInterrupt::PendingInterrupt(VoidFunctionPtr func, int param, long long time, $/;"	f	class:PendingInterrupt
+PerformanceTest	filesys/fstest.cc	/^PerformanceTest()$/;"	f
+PollFile	machine/sysdep.cc	/^PollFile(int fd)$/;"	f
+PollSocket	machine/sysdep.cc	/^PollSocket(int sockID)$/;"	f
+PostOffice	network/post.cc	/^PostOffice::PostOffice(NetworkAddress addr, double reliability, int nBoxes)$/;"	f	class:PostOffice
+PostalDelivery	network/post.cc	/^PostOffice::PostalDelivery()$/;"	f	class:PostOffice
+PostalHelper	network/post.cc	/^static void PostalHelper(int arg)$/;"	f	file:
+Prepend	threads/list.cc	/^List::Prepend (void *item)$/;"	f	class:List
+Print	filesys/directory.cc	/^Directory::Print()$/;"	f	class:Directory
+Print	filesys/filehdr.cc	/^FileHeader::Print()$/;"	f	class:FileHeader
+Print	filesys/filesys.cc	/^FileSystem::Print()$/;"	f	class:FileSystem
+Print	filesys/fstest.cc	/^Print(char *name)$/;"	f
+Print	machine/stats.cc	/^Statistics::Print()$/;"	f	class:Statistics
+Print	threads/scheduler.cc	/^Scheduler::Print ()$/;"	f	class:Scheduler
+Print	userprog/bitmap.cc	/^BitMap::Print ()$/;"	f	class:BitMap
+PrintHeader	network/post.cc	/^PrintHeader(PacketHeader pktHdr, MailHeader mailHdr)$/;"	f	file:
+PrintPending	machine/interrupt.cc	/^PrintPending(int arg)$/;"	f	file:
+PrintSector	machine/disk.cc	/^PrintSector (bool writing, int sector, char *data)$/;"	f	file:
+Put	network/post.cc	/^MailBox::Put(PacketHeader pktHdr, MailHeader mailHdr, char *data)$/;"	f	class:MailBox
+PutChar	machine/console.cc	/^Console::PutChar(char ch)$/;"	f	class:Console
+PutString	machine/console.cc	/^Console::PutString(const char string[])$/;"	f	class:Console
+R	bin/d.c	27;"	d	file:
+RAND	bin/disasm.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+RAND	bin/main.c	/^int NROWS=64, ASSOC=1, LINESIZE=4, RAND=0, LRD=0;$/;"	v
+RD	bin/execute.c	/^RD(i)$/;"	f
+RS	bin/execute.c	/^RS(i)$/;"	f
+RT	bin/execute.c	/^RT(i)$/;"	f
+RaiseException	machine/machine.cc	/^Machine::RaiseException(ExceptionType which, int badVAddr)$/;"	f	class:Machine
+Random	machine/sysdep.cc	/^Random()$/;"	f
+RandomInit	machine/sysdep.cc	/^RandomInit(unsigned seed)$/;"	f
+Read	bin/coff2flat.c	/^void Read(int fd, char *buf, int nBytes)$/;"	f
+Read	bin/coff2noff.c	/^void Read(int fd, char *buf, int nBytes)$/;"	f
+Read	filesys/openfile.cc	/^OpenFile::Read(char *into, int numBytes)$/;"	f	class:OpenFile
+Read	machine/sysdep.cc	/^Read(int fd, char *buffer, int nBytes)$/;"	f
+ReadAt	filesys/openfile.cc	/^OpenFile::ReadAt(char *into, int numBytes, int position)$/;"	f	class:OpenFile
+ReadAvail	network/post.cc	/^static void ReadAvail(int arg)$/;"	f	file:
+ReadAvail	userprog/progtest.cc	/^ReadAvail (int arg)$/;"	f	file:
+ReadAvail	userprog/synchconsole.cc	/^static void ReadAvail(int arg) { readAvail->V(); }$/;"	f	file:
+ReadFromSocket	machine/sysdep.cc	/^ReadFromSocket(int sockID, char *buffer, int packetSize)$/;"	f
+ReadMem	machine/translate.cc	/^Machine::ReadMem(int addr, int size, int *value)$/;"	f	class:Machine
+ReadPartial	machine/sysdep.cc	/^ReadPartial(int fd, char *buffer, int nBytes)$/;"	f
+ReadRegister	machine/machine.cc	/^int Machine::ReadRegister(int num)$/;"	f	class:Machine
+ReadRequest	machine/disk.cc	/^Disk::ReadRequest(int sectorNumber, char* data)$/;"	f	class:Disk
+ReadSector	filesys/synchdisk.cc	/^SynchDisk::ReadSector(int sectorNumber, char* data)$/;"	f	class:SynchDisk
+ReadStruct	bin/coff2flat.c	32;"	d	file:
+ReadStruct	bin/coff2noff.c	70;"	d	file:
+ReadyToRun	threads/scheduler.cc	/^Scheduler::ReadyToRun (Thread * thread)$/;"	f	class:Scheduler
+Receive	machine/network.cc	/^Network::Receive(char* data)$/;"	f	class:Network
+Receive	network/post.cc	/^PostOffice::Receive(int box, PacketHeader *pktHdr, $/;"	f	class:PostOffice
+Reg	bin/execute.c	/^int Reg[32];			\/* GPR's *\/$/;"	v
+Regtrace	bin/disasm.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+Regtrace	bin/main.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+Release	threads/synch.cc	/^Lock::Release ()$/;"	f	class:Lock
+Remove	filesys/directory.cc	/^Directory::Remove(const char *name)$/;"	f	class:Directory
+Remove	filesys/filesys.cc	/^FileSystem::Remove(const char *name)$/;"	f	class:FileSystem
+Remove	threads/list.cc	/^List::Remove ()$/;"	f	class:List
+Remove	threads/synchlist.cc	/^SynchList::Remove ()$/;"	f	class:SynchList
+RequestDone	filesys/synchdisk.cc	/^SynchDisk::RequestDone()$/;"	f	class:SynchDisk
+RestoreState	userprog/addrspace.cc	/^AddrSpace::RestoreState ()$/;"	f	class:AddrSpace
+RestoreUserState	threads/thread.cc	/^Thread::RestoreUserState ()$/;"	f	class:Thread
+Run	machine/mipssim.cc	/^Machine::Run()$/;"	f	class:Machine
+Run	threads/scheduler.cc	/^Scheduler::Run (Thread * nextThread)$/;"	f	class:Scheduler
+STACK_FENCEPOST	threads/thread.cc	23;"	d	file:
+SaveState	userprog/addrspace.cc	/^AddrSpace::SaveState ()$/;"	f	class:AddrSpace
+SaveUserState	threads/thread.cc	/^Thread::SaveUserState ()$/;"	f	class:Thread
+Schedule	machine/interrupt.cc	/^Interrupt::Schedule(VoidFunctionPtr handler, int arg, long long fromNow, IntType type)$/;"	f	class:Interrupt
+Scheduler	threads/scheduler.cc	/^Scheduler::Scheduler ()$/;"	f	class:Scheduler
+Seek	filesys/openfile.cc	/^OpenFile::Seek(int position)$/;"	f	class:OpenFile
+Semaphore	threads/synch.cc	/^Semaphore::Semaphore (const char *debugName, int initialValue)$/;"	f	class:Semaphore
+Send	machine/network.cc	/^Network::Send(PacketHeader hdr, char* data)$/;"	f	class:Network
+Send	network/post.cc	/^PostOffice::Send(PacketHeader pktHdr, MailHeader mailHdr, const char* data)$/;"	f	class:PostOffice
+SendDone	machine/network.cc	/^Network::SendDone()$/;"	f	class:Network
+SendToSocket	machine/sysdep.cc	/^SendToSocket(int sockID, const char *buffer, int packetSize, const char *toName)$/;"	f
+SetLevel	machine/interrupt.cc	/^Interrupt::SetLevel(IntStatus now)$/;"	f	class:Interrupt
+SetupThreadState	threads/thread.cc	/^SetupThreadState ()$/;"	f
+ShortToHost	bin/coff2noff.c	/^ShortToHost(unsigned short shortword) {$/;"	f
+ShortToHost	machine/translate.cc	/^ShortToHost(unsigned short shortword) {$/;"	f
+ShortToMachine	machine/translate.cc	/^ShortToMachine(unsigned short shortword) { return ShortToHost(shortword); }$/;"	f
+Signal	threads/synch.cc	/^Condition::Signal (Lock * conditionLock)$/;"	f	class:Condition
+SimpleThread	threads/threadtest.cc	/^SimpleThread (int which)$/;"	f
+Sleep	threads/thread.cc	/^Thread::Sleep ()$/;"	f	class:Thread
+SortedInsert	threads/list.cc	/^List::SortedInsert (void *item, long long sortKey)$/;"	f	class:List
+SortedRemove	threads/list.cc	/^List::SortedRemove (long long *keyPtr)$/;"	f	class:List
+StackAllocate	threads/thread.cc	/^Thread::StackAllocate (VoidFunctionPtr func, int arg)$/;"	f	class:Thread
+StackSize	bin/coff2flat.c	31;"	d	file:
+StartProcess	userprog/progtest.cc	/^StartProcess (char *filename)$/;"	f
+StartUserThread	userprog/userthread.cc	/^static void StartUserThread(int f)$/;"	f	file:
+Statistics	machine/stats.cc	/^Statistics::Statistics()$/;"	f	class:Statistics
+SwapHeader	userprog/addrspace.cc	/^SwapHeader (NoffHeader * noffH)$/;"	f	file:
+SynchConsole	userprog/synchconsole.cc	/^SynchConsole::SynchConsole(char *readFile, char *writeFile)$/;"	f	class:SynchConsole
+SynchConsoleTest	userprog/progtest.cc	/^SynchConsoleTest (char *in, char *out)$/;"	f
+SynchDisk	filesys/synchdisk.cc	/^SynchDisk::SynchDisk(const char* name)$/;"	f	class:SynchDisk
+SynchGetChar	userprog/synchconsole.cc	/^int SynchConsole::SynchGetChar()$/;"	f	class:SynchConsole
+SynchGetInt	userprog/synchconsole.cc	/^void SynchConsole::SynchGetInt(int *i)$/;"	f	class:SynchConsole
+SynchGetString	userprog/synchconsole.cc	/^void SynchConsole::SynchGetString(char *s, int n)$/;"	f	class:SynchConsole
+SynchList	threads/synchlist.cc	/^SynchList::SynchList ()$/;"	f	class:SynchList
+SynchPutChar	userprog/synchconsole.cc	/^void SynchConsole::SynchPutChar(const char ch)$/;"	f	class:SynchConsole
+SynchPutInt	userprog/synchconsole.cc	/^void SynchConsole::SynchPutInt(int i)$/;"	f	class:SynchConsole
+SynchPutString	userprog/synchconsole.cc	/^void SynchConsole::SynchPutString(const char s[])$/;"	f	class:SynchConsole
+TRACE	bin/disasm.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+TRACE	bin/main.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+Tell	machine/sysdep.cc	/^Tell(int fd)$/;"	f
+Test	userprog/bitmap.cc	/^BitMap::Test (int which)$/;"	f	class:BitMap
+Thread	threads/thread.cc	/^Thread::Thread (const char *threadName)$/;"	f	class:Thread
+ThreadFinish	threads/thread.cc	/^ThreadFinish ()$/;"	f	file:
+ThreadPrint	threads/thread.cc	/^ThreadPrint (int arg)$/;"	f
+ThreadTest	threads/threadtest.cc	/^ThreadTest ()$/;"	f
+TimeOfNextInterrupt	machine/timer.cc	/^Timer::TimeOfNextInterrupt() $/;"	f	class:Timer
+TimeToSeek	machine/disk.cc	/^Disk::TimeToSeek(int newSector, int *rotation) $/;"	f	class:Disk
+Timer	machine/timer.cc	/^Timer::Timer(VoidFunctionPtr timerHandler, int callArg, bool doRandom)$/;"	f	class:Timer
+TimerExpired	machine/timer.cc	/^Timer::TimerExpired() $/;"	f	class:Timer
+TimerHandler	machine/timer.cc	/^static void TimerHandler(int arg)$/;"	f	file:
+TimerInterruptHandler	threads/system.cc	/^TimerInterruptHandler (int dummy)$/;"	f	file:
+TransferSize	filesys/fstest.cc	24;"	d	file:
+Translate	machine/translate.cc	/^Machine::Translate(int virtAddr, int* physAddr, int size, bool writing)$/;"	f	class:Machine
+Traptrace	bin/disasm.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+Traptrace	bin/main.c	/^int TRACE, Traptrace, Regtrace;$/;"	v
+TypeToReg	machine/mipssim.cc	/^TypeToReg(RegType reg, Instruction *instr)$/;"	f	file:
+Unlink	machine/sysdep.cc	/^Unlink(const char *name)$/;"	f
+UpdateLast	machine/disk.cc	/^Disk::UpdateLast(int newSector)$/;"	f	class:Disk
+UpdatePC	userprog/exception.cc	/^UpdatePC ()$/;"	f	file:
+V	threads/synch.cc	/^Semaphore::V ()$/;"	f	class:Semaphore
+Wait	threads/synch.cc	/^Condition::Wait (Lock * conditionLock)$/;"	f	class:Condition
+WordToHost	bin/coff2noff.c	/^WordToHost(unsigned int word) {$/;"	f
+WordToHost	machine/translate.cc	/^WordToHost(unsigned int word) {$/;"	f
+WordToMachine	machine/translate.cc	/^WordToMachine(unsigned int word) { return WordToHost(word); }$/;"	f
+Write	bin/coff2flat.c	/^void Write(int fd, char *buf, int nBytes)$/;"	f
+Write	bin/coff2noff.c	/^void Write(int fd, char *buf, int nBytes)$/;"	f
+Write	filesys/openfile.cc	/^OpenFile::Write(const char *into, int numBytes)$/;"	f	class:OpenFile
+WriteAt	filesys/openfile.cc	/^OpenFile::WriteAt(const char *from, int numBytes, int position)$/;"	f	class:OpenFile
+WriteBack	filesys/directory.cc	/^Directory::WriteBack(OpenFile *file)$/;"	f	class:Directory
+WriteBack	filesys/filehdr.cc	/^FileHeader::WriteBack(int sector)$/;"	f	class:FileHeader
+WriteBack	userprog/bitmap.cc	/^BitMap::WriteBack (OpenFile * file)$/;"	f	class:BitMap
+WriteDone	machine/console.cc	/^Console::WriteDone()$/;"	f	class:Console
+WriteDone	network/post.cc	/^static void WriteDone(int arg)$/;"	f	file:
+WriteDone	userprog/progtest.cc	/^WriteDone (int arg)$/;"	f	file:
+WriteDone	userprog/synchconsole.cc	/^static void WriteDone(int arg) { writeDone->V(); }$/;"	f	file:
+WriteFile	machine/sysdep.cc	/^WriteFile(int fd, const char *buffer, int nBytes)$/;"	f
+WriteMem	machine/translate.cc	/^Machine::WriteMem(int addr, int size, int value)$/;"	f	class:Machine
+WriteRegister	machine/machine.cc	/^void Machine::WriteRegister(int num, int value)$/;"	f	class:Machine
+WriteRequest	machine/disk.cc	/^Disk::WriteRequest(int sectorNumber, char* data)$/;"	f	class:Disk
+WriteSector	filesys/synchdisk.cc	/^SynchDisk::WriteSector(int sectorNumber, char* data)$/;"	f	class:SynchDisk
+Yield	threads/thread.cc	/^Thread::Yield ()$/;"	f	class:Thread
+YieldOnReturn	machine/interrupt.cc	/^Interrupt::YieldOnReturn()$/;"	f	class:Interrupt
+addtable	bin/execute.c	/^int addtable[33][33];$/;"	v
+aouthdr	bin/out.c	/^struct aouthdr aouthdr;$/;"	v	typeref:struct:aouthdr
+arch1cycles	bin/execute.c	/^int arch1cycles;$/;"	v
+b31	bin/execute.c	31;"	d	file:
+bsshead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+bsshead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+cc_add	bin/execute.c	34;"	d	file:
+cc_logic	bin/execute.c	48;"	d	file:
+cc_mulscc	bin/execute.c	54;"	d	file:
+cc_sub	bin/execute.c	40;"	d	file:
+column	bin/out.c	/^static column = 1;$/;"	v	file:
+console	userprog/progtest.cc	/^static Console *console;$/;"	v	file:
+currentThread	threads/system.cc	/^Thread *currentThread;		\/\/ the thread we are running now$/;"	v
+data	bin/out.c	/^  long data[MAXDATA];$/;"	m	struct:data	file:
+data	bin/out.c	/^struct data {$/;"	s	file:
+datahead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+datahead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+dis1	bin/disasm.c	/^dis1(xpc)$/;"	f
+disasm	bin/disasm.c	/^disasm(startpc, argc, argv)$/;"	f
+do_UserThreadCreate	userprog/userthread.cc	/^int do_UserThreadCreate(int f, int arg)$/;"	f
+do_UserThreadExit	userprog/userthread.cc	/^void do_UserThreadExit()$/;"	f
+dump_ascii	bin/d.c	/^dump_ascii(instruction, pc)$/;"	f
+dump_reg	bin/execute.c	/^dump_reg()$/;"	f
+enableFlags	threads/utility.cc	/^static const char *enableFlags = NULL;	\/\/ controls which DEBUG messages are printed $/;"	v	file:
+exceptionNames	machine/machine.cc	/^static const char* exceptionNames[] = { "no exception", "syscall", $/;"	v	file:
+false	bin/execute.c	16;"	d	file:
+feof	machine/console.cc	/^int feof()$/;"	f
+feof	userprog/synchconsole.cc	/^int feof()$/;"	f
+fileSystem	threads/system.cc	/^FileSystem *fileSystem;$/;"	v
+filehdr	bin/out.c	/^struct filehdr filehdr;$/;"	v	typeref:struct:filehdr
+filename	bin/disasm.c	/^static char filename[1000] = "a.out";	\/* default a.out file *\/$/;"	v	file:
+filename	bin/main.c	/^static char filename[1000] = "a.out";	\/* default a.out file *\/$/;"	v	file:
+fmt	bin/execute.c	/^char fmt[] = "%6d";$/;"	v
+fmt2	bin/execute.c	/^char fmt2[] = "------";$/;"	v
+fp	bin/disasm.c	/^static FILE *fp;$/;"	v	file:
+fp	bin/main.c	/^static FILE *fp;$/;"	v	file:
+henter	bin/execute.c	/^henter(n)$/;"	f
+henters	bin/execute.c	/^void henters(n, hist)$/;"	f
+hist	bin/execute.c	/^static int hist[NNNN];$/;"	v	file:
+hists	bin/execute.c	/^static int hists[NH][NNN];$/;"	v	file:
+hoflo	bin/execute.c	/^int hoflo[NH], htotal[NH];$/;"	v
+hprint	bin/execute.c	/^hprint()$/;"	f
+htotal	bin/execute.c	/^int hoflo[NH], htotal[NH];$/;"	v
+ilog2	bin/execute.c	/^ilog2(i)$/;"	f
+intLevelNames	machine/interrupt.cc	/^static const char *intLevelNames[] = { "off", "on"};$/;"	v	file:
+intTypeNames	machine/interrupt.cc	/^static const char *intTypeNames[] = { "timer", "disk", "console write", $/;"	v	file:
+interrupt	threads/system.cc	/^Interrupt *interrupt;		\/\/ interrupt status$/;"	v
+ldptr	bin/disasm.c	/^static LDFILE *ldptr;$/;"	v	file:
+ldptr	bin/main.c	/^static LDFILE *ldptr;$/;"	v	file:
+length	bin/out.c	/^  int length;$/;"	m	struct:data	file:
+load_program	bin/disasm.c	/^load_program(filename)$/;"	f
+load_program	bin/main.c	/^load_program(filename)$/;"	f
+load_section	bin/disasm.c	/^load_section(hd)$/;"	f
+longdis	bin/d.c	/^int longdis = 1;$/;"	v
+m_alloc	bin/disasm.c	/^int *m_alloc(n)$/;"	f
+m_alloc	bin/main.c	/^int *m_alloc(n)$/;"	f
+machine	threads/system.cc	/^Machine *machine;		\/\/ user program memory and registers$/;"	v
+main	bin/coff2flat.c	/^main (int argc, char **argv)$/;"	f
+main	bin/coff2noff.c	/^int main (int argc, char **argv)$/;"	f
+main	bin/disasm.c	/^main(argc, argv)$/;"	f
+main	bin/main.c	/^main(argc, argv)$/;"	f
+main	bin/out.c	/^main(argc,argv)$/;"	f
+main	test/getchar.c	/^int main()$/;"	f
+main	test/getint.c	/^int main()$/;"	f
+main	test/getstring.c	/^int main()$/;"	f
+main	test/halt.c	/^main ()$/;"	f
+main	test/matmult.c	/^main ()$/;"	f
+main	test/putchar.c	/^int main()$/;"	f
+main	test/putint.c	/^int main()$/;"	f
+main	test/putstring.c	/^int main()$/;"	f
+main	test/shell.c	/^main ()$/;"	f
+main	test/sort.c	/^main ()$/;"	f
+main	threads/main.cc	/^main (int argc, char **argv)$/;"	f
+mem	bin/disasm.c	/^char mem[MEMSIZE];		\/* main memory. use malloc later *\/$/;"	v
+mem	bin/main.c	/^char mem[MEMSIZE];		\/* main memory. use malloc later *\/$/;"	v
+myprintf	bin/out.c	/^myprintf(va_alist)$/;"	f
+mysetfile	bin/out.c	/^mysetfile(f)$/;"	f
+mytab	bin/out.c	/^mytab(n)$/;"	f
+noffFileName	bin/coff2noff.c	/^char *noffFileName = NULL;$/;"	v
+normalops	bin/opstrings.c	/^char *normalops[] = {$/;"	v
+numadds	bin/execute.c	/^int numadds=1, numsubs=1, numsuccesses, numcarries;$/;"	v
+numcarries	bin/execute.c	/^int numadds=1, numsubs=1, numsuccesses, numcarries;$/;"	v
+numjmpls	bin/execute.c	/^int numjmpls;$/;"	v
+numsubs	bin/execute.c	/^int numadds=1, numsubs=1, numsuccesses, numcarries;$/;"	v
+numsuccesses	bin/execute.c	/^int numadds=1, numsubs=1, numsuccesses, numcarries;$/;"	v
+ny	bin/execute.c	/^ny()$/;"	f
+outfile	bin/out.c	/^static FILE *outfile = stdout;$/;"	v	file:
+patable	bin/execute.c	/^patable(tab)$/;"	f
+pc	bin/disasm.c	/^int pc;$/;"	v
+postOffice	threads/system.cc	/^PostOffice *postOffice;$/;"	v
+print	test/putchar.c	/^void print(char c, int n)$/;"	f
+print	test/putint.c	/^void print(int n)$/;"	f
+print	test/putstring.c	/^void print(int n)$/;"	f
+print_reloc	bin/out.c	/^print_reloc(vaddr,i,j)$/;"	f
+print_section	bin/out.c	/^print_section(i)$/;"	f
+printf	bin/out.c	190;"	d	file:
+printhist	bin/execute.c	/^printhist()$/;"	f
+println	test/putstring.c	/^void println(int n)$/;"	f
+printstatistics	bin/execute.c	/^printstatistics()$/;"	f
+rdatahead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+rdatahead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+readAvail	userprog/progtest.cc	/^static Semaphore *readAvail;$/;"	v	file:
+readAvail	userprog/synchconsole.cc	/^static Semaphore *readAvail;$/;"	v	file:
+read_struct	bin/out.c	29;"	d	file:
+regstrings	bin/d.c	/^char *regstrings[] =$/;"	v
+reloc	bin/out.c	/^  struct reloc reloc[MAXRELOCS];$/;"	m	struct:data	typeref:struct:data::reloc	file:
+reloc_type	bin/out.c	/^char *reloc_type[] = {$/;"	v
+relocs	bin/out.c	/^  int relocs;$/;"	m	struct:data	file:
+runprogram	bin/execute.c	/^runprogram(startpc, argc, argv)$/;"	f
+sbsshead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+sbsshead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+scheduler	threads/system.cc	/^Scheduler *scheduler;		\/\/ the ready list$/;"	v
+scnhdr	bin/out.c	/^struct scnhdr scnhdr[MAXSCNS];$/;"	v	typeref:struct:scnhdr
+sdatahead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+sdatahead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+section	bin/out.c	/^struct data section[MAXSCNS];$/;"	v	typeref:struct:data
+section_name	bin/out.c	/^char *section_name[] = {$/;"	v
+self	bin/disasm.c	/^static char self[256];			\/* name of invoking program *\/$/;"	v	file:
+self	bin/main.c	/^static char self[256];			\/* name of invoking program *\/$/;"	v	file:
+specialops	bin/opstrings.c	/^char *specialops[] = {$/;"	v
+sptr	bin/d.c	/^int sptr;$/;"	v
+sspace	bin/out.c	/^char sspace[20000];$/;"	v
+stats	threads/system.cc	/^Statistics *stats;		\/\/ performance metrics$/;"	v
+storage_class	bin/out.c	/^char *storage_class[] = {$/;"	v
+string	bin/main.c	/^char *string(s)$/;"	f
+subtable	bin/execute.c	/^int subtable[33][33];$/;"	v
+symbol_type	bin/out.c	/^char *symbol_type[] = {$/;"	v
+symbols	bin/out.c	/^EXTR symbols[MAXSYMS];$/;"	v
+symhdr	bin/out.c	/^HDRR symhdr;$/;"	v
+synchConsole	threads/system.cc	/^SynchConsole *synchConsole ;$/;"	v
+synchDisk	threads/system.cc	/^SynchDisk *synchDisk;$/;"	v
+system_break	bin/system.c	/^system_break()$/;"	f
+system_trap	bin/system.c	/^system_trap()$/;"	f
+texthead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+texthead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+threadToBeDestroyed	threads/system.cc	/^Thread *threadToBeDestroyed;	\/\/ the thread that just finished$/;"	v
+timer	threads/system.cc	/^Timer *timer;			\/\/ the hardware timer device,$/;"	v
+true	bin/execute.c	15;"	d	file:
+u	bin/execute.c	/^u()				\/* unimplemented *\/$/;"	f
+u_to_int_addr	bin/system.c	/^char *u_to_int_addr(ptr)$/;"	f
+u_to_int_fd	bin/system.c	/^u_to_int_fd(fd)$/;"	f
+writeDone	userprog/progtest.cc	/^static Semaphore *writeDone;$/;"	v	file:
+writeDone	userprog/synchconsole.cc	/^static Semaphore *writeDone;$/;"	v	file:
+~AddrSpace	userprog/addrspace.cc	/^AddrSpace::~AddrSpace ()$/;"	f	class:AddrSpace
+~BitMap	userprog/bitmap.cc	/^BitMap::~BitMap ()$/;"	f	class:BitMap
+~Condition	threads/synch.cc	/^Condition::~Condition ()$/;"	f	class:Condition
+~Console	machine/console.cc	/^Console::~Console()$/;"	f	class:Console
+~Directory	filesys/directory.cc	/^Directory::~Directory()$/;"	f	class:Directory
+~Disk	machine/disk.cc	/^Disk::~Disk()$/;"	f	class:Disk
+~Interrupt	machine/interrupt.cc	/^Interrupt::~Interrupt()$/;"	f	class:Interrupt
+~List	threads/list.cc	/^List::~List ()$/;"	f	class:List
+~Lock	threads/synch.cc	/^Lock::~Lock ()$/;"	f	class:Lock
+~Machine	machine/machine.cc	/^Machine::~Machine()$/;"	f	class:Machine
+~MailBox	network/post.cc	/^MailBox::~MailBox()$/;"	f	class:MailBox
+~Network	machine/network.cc	/^Network::~Network()$/;"	f	class:Network
+~OpenFile	filesys/openfile.cc	/^OpenFile::~OpenFile()$/;"	f	class:OpenFile
+~PostOffice	network/post.cc	/^PostOffice::~PostOffice()$/;"	f	class:PostOffice
+~Scheduler	threads/scheduler.cc	/^Scheduler::~Scheduler ()$/;"	f	class:Scheduler
+~Semaphore	threads/synch.cc	/^Semaphore::~Semaphore ()$/;"	f	class:Semaphore
+~SynchConsole	userprog/synchconsole.cc	/^SynchConsole::~SynchConsole()$/;"	f	class:SynchConsole
+~SynchDisk	filesys/synchdisk.cc	/^SynchDisk::~SynchDisk()$/;"	f	class:SynchDisk
+~SynchList	threads/synchlist.cc	/^SynchList::~SynchList ()$/;"	f	class:SynchList
+~Thread	threads/thread.cc	/^Thread::~Thread ()$/;"	f	class:Thread

@@ -151,7 +151,8 @@ Console::GetChar()
 
    if (ch == EOF)
    {
-		eof = true ;
+	   // Set the eof flag to true in case if user call "feof".
+	   eof = true ;
    }
 
    return ch;
@@ -166,6 +167,8 @@ Console::GetChar()
 void
 Console::PutString(const char string[])
 {
+	// Write directly into the file (stream) to avoid multiple call to
+	// the "PutChar" function.
     ASSERT(putBusy == FALSE);
     WriteFile(writeFileNo, string, (strlen(string)) * sizeof(char));
     putBusy = TRUE;
@@ -175,7 +178,7 @@ Console::PutString(const char string[])
 
 /* Return true if EOF reached previously.
 */
-int feof()
+int Console::feof()
 {
 	return eof ;
 }	

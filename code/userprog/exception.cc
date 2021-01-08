@@ -24,7 +24,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
-#include "utils.h"
+#include "userthread.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -87,47 +87,80 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_PutChar: 
 				{
+					// Params.
 					char c = machine->ReadRegister(4) ;
+					// Execution.
 					synchConsole->SynchPutChar(c) ;
 					break;
 				}
 			case SC_GetChar: 
 				{
+					// Params + Execution.
 					char c = synchConsole->SynchGetChar() ;
+					// Return.
 					machine->WriteRegister(2, c) ;
 					break;
 				}
 			case SC_PutString: 
 				{
+					// Params.
 					int from = machine->ReadRegister(4) ;
 					unsigned size = MAX_STRING_SIZE ; 
 					char string[size] ;
-					CopyStringFromMachine(from, string, size) ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
 					synchConsole->SynchPutString(string) ; 
 					break;
 				}
 			case SC_GetString: 
 				{
+					// Params.
 					int to = machine->ReadRegister(4) ;
 					unsigned size = machine->ReadRegister(5) ;
 					char string[size] ;
+					// Execution.
 					synchConsole->SynchGetString(string, size) ; 
-					CopyStringToMachine(string, to, size) ;
+					synchConsole->CopyStringToMachine(string, to, size) ;
 					break;
 				}
 			case SC_PutInt: 
 				{
+					// Params.
 					int i = machine->ReadRegister(4) ;
+					// Execution.
 					synchConsole->SynchPutInt(i) ;
 					break;
 				}
 			case SC_GetInt: 
 				{
+					// Params.
 					int to = machine->ReadRegister(4) ;
 					int i ;
+					// Execution.
 				   	synchConsole->SynchGetInt(&i) ;
 					machine->WriteMem(to, sizeof(int), i) ;
 					break;
+				}
+			case SC_ThreadCreate: 
+				{
+					// Params.
+					int f = machine->ReadRegister(4) ; 
+					int arg = machine->ReadRegister(5) ; 
+					// Execution.
+					int res = do_UserThreadCreate(f, arg) ; 
+					// Return..
+					machine->WriteRegister(2, res) ;
+					break ;
+				}
+			case SC_ThreadExit: 
+				{
+					do_UserThreadExit() ;
+					break ;
+				}
+			case SC_ThreadJoin:
+				{
+					do_UserThreadJoin() ;
+					break ;
 				}
 			default:	
 				{

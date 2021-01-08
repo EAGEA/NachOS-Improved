@@ -18,6 +18,8 @@ class SynchConsole
 		void SynchPutInt(int i);
 		void SynchGetInt(int *i);
 		int feof() ;
+		void CopyStringFromMachine(int from, char *to, unsigned size) ; // MIPS -> LINUX string conversion.
+		void CopyStringToMachine(char *from, int to, unsigned size) ; // LINUX -> MIPS string conversion.
 
 	private:
 

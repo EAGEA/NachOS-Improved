@@ -56,7 +56,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 
 	char inputBuffer[MAX_STRING_SIZE] ;
 	int i = 0 ;
-
+	// Fill the buffer with input.
 	while (i < MAX_STRING_SIZE 
 			&& (i == 0 || (inputBuffer[i - 1] != EOF && inputBuffer[i - 1] != '\n' && inputBuffer[i - 1] != '\0')))
 	{
@@ -64,7 +64,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 	}
 
 	i = 0 ;
-
+	// Fill the return value with the buffer.
 	while (i < n)
 	{
 		char c = inputBuffer[i] ;
@@ -105,7 +105,47 @@ void SynchConsole::SynchGetInt(int *i)
 
 /* Return true if EOF reached previously.
  */
-int feof()
+int SynchConsole::feof()
 {
 	return console->feof() ;
 }	
+
+/* MIPS -> Linux string conversion.
+ */
+void SynchConsole::CopyStringFromMachine(int from, char *to, unsigned size)
+{
+	unsigned i ;
+	int ch = 1 ;
+
+	for (i = 0 ; i < size - 1 && ch != '\0'; i ++)
+	{
+		// Read the string in the machine main memory.
+		if (machine->ReadMem(from + i, 1, &ch))
+		{
+			to[i] = (char) ch ; 
+		}
+	}
+
+	to[i] = '\0' ;
+}
+
+/* Linux -> MIPS string conversion.
+ */
+void SynchConsole::CopyStringToMachine(char *from, int to, unsigned size)
+{
+	unsigned i ;
+
+	for (i = 0 ; i < size - 1 && from[i] != '\0'; i ++)
+	{
+		// Write the string in the machine main memory.
+		if (! machine->WriteMem(to + i, sizeof(char), from[i]))
+		{
+			printf("Can't write in memory string.");
+		}
+	}
+
+	if (! machine->WriteMem(to + i, sizeof(char), '\0')) 
+	{
+		printf("Can't write in memory end of string.");
+	}
+}

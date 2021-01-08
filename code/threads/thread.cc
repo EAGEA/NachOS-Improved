@@ -408,6 +408,36 @@ Thread::RestoreUserState ()
     for (int i = 0; i < NumTotalRegs; i++)
 	machine->WriteRegister (i, userRegisters[i]);
 }
+
+
+/** 
+ * Params of the thread. 
+ */
+
+ThreadParams::ThreadParams(int f, int a)
+{
+	fun = f ;
+	arg = a ;
+}
+
+void ThreadParams::SetFun(int f)
+{
+	fun = f ;
+}
+
+void ThreadParams::SetArg(int a)
+{
+	arg = a ;
+}
+
+int ThreadParams::GetFun()
+{
+	return fun ;
+}
+
+int ThreadParams::GetArg()
+{
+	return arg ;
+}
+
 #endif
-
-
