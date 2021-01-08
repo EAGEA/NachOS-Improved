@@ -145,11 +145,14 @@ void PutChar(char c) ;
  */
 char GetChar() ;
 
-/* Output a sequence of characters to a stream.
+/* Output a sequence of characters to a stream. There is no limit on the size of 
+ * the string s.
  */
 void PutString(const char s[]) ;
 
 /* Get a sequence of characters from the input buffer.
+ * There is a limit on the size of the string s which is : MAX_STRING_SIZE ( 4096 )
+ * MAX_STRING_SIZE is defined in the file "threads/system.h".
  */
 void GetString(char *s, int n) ;
 
