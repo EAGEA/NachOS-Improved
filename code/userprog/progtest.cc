@@ -109,7 +109,7 @@ ConsoleTest (char *in, char *out)
 		writeDone->P ();		// wait for write to finish
 
 		// Q | ^D | ytt | EOF
-		if (ch == 'q' || ch == 4 || ch == 127 || ch == EOF)
+		if (ch == 'q' || ch == EOF)
 		{
 			console->PutChar ('>');	
 			writeDone->P ();	// wait for write to finish
@@ -148,7 +148,7 @@ SynchConsoleTest (char *in, char *out)
 		synchconsole->SynchPutChar(ch);
 
 		// Q | ^D | ytt | EOF
-		if (ch == 'q' || ch == 4 || ch == 127 || ch == EOF)
+		if (ch == 'q' || ch == EOF)
 		{
 			synchconsole->SynchPutChar ('>');	
 			synchconsole->SynchPutChar ('\n');	

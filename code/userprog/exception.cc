@@ -81,6 +81,17 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_Halt: 
 				{
+					AddrSpace *currentSpace = currentThread->space ;
+					
+					currentSpace->MutexLock() ;
+
+					while (currentSpace->GetTotalThreads() > 1)
+					{
+						currentSpace->CondWait() ;
+					}
+
+					currentSpace->MutexUnlock() ;
+
 					DEBUG('a', "Shutdown, initiated by user program.\n");
 					interrupt->Halt();
 					break;

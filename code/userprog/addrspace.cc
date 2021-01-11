@@ -21,6 +21,9 @@
 #include "noff.h"
 
 #include <strings.h>		/* for bzero */
+#include <pthread.h>		
+
+
 
 //----------------------------------------------------------------------
 // SwapHeader
@@ -201,12 +204,41 @@ AddrSpace::RestoreState ()
 
 //----------------------------------------------------------------------
 // Functions to manage the user threads. 
+//		The one which access the "totalThreads" must be protected
+//		by the mutex.
 //----------------------------------------------------------------------
 
 
+void AddrSpace::CondWait()
+{
+	pthread_cond_wait(&cond, &mutex) ;
+}
+
+void AddrSpace::CondSignal()
+{
+	pthread_cond_signal(&cond) ;
+}
+
+void AddrSpace::MutexLock()
+{
+	pthread_mutex_lock(&mutex) ;
+}
+
+void AddrSpace::MutexUnlock()
+{
+	pthread_mutex_unlock(&mutex) ;
+}
+
 void AddrSpace::SetTotalThreads(int val)
 {
+
 	totalThreads = val ;
+
+	if (totalThreads == 1)
+	{
+		// Notify the "Halt" function if only the main thread is left.
+		CondSignal() ;
+	}
 }
 
 int AddrSpace::GetTotalThreads()

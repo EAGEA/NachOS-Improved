@@ -224,7 +224,7 @@ RestoreState	userprog/addrspace.cc	/^AddrSpace::RestoreState ()$/;"	f	class:Addr
 RestoreUserState	threads/thread.cc	/^Thread::RestoreUserState ()$/;"	f	class:Thread
 Run	machine/mipssim.cc	/^Machine::Run()$/;"	f	class:Machine
 Run	threads/scheduler.cc	/^Scheduler::Run (Thread * nextThread)$/;"	f	class:Scheduler
-STACK_FENCEPOST	threads/thread.cc	23;"	d	file:
+STACK_FENCEPOST	threads/thread.cc	24;"	d	file:
 SaveState	userprog/addrspace.cc	/^AddrSpace::SaveState ()$/;"	f	class:AddrSpace
 SaveUserState	threads/thread.cc	/^Thread::SaveUserState ()$/;"	f	class:Thread
 Schedule	machine/interrupt.cc	/^Interrupt::Schedule(VoidFunctionPtr handler, int arg, long long fromNow, IntType type)$/;"	f	class:Interrupt
@@ -257,7 +257,7 @@ SwapHeader	userprog/addrspace.cc	/^SwapHeader (NoffHeader * noffH)$/;"	f	file:
 SynchConsole	userprog/synchconsole.cc	/^SynchConsole::SynchConsole(char *readFile, char *writeFile)$/;"	f	class:SynchConsole
 SynchConsoleTest	userprog/progtest.cc	/^SynchConsoleTest (char *in, char *out)$/;"	f
 SynchDisk	filesys/synchdisk.cc	/^SynchDisk::SynchDisk(const char* name)$/;"	f	class:SynchDisk
-SynchGetChar	userprog/synchconsole.cc	/^int SynchConsole::SynchGetChar()$/;"	f	class:SynchConsole
+SynchGetChar	userprog/synchconsole.cc	/^int SynchConsole::SynchGetChar(bool isCalledInGetString)$/;"	f	class:SynchConsole
 SynchGetInt	userprog/synchconsole.cc	/^void SynchConsole::SynchGetInt(int *i)$/;"	f	class:SynchConsole
 SynchGetString	userprog/synchconsole.cc	/^void SynchConsole::SynchGetString(char *s, int n)$/;"	f	class:SynchConsole
 SynchList	threads/synchlist.cc	/^SynchList::SynchList ()$/;"	f	class:SynchList
@@ -448,6 +448,7 @@ system_break	bin/system.c	/^system_break()$/;"	f
 system_trap	bin/system.c	/^system_trap()$/;"	f
 texthead	bin/disasm.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
 texthead	bin/main.c	/^static SCNHDR texthead, rdatahead, datahead, sdatahead, sbsshead, bsshead;$/;"	v	file:
+threadAvail	userprog/synchconsole.cc	/^static Semaphore *threadAvail ;$/;"	v	file:
 threadToBeDestroyed	threads/system.cc	/^Thread *threadToBeDestroyed;	\/\/ the thread that just finished$/;"	v
 timer	threads/system.cc	/^Timer *timer;			\/\/ the hardware timer device,$/;"	v
 true	bin/execute.c	15;"	d	file:

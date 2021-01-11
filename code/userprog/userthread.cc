@@ -27,9 +27,6 @@ static void StartUserThread(int f)
 int do_UserThreadCreate(int f, int arg)
 {
 	AddrSpace *currentSpace = currentThread->space ;
-	/*
-	// Get the total number of threads currently existing.
-	int totalThreads = currentSpace->GetTotalThreads() ; 
 	// Check if we can create this thread:
 	if (false)
 	{
@@ -38,12 +35,13 @@ int do_UserThreadCreate(int f, int arg)
 	}
 	// Create the thread:
 	// Add this one to the total of threads existing.
-	currentSpace->SetTotalThreads(totalThreads + 1) ;
-	*/
+	currentSpace->MutexLock() ;
+	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() + 1) ;
+	currentSpace->MutexUnlock() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create the thread with the same pace as the current, and start it.
-	Thread *thread = new Thread("User Thread n°");// + (totalThreads + 1)) ;
+	Thread *thread = new Thread("User Thread") ; 
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -52,6 +50,11 @@ int do_UserThreadCreate(int f, int arg)
 
 void do_UserThreadExit()
 {
+	AddrSpace *currentSpace = currentThread->space ;
+	// Remove this one from the total of threads existing.
+	currentSpace->MutexLock() ;
+	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
+	currentSpace->MutexUnlock() ;
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.
