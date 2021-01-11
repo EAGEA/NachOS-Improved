@@ -39,6 +39,7 @@
 
 #include "copyright.h"
 #include "utility.h"
+#include <pthread.h>
 
 #ifdef USER_PROGRAM
 #include "machine.h"
@@ -121,18 +122,18 @@ class Thread
 
     void CheckOverflow ();	// Check if thread has 
     // overflowed its stack
-    void setStatus (ThreadStatus st)
-    {
-	status = st;
-    }
-    const char *getName ()
-    {
-	return (name);
-    }
-    void Print ()
-    {
-	printf ("%s, ", name);
-    }
+	void setStatus (ThreadStatus st)
+	{
+		status = st;
+	}
+	const char *getName ()
+	{
+		return (name);
+	}
+	void Print ()
+	{
+		printf ("%s, ", name);
+	}
 
   private:
     // some of the private data for this class is listed above

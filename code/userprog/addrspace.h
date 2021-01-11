@@ -33,11 +33,15 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
+	void SetTotalThreads(int val) ;
+	int GetTotalThreads() ;
+
   private:
       TranslationEntry * pageTable;	// Assume linear page table translation
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
+	unsigned int totalThreads ; // Number of user threads (including the main thread).
 };
 
 #endif // ADDRSPACE_H

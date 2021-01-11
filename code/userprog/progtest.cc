@@ -131,7 +131,7 @@ SynchConsoleTest (char *in, char *out)
 
 	for (;;)
 	{
-		ch = synchconsole->SynchGetChar() ;
+		ch = synchconsole->SynchGetChar(false) ;
 
 		if (! breakLine)
 		{

@@ -3,6 +3,12 @@
 #include "synchconsole.h"
 #include "synch.h"
 
+// Input/output thread protection.
+// -> allow only one thread to enter a "synch" function.
+static Semaphore *threadAvail ;
+// Input/output general protection.
+// -> "readAvail" to wait before reading a char (=> so a string).
+// -> "writeDone" to signal that a char/string was written.
 static Semaphore *readAvail;
 static Semaphore *writeDone;
 static void ReadAvail(int arg) { readAvail->V(); }
@@ -10,6 +16,7 @@ static void WriteDone(int arg) { writeDone->V(); }
 
 SynchConsole::SynchConsole(char *readFile, char *writeFile)
 {
+	threadAvail = new Semaphore("thread I/O avail", 1) ;
 	readAvail = new Semaphore("read avail", 0);
 	writeDone = new Semaphore("write done", 0);
 	console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0) ;
@@ -18,22 +25,42 @@ SynchConsole::SynchConsole(char *readFile, char *writeFile)
 SynchConsole::~SynchConsole()
 {
 	delete console;
+	delete threadAvail ;
 	delete writeDone;
 	delete readAvail;
 }
 
 void SynchConsole::SynchPutChar(const char ch)
 {
+	threadAvail->P() ;
+
 	console->PutChar(ch) ;
 	writeDone->P() ;
+
+	threadAvail->V() ;
 }
 
 /* Updated version to detect only EOF on an end of file.
- */
-int SynchConsole::SynchGetChar()
+ * If is called in "GetString", we don't lock the semaphore
+ * for multithreading, because "GetString" has already done
+ * it.
+*/
+int SynchConsole::SynchGetChar(bool isCalledInGetString)
 {
+	if (! isCalledInGetString)
+	{
+		threadAvail->P() ;
+	}
+
 	readAvail->P() ;
-	return console->GetChar() ;
+	char c = console->GetChar() ; 
+
+	if (! isCalledInGetString)
+	{
+		threadAvail->V() ;
+	}
+
+	return c ;  
 }
 
 void SynchConsole::SynchPutString(const char s[])
@@ -43,8 +70,12 @@ void SynchConsole::SynchPutString(const char s[])
 		return ;
 	}
 
+	threadAvail->P() ;
+
 	console->PutString(s) ;	
 	writeDone->P() ;
+
+	threadAvail->V() ;
 }
 
 void SynchConsole::SynchGetString(char *s, int n)
@@ -53,46 +84,34 @@ void SynchConsole::SynchGetString(char *s, int n)
 	{
 		return ;
 	}
+	else if (n == 1)
+	{
+		s[0] = '\0' ;
+		return ;
+	}
 
-	char inputBuffer[MAX_STRING_SIZE] ;
+	threadAvail->P() ;
+
 	int i = 0 ;
-	// Fill the buffer with input.
-	while (i < MAX_STRING_SIZE 
-			&& (i == 0 || (inputBuffer[i - 1] != EOF && inputBuffer[i - 1] != '\n' && inputBuffer[i - 1] != '\0')))
+
+	s[i] = SynchGetChar(true) ;
+
+	while (i < n - 1 && s[i] != EOF && s[i] != '\n' && s[i] != '\0') 
 	{
-		inputBuffer[i ++] = SynchGetChar() ;
+		s[++ i] = SynchGetChar(true);
 	}
 
-	i = 0 ;
-	// Fill the return value with the buffer.
-	while (i < n)
-	{
-		char c = inputBuffer[i] ;
+	s[i + 1] = '\0' ;
 
-		// Fgets behavior.
-		if (c == '\n')
-		{
-			s[i ++] = '\n' ; 
-			s[i] = '\0' ;
-			return ;
-		}
-		else if (c == EOF || c == '\0' || i == n - 1)
-		{
-			s[i] = '\0' ;
-			return ;
-		}
-
-		s[i] = inputBuffer[i] ; 
-		i ++ ;
-	}
+	threadAvail->V() ;
 }
 
 void SynchConsole::SynchPutInt(int i)
 {
-	 char n[MAX_STRING_SIZE] ;
-	 
-	 snprintf(n, MAX_STRING_SIZE, "%i", i) ;
-	 SynchPutString(n) ;
+	char n[MAX_STRING_SIZE] ;
+
+	snprintf(n, MAX_STRING_SIZE, "%i", i) ;
+	SynchPutString(n) ;
 }
 
 void SynchConsole::SynchGetInt(int *i)
@@ -104,14 +123,14 @@ void SynchConsole::SynchGetInt(int *i)
 }
 
 /* Return true if EOF reached previously.
- */
+*/
 int SynchConsole::feof()
 {
 	return console->feof() ;
 }	
 
 /* MIPS -> Linux string conversion.
- */
+*/
 void SynchConsole::CopyStringFromMachine(int from, char *to, unsigned size)
 {
 	unsigned i ;
@@ -130,7 +149,7 @@ void SynchConsole::CopyStringFromMachine(int from, char *to, unsigned size)
 }
 
 /* Linux -> MIPS string conversion.
- */
+*/
 void SynchConsole::CopyStringToMachine(char *from, int to, unsigned size)
 {
 	unsigned i ;

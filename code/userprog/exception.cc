@@ -96,7 +96,7 @@ ExceptionHandler (ExceptionType which)
 			case SC_GetChar: 
 				{
 					// Params + Execution.
-					char c = synchConsole->SynchGetChar() ;
+					char c = synchConsole->SynchGetChar(false) ;
 					// Return.
 					machine->WriteRegister(2, c) ;
 					break;
@@ -148,7 +148,7 @@ ExceptionHandler (ExceptionType which)
 					int arg = machine->ReadRegister(5) ; 
 					// Execution.
 					int res = do_UserThreadCreate(f, arg) ; 
-					// Return..
+					// Return.
 					machine->WriteRegister(2, res) ;
 					break ;
 				}

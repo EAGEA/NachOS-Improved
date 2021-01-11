@@ -120,6 +120,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			      noffH.initData.size, noffH.initData.inFileAddr);
       }
 
+	// Init the total of threads created (count the main one).
+	totalThreads = 1 ; 
 }
 
 //----------------------------------------------------------------------
@@ -194,4 +196,20 @@ AddrSpace::RestoreState ()
 {
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
+}
+
+
+//----------------------------------------------------------------------
+// Functions to manage the user threads. 
+//----------------------------------------------------------------------
+
+
+void AddrSpace::SetTotalThreads(int val)
+{
+	totalThreads = val ;
+}
+
+int AddrSpace::GetTotalThreads()
+{
+	return totalThreads ;
 }

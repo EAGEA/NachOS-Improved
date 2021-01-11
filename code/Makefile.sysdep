@@ -20,8 +20,8 @@ CXXFLAGS+=-g
 
 HOST_TARGET_ARCH=-m32
 HOST_TARGET_MACH=-m32
-HOST_CC=gcc
-HOST_CXX=g++
+HOST_CC=gcc -pthread
+HOST_CXX=g++ -pthread
 
 # MIPS_CC (and other similar variables) is the compiler used to
 # produce mipsel code

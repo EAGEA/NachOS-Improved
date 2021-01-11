@@ -2,14 +2,18 @@
 
 void print(void *c)
 {
-	PutString("Starting thread function.\n") ;
+	//PutString("Starting thread function.\n") ;
 
-	int i ;
+//	int i ;
 
-	for (i = 0 ; i < 4 ; i ++)
+	/*
+	for (i = 0 ; i < 4000 ; i ++)
 	{
-		PutChar(*((char *) c) + i) ;
+		//PutChar(*((char *) c) + i % 26) ;
 	}
+	*/
+
+	//PutString("Ending thread function.\n") ;
 
 	UserThreadExit() ;
 }
@@ -27,7 +31,7 @@ int main()
 		PutString("Thread created.\n") ;
 	}
 
-	UserThreadJoin() ;
+	PutString("Thread exited.\n") ;
 
 	Exit(0) ;
 }

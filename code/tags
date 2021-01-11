@@ -42,10 +42,8 @@ ConsoleWriteDone	machine/console.cc	/^static void ConsoleWriteDone(int c)$/;"	f	
 ContentSize	filesys/fstest.cc	113;"	d	file:
 Contents	filesys/fstest.cc	112;"	d	file:
 Copy	filesys/fstest.cc	/^Copy(const char *from, const char *to)$/;"	f
-CopyStringFromMachine	userprog/synchconsole.cc	/^void CopyStringFromMachine(int from, char *to, unsigned size)$/;"	f
-CopyStringFromMachine	userprog/utils.cc	/^void CopyStringFromMachine(int from, char *to, unsigned size)$/;"	f
-CopyStringToMachine	userprog/synchconsole.cc	/^void CopyStringToMachine(char *from, int to, unsigned size)$/;"	f
-CopyStringToMachine	userprog/utils.cc	/^void CopyStringToMachine(char *from, int to, unsigned size)$/;"	f
+CopyStringFromMachine	userprog/synchconsole.cc	/^void SynchConsole::CopyStringFromMachine(int from, char *to, unsigned size)$/;"	f	class:SynchConsole
+CopyStringToMachine	userprog/synchconsole.cc	/^void SynchConsole::CopyStringToMachine(char *from, int to, unsigned size)$/;"	f	class:SynchConsole
 Create	filesys/filesys.cc	/^FileSystem::Create(const char *name, int initialSize)$/;"	f	class:FileSystem
 DEBUG	threads/utility.cc	/^DEBUG (char flag, const char *format, ...)$/;"	f
 DeAssignNameToSocket	machine/sysdep.cc	/^DeAssignNameToSocket(const char *socketName)$/;"	f
@@ -89,8 +87,10 @@ Fork	threads/thread.cc	/^Thread::Fork (VoidFunctionPtr func, int arg)$/;"	f	clas
 FreeMapFileSize	filesys/filesys.cc	63;"	d	file:
 FreeMapSector	filesys/filesys.cc	57;"	d	file:
 Get	network/post.cc	/^MailBox::Get(PacketHeader *pktHdr, MailHeader *mailHdr, char *data) $/;"	f	class:MailBox
+GetArg	threads/thread.cc	/^int ThreadParams::GetArg()$/;"	f	class:ThreadParams
 GetChar	machine/console.cc	/^Console::GetChar()$/;"	f	class:Console
-GetNextUserThread	userprog/userthread.cc	/^int GetNextUserThread() $/;"	f
+GetFun	threads/thread.cc	/^int ThreadParams::GetFun()$/;"	f	class:ThreadParams
+GetTotalThreads	userprog/addrspace.cc	/^int AddrSpace::GetTotalThreads()$/;"	f	class:AddrSpace
 HI	bin/execute.c	/^int HI, LO;			\/* mul\/div machine registers *\/$/;"	v
 Halt	machine/interrupt.cc	/^Interrupt::Halt()$/;"	f	class:Interrupt
 HandleInterrupt	machine/disk.cc	/^Disk::HandleInterrupt ()$/;"	f	class:Disk
@@ -235,7 +235,10 @@ Send	machine/network.cc	/^Network::Send(PacketHeader hdr, char* data)$/;"	f	clas
 Send	network/post.cc	/^PostOffice::Send(PacketHeader pktHdr, MailHeader mailHdr, const char* data)$/;"	f	class:PostOffice
 SendDone	machine/network.cc	/^Network::SendDone()$/;"	f	class:Network
 SendToSocket	machine/sysdep.cc	/^SendToSocket(int sockID, const char *buffer, int packetSize, const char *toName)$/;"	f
+SetArg	threads/thread.cc	/^void ThreadParams::SetArg(int a)$/;"	f	class:ThreadParams
+SetFun	threads/thread.cc	/^void ThreadParams::SetFun(int f)$/;"	f	class:ThreadParams
 SetLevel	machine/interrupt.cc	/^Interrupt::SetLevel(IntStatus now)$/;"	f	class:Interrupt
+SetTotalThreads	userprog/addrspace.cc	/^void AddrSpace::SetTotalThreads(int val)$/;"	f	class:AddrSpace
 SetupThreadState	threads/thread.cc	/^SetupThreadState ()$/;"	f
 ShortToHost	bin/coff2noff.c	/^ShortToHost(unsigned short shortword) {$/;"	f
 ShortToHost	machine/translate.cc	/^ShortToHost(unsigned short shortword) {$/;"	f
@@ -267,6 +270,7 @@ Tell	machine/sysdep.cc	/^Tell(int fd)$/;"	f
 Test	userprog/bitmap.cc	/^BitMap::Test (int which)$/;"	f	class:BitMap
 Thread	threads/thread.cc	/^Thread::Thread (const char *threadName)$/;"	f	class:Thread
 ThreadFinish	threads/thread.cc	/^ThreadFinish ()$/;"	f	file:
+ThreadParams	threads/thread.cc	/^ThreadParams::ThreadParams(int f, int a)$/;"	f	class:ThreadParams
 ThreadPrint	threads/thread.cc	/^ThreadPrint (int arg)$/;"	f
 ThreadTest	threads/threadtest.cc	/^ThreadTest ()$/;"	f
 TimeOfNextInterrupt	machine/timer.cc	/^Timer::TimeOfNextInterrupt() $/;"	f	class:Timer
@@ -327,13 +331,14 @@ dis1	bin/disasm.c	/^dis1(xpc)$/;"	f
 disasm	bin/disasm.c	/^disasm(startpc, argc, argv)$/;"	f
 do_UserThreadCreate	userprog/userthread.cc	/^int do_UserThreadCreate(int f, int arg)$/;"	f
 do_UserThreadExit	userprog/userthread.cc	/^void do_UserThreadExit()$/;"	f
+do_UserThreadJoin	userprog/userthread.cc	/^void do_UserThreadJoin() $/;"	f
 dump_ascii	bin/d.c	/^dump_ascii(instruction, pc)$/;"	f
 dump_reg	bin/execute.c	/^dump_reg()$/;"	f
 enableFlags	threads/utility.cc	/^static const char *enableFlags = NULL;	\/\/ controls which DEBUG messages are printed $/;"	v	file:
 exceptionNames	machine/machine.cc	/^static const char* exceptionNames[] = { "no exception", "syscall", $/;"	v	file:
 false	bin/execute.c	16;"	d	file:
-feof	machine/console.cc	/^int feof()$/;"	f
-feof	userprog/synchconsole.cc	/^int feof()$/;"	f
+feof	machine/console.cc	/^int Console::feof()$/;"	f	class:Console
+feof	userprog/synchconsole.cc	/^int SynchConsole::feof()$/;"	f	class:SynchConsole
 fileSystem	threads/system.cc	/^FileSystem *fileSystem;$/;"	v
 filehdr	bin/out.c	/^struct filehdr filehdr;$/;"	v	typeref:struct:filehdr
 filename	bin/disasm.c	/^static char filename[1000] = "a.out";	\/* default a.out file *\/$/;"	v	file:
@@ -378,6 +383,7 @@ main	test/putint.c	/^int main()$/;"	f
 main	test/putstring.c	/^int main()$/;"	f
 main	test/shell.c	/^main ()$/;"	f
 main	test/sort.c	/^main ()$/;"	f
+main	test/thread.c	/^int main()$/;"	f
 main	threads/main.cc	/^main (int argc, char **argv)$/;"	f
 mem	bin/disasm.c	/^char mem[MEMSIZE];		\/* main memory. use malloc later *\/$/;"	v
 mem	bin/main.c	/^char mem[MEMSIZE];		\/* main memory. use malloc later *\/$/;"	v
@@ -399,6 +405,7 @@ postOffice	threads/system.cc	/^PostOffice *postOffice;$/;"	v
 print	test/putchar.c	/^void print(char c, int n)$/;"	f
 print	test/putint.c	/^void print(int n)$/;"	f
 print	test/putstring.c	/^void print(int n)$/;"	f
+print	test/thread.c	/^void print(void *c)$/;"	f
 print_reloc	bin/out.c	/^print_reloc(vaddr,i,j)$/;"	f
 print_section	bin/out.c	/^print_section(i)$/;"	f
 printf	bin/out.c	190;"	d	file:
