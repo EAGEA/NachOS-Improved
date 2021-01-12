@@ -31,6 +31,15 @@ int main()
 		PutString("User thread created.\n") ;
 	}
 
+	if (UserThreadCreate(print, &c) == -1) 
+	{
+		PutString("Can't create user thread.\n") ;
+	}
+	else
+	{
+		PutString("User thread created.\n") ;
+	}
+
 	PutString("Waiting for ending main thread.\n") ;
 
 	Halt() ;
