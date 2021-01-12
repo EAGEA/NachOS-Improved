@@ -6,7 +6,7 @@ void print(void *c)
 
 	int i ;
 
-	for (i = 0 ; i < 26 ; i ++)
+	for (i = 0 ; i < 52 ; i ++)
 	{
 		PutChar(*((char *) c) + i % 26) ;
 	}

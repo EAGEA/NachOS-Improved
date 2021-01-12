@@ -87,7 +87,9 @@ ExceptionHandler (ExceptionType which)
 
 					while (currentSpace->GetTotalThreads() > 1)
 					{
+						currentSpace->LockRelease() ;
 						currentSpace->CondWait() ;
+						currentSpace->LockAcquire() ;
 					}
 
 					currentSpace->LockRelease() ;
