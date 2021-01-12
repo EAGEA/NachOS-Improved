@@ -35,9 +35,9 @@ int do_UserThreadCreate(int f, int arg)
 	}
 	// Create the thread:
 	// Add this one to the total of threads existing.
-	currentSpace->MutexLock() ;
+	currentSpace->LockAcquire() ;
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() + 1) ;
-	currentSpace->MutexUnlock() ;
+	currentSpace->LockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create the thread with the same pace as the current, and start it.
@@ -53,9 +53,9 @@ void do_UserThreadExit()
 {
 	AddrSpace *currentSpace = currentThread->space ;
 	// Remove this one from the total of threads existing.
-	currentSpace->MutexLock() ;
+	currentSpace->LockAcquire() ;
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
-	currentSpace->MutexUnlock() ;
+	currentSpace->LockRelease() ;
 
 	// Finish the thread.
 	currentThread->Finish();

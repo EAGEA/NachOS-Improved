@@ -83,14 +83,14 @@ ExceptionHandler (ExceptionType which)
 				{
 					AddrSpace *currentSpace = currentThread->space ;
 					
-					currentSpace->MutexLock() ;
+					currentSpace->LockAcquire() ;
 
 					while (currentSpace->GetTotalThreads() > 1)
 					{
 						currentSpace->CondWait() ;
 					}
 
-					currentSpace->MutexUnlock() ;
+					currentSpace->LockRelease() ;
 
 					DEBUG('a', "Shutdown, initiated by user program.\n");
 					interrupt->Halt();
@@ -165,11 +165,13 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_ThreadExit: 
 				{
+					// Execution.
 					do_UserThreadExit() ;
 					break ;
 				}
 			case SC_ThreadJoin:
 				{
+					// Execution.
 					do_UserThreadJoin() ;
 					break ;
 				}

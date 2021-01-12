@@ -17,8 +17,6 @@
 #include "filesys.h"
 #include "translate.h"
 
-#include <pthread.h> 
-
 #define UserStackSize		1024	// increase this as necessary!
 
 class AddrSpace
@@ -38,22 +36,19 @@ class AddrSpace
 	// Manage the total of threads running into this address space.
 	void CondWait() ;
 	void CondSignal() ;
-	void MutexLock() ;
-	void MutexUnlock() ;
+	void LockRelease() ;
+	void LockAcquire() ;
 	void SetTotalThreads(int val) ;
 	int GetTotalThreads() ;
 
   private:
+
+
 	TranslationEntry * pageTable;	// Assume linear page table translation
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
 	unsigned int totalThreads ; // Number of user threads (including the main thread).
-
-	// To access the number of threads using this address space.
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-	// To signal when 0 threads are running into this address space.
-	pthread_cond_t cond = PTHREAD_COND_INITIALIZER ;
 };
 
 #endif // ADDRSPACE_H

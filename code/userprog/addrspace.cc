@@ -19,10 +19,17 @@
 #include "system.h"
 #include "addrspace.h"
 #include "noff.h"
+#include "synch.h"
 
 #include <strings.h>		/* for bzero */
-#include <pthread.h>		
 
+
+/** Can't be declared as a private/public member of the class otherwise
+ * include errors with synch.h ... **/
+// To access the number of threads using this address space.
+Semaphore *lock ; 
+// To signal when 0 threads are running into this address space.
+Semaphore *cond ; 
 
 
 //----------------------------------------------------------------------
@@ -125,6 +132,9 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 	// Init the total of threads created (count the main one).
 	totalThreads = 1 ; 
+	// And the synchronization mechanisms.
+	lock = new Semaphore("AddrSpace threads lock", 1) ;
+	cond = new Semaphore("AddrSpace threads cond", 0) ;
 }
 
 //----------------------------------------------------------------------
@@ -134,10 +144,13 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
-  // LB: Missing [] for delete
-  // delete pageTable;
-  delete [] pageTable;
-  // End of modification
+	// LB: Missing [] for delete
+	// delete pageTable;
+	delete [] pageTable;
+	// And the synchronization mechanisms.
+	delete lock ;
+	delete cond ;
+	// End of modification
 }
 
 //----------------------------------------------------------------------
@@ -205,33 +218,32 @@ AddrSpace::RestoreState ()
 //----------------------------------------------------------------------
 // Functions to manage the user threads. 
 //		The one which access the "totalThreads" must be protected
-//		by the mutex.
+//		by the lock.
 //----------------------------------------------------------------------
 
 
 void AddrSpace::CondWait()
 {
-	pthread_cond_wait(&cond, &mutex) ;
+	cond->P() ;
 }
 
 void AddrSpace::CondSignal()
 {
-	pthread_cond_signal(&cond) ;
+	cond->V() ;
 }
 
-void AddrSpace::MutexLock()
+void AddrSpace::LockAcquire()
 {
-	pthread_mutex_lock(&mutex) ;
+	lock->P() ;
 }
 
-void AddrSpace::MutexUnlock()
+void AddrSpace::LockRelease()
 {
-	pthread_mutex_unlock(&mutex) ;
+	lock->V() ;
 }
 
 void AddrSpace::SetTotalThreads(int val)
 {
-
 	totalThreads = val ;
 
 	if (totalThreads == 1)

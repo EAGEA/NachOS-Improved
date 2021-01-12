@@ -126,32 +126,31 @@ void
 SynchConsoleTest (char *in, char *out)
 {
 	char ch;
-	SynchConsole *synchconsole = new SynchConsole(in, out);
 	bool breakLine = false ;
 
 	for (;;)
 	{
-		ch = synchconsole->SynchGetChar(false) ;
+		ch = synchConsole->SynchGetChar(false) ;
 
 		if (! breakLine)
 		{
 			breakLine = true ;
-			synchconsole->SynchPutChar ('<');	
+			synchConsole->SynchPutChar ('<');	
 		}
 
 		if (breakLine && ch == '\n')
 		{
 			breakLine = false ;
-			synchconsole->SynchPutChar ('>');	
+			synchConsole->SynchPutChar ('>');	
 		}
 
-		synchconsole->SynchPutChar(ch);
+		synchConsole->SynchPutChar(ch);
 
 		// Q | ^D | ytt | EOF
 		if (ch == 'q' || ch == EOF)
 		{
-			synchconsole->SynchPutChar ('>');	
-			synchconsole->SynchPutChar ('\n');	
+			synchConsole->SynchPutChar ('>');	
+			synchConsole->SynchPutChar ('\n');	
 			return;		// Quit. 
 		}
 	}
