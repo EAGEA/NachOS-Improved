@@ -4,12 +4,26 @@ void print(void *c)
 {
 	int i ;
 
-	for (i = 0 ; i < 100 ; i ++)
+	for (i = 0 ; i < 4 ; i ++)
 	{
 		PutChar(*((char *) c)) ;
 	}
 
-	PutChar('\n') ;
+	PutString("User thread ending.\n") ;
+
+	UserThreadExit() ;
+}
+
+void printb(void *c)
+{
+	int j ;
+
+	for (j = 0 ; j < 4 ; j ++)
+	{
+		PutChar(*((char *) c)) ;
+	}
+
+	PutString("User thread ending.\n") ;
 
 	UserThreadExit() ;
 }
@@ -18,15 +32,21 @@ int main()
 {
 	PutString("Starting main thread.\n") ;
 
-	char c = 'a' ;
+	char a = 'a' ;
+	char b = 'b' ;
 
-	int t1 = UserThreadCreate(print,&c) ;
 
-	int res = UserThreadJoin(t1) ;
+	UserThreadCreate(print, &a) ;
 
-	PutInt(res) ;
+	int i ;
+	for (i = 0 ; i < 0 ;  i++)
+	{
 
-	PutString("\nHey\n") ;
+	}
+	UserThreadCreate(printb, &b) ;
+
+
+	PutString("Main thread ending.\n") ;
 
 	Halt() ;
 }

@@ -1,7 +1,8 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
-#include <unistd.h>
+#include "userthread.h"
+
 
 static void StartUserThread(int f)
 {
@@ -37,7 +38,8 @@ int do_UserThreadCreate(int f, int arg)
 	// Create the thread:
 	// Add this one to the total of threads existing.
 	currentSpace->LockAcquire() ;
-	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() + 1) ;
+	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
+	currentSpace->SetTotalThreads(totalThreads) ;
 	currentSpace->LockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
@@ -47,7 +49,7 @@ int do_UserThreadCreate(int f, int arg)
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
-	return currentSpace->GetTotalThreads() ; 
+	return totalThreads ; 
 }
 
 void do_UserThreadExit()
@@ -82,4 +84,34 @@ int do_UserThreadJoin(int t)
 	currentSpace->LockRelease() ;
 
 	return currentSpace->GetLastid();
+}
+
+/** 
+ * Params of the thread for the "Start" function. 
+ */
+
+ThreadParams::ThreadParams(int f, int a)
+{
+	fun = f ;
+	arg = a ;
+}
+
+void ThreadParams::SetFun(int f)
+{
+	fun = f ;
+}
+
+void ThreadParams::SetArg(int a)
+{
+	arg = a ;
+}
+
+int ThreadParams::GetFun()
+{
+	return fun ;
+}
+
+int ThreadParams::GetArg()
+{
+	return arg ;
 }

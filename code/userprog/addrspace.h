@@ -40,6 +40,7 @@ class AddrSpace
 	void LockAcquire() ;
 	void SetTotalThreads(int val) ;
 	int GetTotalThreads() ;
+	// Manage the thread ID.
     void SetLastid(int val) ;
     int GetLastid() ;
 
@@ -50,8 +51,8 @@ class AddrSpace
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
+	
 	unsigned int totalThreads ; // Number of user threads (including the main thread).
-
     unsigned int lastid ; //Last executed thread
 };
 

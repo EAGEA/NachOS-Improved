@@ -4,8 +4,9 @@
 #include "synch.h"
 
 // Input/output thread protection.
-// -> allow only one thread to enter a "synch" function.
-static Semaphore *threadAvail ;
+// -> allow only one thread to enter a "synch" function of read/write type.
+static Semaphore *threadWrite ;
+static Semaphore *threadRead ;
 // Input/output general protection.
 // -> "readAvail" to wait before reading a char (=> so a string).
 // -> "writeDone" to signal that a char/string was written.
@@ -16,28 +17,30 @@ static void WriteDone(int arg) { writeDone->V(); }
 
 SynchConsole::SynchConsole(char *readFile, char *writeFile)
 {
-	threadAvail = new Semaphore("thread I/O avail", 1) ;
+	console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0) ;
+	threadWrite = new Semaphore("thread output avail", 1) ;
+	threadRead = new Semaphore("thread input avail", 1) ;
 	readAvail = new Semaphore("read avail", 0);
 	writeDone = new Semaphore("write done", 0);
-	console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0) ;
 }
 
 SynchConsole::~SynchConsole()
 {
 	delete console;
-	delete threadAvail ;
+	delete threadWrite ;
+	delete threadRead ;
 	delete writeDone;
 	delete readAvail;
 }
 
 void SynchConsole::SynchPutChar(const char ch)
 {
-	threadAvail->P() ;
+	threadWrite->P() ;
 
 	console->PutChar(ch) ;
 	writeDone->P() ;
 
-	threadAvail->V() ;
+	threadWrite->V() ;
 }
 
 /* Updated version to detect only EOF on an end of file.
@@ -49,7 +52,7 @@ int SynchConsole::SynchGetChar(bool isCalledInGetString)
 {
 	if (! isCalledInGetString)
 	{
-		threadAvail->P() ;
+		threadRead->P() ;
 	}
 
 	readAvail->P() ;
@@ -57,7 +60,7 @@ int SynchConsole::SynchGetChar(bool isCalledInGetString)
 
 	if (! isCalledInGetString)
 	{
-		threadAvail->V() ;
+		threadRead->V() ;
 	}
 
 	return c ;  
@@ -70,12 +73,12 @@ void SynchConsole::SynchPutString(const char s[])
 		return ;
 	}
 
-	threadAvail->P() ;
+	threadWrite->P() ;
 
 	console->PutString(s) ;	
 	writeDone->P() ;
 
-	threadAvail->V() ;
+	threadWrite->V() ;
 }
 
 void SynchConsole::SynchGetString(char *s, int n)
@@ -90,7 +93,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 		return ;
 	}
 
-	threadAvail->P() ;
+	threadRead->P() ;
 
 	int i = 0 ;
 
@@ -103,7 +106,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 
 	s[i + 1] = '\0' ;
 
-	threadAvail->V() ;
+	threadRead->V() ;
 }
 
 void SynchConsole::SynchPutInt(int i)

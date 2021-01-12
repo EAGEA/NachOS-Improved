@@ -66,23 +66,6 @@ enum ThreadStatus
 // external function, dummy routine whose sole job is to call Thread::Print
 extern void ThreadPrint (int arg);
 
-// Class to pass the arguments to the "Fork" function.
-class ThreadParams
-{
-	private :
-
-		int fun ;
-		int arg ;
-
-	public :
-		
-		ThreadParams(int fun, int arg) ;
-		void SetFun(int fun) ;
-		void SetArg(int arg) ;
-		int GetFun() ;
-		int GetArg() ;
-} ;
-
 // The following class defines a "thread control block" -- which
 // represents a single thread of execution.
 //
