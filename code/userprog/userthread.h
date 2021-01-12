@@ -5,6 +5,6 @@ int do_UserThreadCreate(int f, int arg) ;
 
 void do_UserThreadExit() ;
 
-void do_UserThreadJoin() ;
+int do_UserThreadJoin(int t) ;
 
 #endif

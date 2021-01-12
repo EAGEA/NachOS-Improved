@@ -1,6 +1,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
+#include <unistd.h>
 
 static void StartUserThread(int f)
 {
@@ -46,7 +47,7 @@ int do_UserThreadCreate(int f, int arg)
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
-	return 0 ; 
+	return currentSpace->GetTotalThreads() ; 
 }
 
 void do_UserThreadExit()
@@ -57,12 +58,28 @@ void do_UserThreadExit()
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
 	currentSpace->LockRelease() ;
 
+	currentSpace->SetLastid(currentThread->getTid());
+
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.
 	delete currentThread->space ;
 }
 
-void do_UserThreadJoin() 
+int do_UserThreadJoin(int t) 
 {
+	AddrSpace *currentSpace = currentThread->space ;
+
+	currentSpace->LockAcquire() ;
+
+	while (currentSpace->GetLastid() != t)
+	{
+		currentSpace->LockRelease() ;
+		currentSpace->CondWait() ;
+		currentSpace->LockAcquire() ;
+	}
+
+	currentSpace->LockRelease() ;
+
+	return currentSpace->GetLastid();
 }

@@ -173,8 +173,12 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_ThreadJoin:
 				{
+					// Params.
+					int t = machine->ReadRegister(4) ;
 					// Execution.
-					do_UserThreadJoin() ;
+					int res = do_UserThreadJoin(t) ;
+					// Return.
+					machine->WriteRegister(2, res);
 					break ;
 				}
 			default:	

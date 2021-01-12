@@ -174,7 +174,7 @@ void UserThreadExit() ;
 
 /* Wait for the user thread to finish.
  */
-void UserThreadJoin() ;
+int UserThreadJoin(int t) ;
 
 #endif // IN_USER_MODE
 

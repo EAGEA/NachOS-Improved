@@ -135,6 +135,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	// And the synchronization mechanisms.
 	lock = new Semaphore("AddrSpace threads lock", 1) ;
 	cond = new Semaphore("AddrSpace threads cond", 0) ;
+
+	lastid = 1 ;
 }
 
 //----------------------------------------------------------------------
@@ -256,4 +258,14 @@ void AddrSpace::SetTotalThreads(int val)
 int AddrSpace::GetTotalThreads()
 {
 	return totalThreads ;
+}
+
+void AddrSpace::SetLastid(int val)
+{
+	lastid = val ;
+}
+
+int AddrSpace::GetLastid()
+{
+	return lastid ;
 }
