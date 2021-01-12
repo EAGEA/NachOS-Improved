@@ -42,6 +42,7 @@ int do_UserThreadCreate(int f, int arg)
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create the thread with the same pace as the current, and start it.
 	Thread *thread = new Thread("User Thread") ; 
+	thread->setTid(currentSpace->GetTotalThreads()); //set the tid of the new thread
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -55,6 +56,7 @@ void do_UserThreadExit()
 	currentSpace->MutexLock() ;
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
 	currentSpace->MutexUnlock() ;
+
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.

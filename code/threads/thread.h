@@ -134,6 +134,13 @@ class Thread
 	{
 		printf ("%s, ", name);
 	}
+    //Get the tid of the thread
+    const int getTid()
+    {
+        return tid;
+    }
+    //Set the tid of the thread
+    void setTid(int id);
 
   private:
     // some of the private data for this class is listed above
@@ -143,6 +150,7 @@ class Thread
     // (If NULL, don't deallocate stack)
     ThreadStatus status;	// ready, running or blocked
     const char *name;
+    int tid; //id of the thread
 
     void StackAllocate (VoidFunctionPtr func, int arg);
     // Allocate a stack for thread.
