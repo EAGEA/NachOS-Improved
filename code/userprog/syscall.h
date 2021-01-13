@@ -40,7 +40,6 @@
 #define SC_ThreadJoin       19
 #define SC_ThreadId         20
 
-
 #ifdef IN_USER_MODE
 
 // LB: This part is read only on compiling the test/*.c files.

@@ -103,38 +103,103 @@ Semaphore::V ()
 // the test case in the network assignment won't work!
 Lock::Lock (const char *debugName)
 {
+	name = debugName ;
+
+	ownerID = -1 ;
+	lock = new Semaphore("Lock semaphore", 1) ;
+	innerLock = new Semaphore("Lock inner semaphore", 1) ;
 }
 
 Lock::~Lock ()
 {
+	delete lock ;
+	delete innerLock ;
 }
 	void
 Lock::Acquire ()
 {
+	lock->P() ;
+	innerLock->P() ;
+
+	if (ownerID == -1)
+	{
+		ownerID = currentThread->getTid() ;
+	}
+	else 
+	{
+		lock->V() ;
+	}
+
+	innerLock->V() ;
 }
 	void
 Lock::Release ()
 {
+	innerLock->P() ;
+
+	if (ownerID == currentThread->getTid())
+	{
+		ownerID = -1 ;
+		lock->V() ;
+	}
+
+	innerLock->V() ;
 }
 
 Condition::Condition (const char *debugName)
 {
+	name = debugName ;
+
+	totalSleepers = 0 ;
+	sleepLock = new Semaphore("CV sleep semaphore", 0) ;
+	innerLock = new Semaphore("CV inner semaphore", 1) ;
 }
 
 Condition::~Condition ()
 {
+	delete sleepLock ;
+	delete innerLock ;
 }
+
 	void
 Condition::Wait (Lock * conditionLock)
 {
-	ASSERT (FALSE);
+	innerLock->P() ;
+
+	totalSleepers ++ ;
+
+	conditionLock->Release() ;
+
+	innerLock->V() ;
+	sleepLock->P() ;
+
+	conditionLock->Acquire() ;
 }
 
 	void
 Condition::Signal (Lock * conditionLock)
 {
+	innerLock->P() ;
+
+	if (totalSleepers > 0)
+	{
+		sleepLock->V() ;
+		totalSleepers -- ;
+	}
+
+	innerLock->V() ;
 }
+
 	void
 Condition::Broadcast (Lock * conditionLock)
 {
+	innerLock->P() ;
+
+	while (totalSleepers > 0) 
+	{
+		sleepLock->V() ; 
+		totalSleepers -- ;
+	}
+
+	innerLock->V() ;
 }

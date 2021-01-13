@@ -42,13 +42,18 @@ int do_UserThreadCreate(int f, int arg)
 	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
 	currentSpace->SetTotalThreads(totalThreads) ;
 	currentSpace->ExitLockRelease() ;
+	// And add this thread to the living ones. 
+	currentSpace->JoinLockAcquire() ;
+	int tid = currentSpace->GetNextThreadID() ;
+	currentSpace->AddThreadID(tid) ;
+	currentSpace->JoinLockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create thread name for debugging.
 	char *name = (char *) malloc(sizeof(char) * 18) ;
-	sprintf(name, "User thread n°%d", totalThreads) ;
+	sprintf(name, "User thread n°%d", tid) ;
 	// To create the object with the same space as the current, and start it.
-	Thread *thread = new Thread(name, totalThreads) ;
+	Thread *thread = new Thread(name, tid) ;
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -62,9 +67,9 @@ void do_UserThreadExit()
 	currentSpace->ExitLockAcquire() ;
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
 	currentSpace->ExitLockRelease() ;
-	// And set the current thread as the last to finish in this address space.
+	// And remove this thread from the living ones. 
 	currentSpace->JoinLockAcquire() ;
-	currentSpace->SetLastid(currentThread->getTid());
+	currentSpace->RemoveThreadID(currentThread->getTid()) ;
 	currentSpace->JoinLockRelease() ;
 	// Finish the thread.
 	currentThread->Finish();
@@ -75,16 +80,23 @@ void do_UserThreadExit()
 void do_UserThreadJoin(int t) 
 {
 	AddrSpace *currentSpace = currentThread->space ;
+	// Put in sleep the joining thread.
+	/*
+	IntStatus oldLevel = interrupt->SetLevel(IntOff) ;
+	currentThread->Sleep() ;
+	interrupt->SetLevel(oldLevel) ;
+	*/
 
 	currentSpace->JoinLockAcquire() ;
 
-	while (currentSpace->GetLastid() != t)
+	while (currentSpace->ContainThreadID(t))
 	{
-		currentSpace->JoinLockRelease() ;
+		printf("HEY %d\n", t) ;
+		// The thread is still living in this addr space.
 		currentSpace->JoinCondWait() ;
-		currentSpace->JoinLockAcquire() ;
 	}
 
+	printf("OUUUUUUUUUUT %d\n", t) ;
 	currentSpace->JoinLockRelease() ;
 }
 

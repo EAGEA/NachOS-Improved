@@ -30,8 +30,8 @@
 Semaphore *exitLock ; 
 Semaphore *exitCond ; 
 // To access/signal when a thread exited. 
-Semaphore *joinLock ; 
-Semaphore *joinCond ; 
+Lock *joinLock ; 
+Condition *joinCond ; 
 
 
 //----------------------------------------------------------------------
@@ -137,15 +137,16 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	// And the synchronization mechanisms.
 	exitLock = new Semaphore("AddrSpace threads exit lock", 1) ;
 	exitCond = new Semaphore("AddrSpace threads exit cond", 0) ;
-	joinLock = new Semaphore("AddrSpace threads join lock", 1) ;
-	joinCond = new Semaphore("AddrSpace threads join cond", 0) ;
-
-	lastid = -1 ;
+	joinLock = new Lock("AddrSpace threads join lock") ;
+	joinCond = new Condition("AddrSpace threads join cond") ;
+	// Already contains the main thread. 
+	i_threadIDs = 1 ;
+	threadIDs[0] = 1 ;
 }
 
 //----------------------------------------------------------------------
 // AddrSpace::~AddrSpace
-//      Dealloate an address space.  Nothing for now!
+//      Deallocate an address space.  Nothing for now!
 //----------------------------------------------------------------------
 
 AddrSpace::~AddrSpace ()
@@ -232,12 +233,12 @@ AddrSpace::RestoreState ()
 
 void AddrSpace::JoinCondWait()
 {
-	joinCond->P() ;
+	joinCond->Wait(joinLock) ;
 }
 
 void AddrSpace::JoinCondSignal()
 {
-	joinCond->V() ;
+	joinCond->Broadcast(joinLock) ;
 }
 
 void AddrSpace::ExitCondWait()
@@ -252,12 +253,12 @@ void AddrSpace::ExitCondSignal()
 
 void AddrSpace::JoinLockAcquire()
 {
-	joinLock->P() ;
+	joinLock->Acquire() ;
 }
 
 void AddrSpace::JoinLockRelease()
 {
-	joinLock->V() ;
+	joinLock->Release() ;
 }
 
 void AddrSpace::ExitLockAcquire()
@@ -272,12 +273,6 @@ void AddrSpace::ExitLockRelease()
 
 void AddrSpace::SetTotalThreads(unsigned int val)
 {
-	if (val < totalThreads)
-	{
-		// Notify the "Join" function that a thread exited.
-		JoinCondSignal() ;
-	}
-
 	totalThreads = val ;
 
 	if (totalThreads == 1)
@@ -292,12 +287,97 @@ int AddrSpace::GetTotalThreads()
 	return totalThreads ;
 }
 
-void AddrSpace::SetLastid(int val)
+void AddrSpace::AddThreadID(unsigned int ID)
 {
-	lastid = val ;
+	unsigned int i, j ; 
+
+	for (i = 0 ; i < i_threadIDs ; i ++)
+	{
+		if (threadIDs[i] > ID)
+		{
+			for (j = i_threadIDs - 1 ; j >= i ; j --)
+			{
+				// Shift the others.
+				threadIDs[j + 1] = threadIDs[j] ;
+			}
+
+			break ;
+		}
+		else if (threadIDs[i] == ID)
+		{
+			// Already contain the ID.
+			DEBUG ('t', "Already contain user thread ID \"%d\" at position %d\n", ID, i) ;
+			return ;
+		}
+	}
+
+	threadIDs[i] = ID ;
+	i_threadIDs ++ ;
+
+	DEBUG ('t', "Add user thread ID \"%d\" at position %d\n", ID, i) ;
 }
 
-int AddrSpace::GetLastid()
+void AddrSpace::RemoveThreadID(unsigned int ID)
 {
-	return lastid ;
+	unsigned int i, j ; 
+
+	for (i = 0 ; i < i_threadIDs ; i ++)
+	{
+		if (threadIDs[i] == ID)
+		{
+			for (j = i ; j < i_threadIDs - 1 ; j ++)
+			{
+				// Shift the others.
+				threadIDs[j] = threadIDs[j + 1] ;
+			}
+
+			i_threadIDs -- ;
+
+			// Notify the "Join" function that a thread exited.
+			JoinCondSignal() ;
+
+			DEBUG ('t', "Remove user thread ID \"%d\" at position %d\n", ID, i) ;
+			return ;
+		}
+		else if (threadIDs[i] > ID)
+		{
+			// Doesn't contain the ID.
+			DEBUG ('t', "Can't remove user thread ID \"%d\"\n", ID) ;
+			return ;
+		}
+	}
+}
+
+bool AddrSpace::ContainThreadID(unsigned int ID)
+{
+	unsigned int i ;
+
+	for (i = 0 ; i < i_threadIDs ; i ++)
+	{
+		if (threadIDs[i] == ID)
+		{
+			DEBUG ('t', "Contain user thread ID \"%d\"\n", ID) ;
+			return true ;
+		}
+	}
+
+	DEBUG ('t', "Doesn't contain user thread ID \"%d\"\n", ID) ;
+	return false ; 
+}
+
+unsigned int AddrSpace::GetNextThreadID()
+{
+	unsigned int i ;
+
+	for (i = 0 ; i < i_threadIDs ; i ++)
+	{
+		if (threadIDs[i] != i + 1)
+		{
+			DEBUG ('t', "Next user thread ID \"%d\"\n", i + 1) ;
+			return i + 1 ;
+		}
+	}
+
+	DEBUG ('t', "Next user thread ID \"%d\"\n", i_threadIDs + 1) ;
+	return i_threadIDs + 1 ; 
 }

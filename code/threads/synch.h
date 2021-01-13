@@ -87,7 +87,10 @@ class Lock
 
   private:
     const char *name;		// for debugging
-    // plus some other stuff you'll need to define
+
+	int ownerID ;
+	Semaphore *innerLock ;
+	Semaphore *lock ;
 };
 
 // The following class defines a "condition variable".  A condition
@@ -137,12 +140,15 @@ class Condition
     // condition variables; releasing the 
     // lock and going to sleep are 
     // *atomic* in Wait()
-    void Signal (Lock * conditionLock);	// conditionLock must be held by
-    void Broadcast (Lock * conditionLock);	// the currentThread for all of 
+    void Signal (Lock *lock);	// conditionLock must be held by
+    void Broadcast (Lock *lock);	// the currentThread for all of 
     // these operations
 
   private:
     const char *name;
-    // plus some other stuff you'll need to define
+
+	int totalSleepers ;
+	Semaphore *innerLock ;
+	Semaphore *sleepLock ;
 };
 #endif // SYNCH_H

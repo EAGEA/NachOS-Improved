@@ -1,29 +1,46 @@
 #include "syscall.h"
 
-void print(void *c)
+void process(void *c)
 {
 	int i ;
 
-	for (i = 0 ; i < 4 ; i ++)
+	for (i = 0 ; i < 00000 ; i ++)
 	{
-		PutChar(*((char *) c)) ;
+		// Process a task.
 	}
 
-	PutString("User thread ending.\n") ;
+	PutString("User thread 3 ending.\n") ;
 
 	UserThreadExit() ;
 }
 
-void printb(void *c)
+void processAndJoin(void *c)
 {
-	int j ;
+	int i ;
 
-	for (j = 0 ; j < 4 ; j ++)
+	for (i = 0 ; i < 00000 ; i ++)
 	{
-		PutChar(*((char *) c)) ;
+		// Process a task.
 	}
 
-	PutString("User thread ending.\n") ;
+	int tid = UserThreadCreate(process, &i) ;
+
+	UserThreadJoin(tid) ;
+
+	PutString("User thread 2 ending.\n") ;
+
+	UserThreadExit() ;
+}
+
+void join(void *c)
+{
+	int i = 2 ;
+
+	int tid = UserThreadCreate(process, &i) ;
+
+	UserThreadJoin(tid) ;
+
+	PutString("User thread 1 ending.\n") ;
 
 	UserThreadExit() ;
 }
@@ -32,14 +49,11 @@ int main()
 {
 	PutString("Starting main thread.\n") ;
 
-	char a = 'a' ;
-	char b = 'b' ;
+	int i = 1 ;
 
+	int tid = UserThreadCreate(join, &i) ;
 
-	UserThreadCreate(print, &a) ;
-
-	UserThreadCreate(printb, &b) ;
-
+	UserThreadJoin(tid) ;
 
 	PutString("Main thread ending.\n") ;
 

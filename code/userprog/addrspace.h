@@ -45,9 +45,11 @@ class AddrSpace
 	// Total of thread running into this address space.
 	void SetTotalThreads(unsigned int val) ;
 	int GetTotalThreads() ;
-	// Manage the thread ID.
-    void SetLastid(int val) ;
-    int GetLastid() ;
+	// Manage the thread IDs.
+	void AddThreadID(unsigned int ID) ;
+	void RemoveThreadID(unsigned int ID) ;
+	bool ContainThreadID(unsigned int ID) ;
+	unsigned int GetNextThreadID() ;
 
   private:
 
@@ -58,7 +60,8 @@ class AddrSpace
     // address space
 	
 	unsigned int totalThreads ; // Number of user threads (including the main thread).
-    unsigned int lastid ; //Last executed thread
+	unsigned int threadIDs[10] ; // Current threads "living" in this addr space.
+	unsigned int i_threadIDs ;
 };
 
 #endif // ADDRSPACE_H
