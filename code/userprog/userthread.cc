@@ -45,7 +45,7 @@ int do_UserThreadCreate(int f, int arg)
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create the thread with the same pace as the current, and start it.
 	Thread *thread = new Thread("User Thread") ; 
-	thread->setTid(currentSpace->GetTotalThreads()); //set the tid of the new thread
+	thread->setTid(totalThreads) ; //set the tid of the new thread
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -84,6 +84,11 @@ int do_UserThreadJoin(int t)
 	currentSpace->LockRelease() ;
 
 	return currentSpace->GetLastid();
+}
+
+int do_UserThreadId()
+{
+	return currentThread->getTid() ;
 }
 
 /** 

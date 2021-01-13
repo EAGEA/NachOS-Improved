@@ -38,11 +38,6 @@ int main()
 
 	UserThreadCreate(print, &a) ;
 
-	int i ;
-	for (i = 0 ; i < 0 ;  i++)
-	{
-
-	}
 	UserThreadCreate(printb, &b) ;
 
 

@@ -7,6 +7,8 @@ void do_UserThreadExit() ;
 
 int do_UserThreadJoin(int t) ;
 
+int do_UserThreadId() ;
+
 // Class to pass the arguments to the "Fork" function.
 class ThreadParams
 {

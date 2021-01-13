@@ -181,6 +181,14 @@ ExceptionHandler (ExceptionType which)
 					machine->WriteRegister(2, res);
 					break ;
 				}
+			case SC_ThreadId:
+				{
+					//Execution
+					int res = do_UserThreadId() ;
+					//Return.
+					machine->WriteRegister(2, res) ;
+					break ;
+				}
 			default:	
 				{
 					printf("Unexpected user mode exception %d %d\n", which, type);
