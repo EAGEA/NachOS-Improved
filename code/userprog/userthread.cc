@@ -4,6 +4,7 @@
 #include "userthread.h"
 
 
+
 static void StartUserThread(int f)
 {
 	// Unpack the params.
@@ -37,15 +38,17 @@ int do_UserThreadCreate(int f, int arg)
 	}
 	// Create the thread:
 	// Add this one to the total of threads existing.
-	currentSpace->LockAcquire() ;
+	currentSpace->ExitLockAcquire() ;
 	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
 	currentSpace->SetTotalThreads(totalThreads) ;
-	currentSpace->LockRelease() ;
+	currentSpace->ExitLockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
-	// Then create the thread with the same pace as the current, and start it.
-	Thread *thread = new Thread("User Thread") ; 
-	thread->setTid(currentSpace->GetTotalThreads()); //set the tid of the new thread
+	// Then create thread name for debugging.
+	char *name = (char *) malloc(sizeof(char) * 18) ;
+	sprintf(name, "User thread n°%d", totalThreads) ;
+	// To create the object with the same space as the current, and start it.
+	Thread *thread = new Thread(name, totalThreads) ;
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -56,34 +59,38 @@ void do_UserThreadExit()
 {
 	AddrSpace *currentSpace = currentThread->space ;
 	// Remove this one from the total of threads existing.
-	currentSpace->LockAcquire() ;
+	currentSpace->ExitLockAcquire() ;
 	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
-	currentSpace->LockRelease() ;
-
+	currentSpace->ExitLockRelease() ;
+	// And set the current thread as the last to finish in this address space.
+	currentSpace->JoinLockAcquire() ;
 	currentSpace->SetLastid(currentThread->getTid());
-
+	currentSpace->JoinLockRelease() ;
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.
 	delete currentThread->space ;
 }
 
-int do_UserThreadJoin(int t) 
+void do_UserThreadJoin(int t) 
 {
 	AddrSpace *currentSpace = currentThread->space ;
 
-	currentSpace->LockAcquire() ;
+	currentSpace->JoinLockAcquire() ;
 
 	while (currentSpace->GetLastid() != t)
 	{
-		currentSpace->LockRelease() ;
-		currentSpace->CondWait() ;
-		currentSpace->LockAcquire() ;
+		currentSpace->JoinLockRelease() ;
+		currentSpace->JoinCondWait() ;
+		currentSpace->JoinLockAcquire() ;
 	}
 
-	currentSpace->LockRelease() ;
+	currentSpace->JoinLockRelease() ;
+}
 
-	return currentSpace->GetLastid();
+int do_UserThreadId()
+{
+	return currentThread->getTid() ;
 }
 
 /** 

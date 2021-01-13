@@ -201,6 +201,14 @@ UserThreadJoin:
 	j	$31
 	.end UserThreadJoin
 
+	.globl UserThreadId
+	.ent   UserThreadId
+UserThreadId:
+	addiu $2,$0,SC_ThreadId
+	syscall
+	j   $31
+	.end UserThreadId
+
 /* dummy function to keep gcc happy */
         .globl  __main
         .ent    __main

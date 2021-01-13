@@ -38,6 +38,8 @@
 #define SC_ThreadCreate		17
 #define SC_ThreadExit		18
 #define SC_ThreadJoin       19
+#define SC_ThreadId         20
+
 
 #ifdef IN_USER_MODE
 
@@ -175,6 +177,10 @@ void UserThreadExit() ;
 /* Wait for the user thread to finish.
  */
 int UserThreadJoin(int t) ;
+
+/* Return the Thread Id of the current thread (caller).
+ */
+int UserThreadId() ;
 
 #endif // IN_USER_MODE
 

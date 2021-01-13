@@ -33,12 +33,17 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
-	// Manage the total of threads running into this address space.
-	void CondWait() ;
-	void CondSignal() ;
-	void LockRelease() ;
-	void LockAcquire() ;
-	void SetTotalThreads(int val) ;
+	// Manage the "Join"/"Exit"/"Halt" functions.
+	void ExitCondWait() ;
+	void ExitCondSignal() ;
+	void ExitLockRelease() ;
+	void ExitLockAcquire() ;
+	void JoinCondWait() ;
+	void JoinCondSignal() ;
+	void JoinLockRelease() ;
+	void JoinLockAcquire() ;
+	// Total of thread running into this address space.
+	void SetTotalThreads(unsigned int val) ;
 	int GetTotalThreads() ;
 	// Manage the thread ID.
     void SetLastid(int val) ;

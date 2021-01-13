@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "userthread.h"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -83,16 +84,16 @@ ExceptionHandler (ExceptionType which)
 				{
 					AddrSpace *currentSpace = currentThread->space ;
 					
-					currentSpace->LockAcquire() ;
+					currentSpace->ExitLockAcquire() ;
 
 					while (currentSpace->GetTotalThreads() > 1)
 					{
-						currentSpace->LockRelease() ;
-						currentSpace->CondWait() ;
-						currentSpace->LockAcquire() ;
+						currentSpace->ExitLockRelease() ;
+						currentSpace->ExitCondWait() ;
+						currentSpace->ExitLockAcquire() ;
 					}
 
-					currentSpace->LockRelease() ;
+					currentSpace->ExitLockRelease() ;
 
 					DEBUG('a', "Shutdown, initiated by user program.\n");
 					interrupt->Halt();
@@ -176,9 +177,15 @@ ExceptionHandler (ExceptionType which)
 					// Params.
 					int t = machine->ReadRegister(4) ;
 					// Execution.
-					int res = do_UserThreadJoin(t) ;
-					// Return.
-					machine->WriteRegister(2, res);
+					do_UserThreadJoin(t) ;
+					break ;
+				}
+			case SC_ThreadId:
+				{
+					//Execution
+					int res = do_UserThreadId() ;
+					//Return.
+					machine->WriteRegister(2, res) ;
 					break ;
 				}
 			default:	

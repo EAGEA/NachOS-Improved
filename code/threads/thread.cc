@@ -33,10 +33,10 @@
 //      "threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
-Thread::Thread (const char *threadName)
+Thread::Thread (const char *threadName, int id)
 {
     name = threadName;
-    tid = 1; //By default the first thread ( main ), will be the thread n°1
+    tid = id; 
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;
@@ -409,12 +409,6 @@ Thread::RestoreUserState ()
 {
     for (int i = 0; i < NumTotalRegs; i++)
 	machine->WriteRegister (i, userRegisters[i]);
-}
-
-void 
-Thread::setTid(int id)
-{
-  tid = id;
 }
 
 #endif

@@ -4,6 +4,7 @@
 #include "copyright.h"
 #include "utility.h"
 #include "console.h"
+#include "synch.h"
 
 class SynchConsole 
 {
@@ -24,6 +25,10 @@ class SynchConsole
 	private:
 
 		Console *console;
+		// Input/output thread protection.
+		// -> allow only one thread to enter a "synch" function of read/write type.
+		Semaphore *threadWrite ;
+		Semaphore *threadRead ;
 };
 
 #endif

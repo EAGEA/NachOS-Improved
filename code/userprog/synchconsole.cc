@@ -3,10 +3,6 @@
 #include "synchconsole.h"
 #include "synch.h"
 
-// Input/output thread protection.
-// -> allow only one thread to enter a "synch" function of read/write type.
-static Semaphore *threadWrite ;
-static Semaphore *threadRead ;
 // Input/output general protection.
 // -> "readAvail" to wait before reading a char (=> so a string).
 // -> "writeDone" to signal that a char/string was written.

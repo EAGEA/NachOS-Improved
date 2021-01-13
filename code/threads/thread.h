@@ -87,7 +87,7 @@ class Thread
     int machineState[MachineStateSize];	// all registers except for stackTop
 
   public:
-      Thread (const char *debugName);	// initialize a Thread 
+      Thread (const char *debugName, int tid);	// initialize a Thread 
      ~Thread ();		// deallocate a Thread
     // NOTE -- thread being deleted
     // must not be running when delete 
@@ -122,7 +122,10 @@ class Thread
         return tid;
     }
     //Set the tid of the thread
-    void setTid(int id);
+    void setTid(int id)
+	{
+		tid = id ;
+	}
 
   private:
     // some of the private data for this class is listed above
