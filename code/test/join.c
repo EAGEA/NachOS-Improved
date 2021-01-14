@@ -4,7 +4,7 @@ void process(void *c)
 {
 	int i ;
 
-	for (i = 0 ; i < 00000 ; i ++)
+	for (i = 0 ; i < 50000 ; i ++)
 	{
 		// Process a task.
 	}
@@ -18,7 +18,7 @@ void processAndJoin(void *c)
 {
 	int i ;
 
-	for (i = 0 ; i < 00000 ; i ++)
+	for (i = 0 ; i < 50000 ; i ++)
 	{
 		// Process a task.
 	}
@@ -36,7 +36,7 @@ void join(void *c)
 {
 	int i = 2 ;
 
-	int tid = UserThreadCreate(process, &i) ;
+	int tid = UserThreadCreate(processAndJoin, &i) ;
 
 	UserThreadJoin(tid) ;
 

@@ -26,11 +26,8 @@
 
 /** Can't be declared as a private/public member of the class otherwise
  * include errors with synch.h ... **/
-// To access/signal when 0 threads are running into this address space.
-Semaphore *exitLock ; 
-Semaphore *exitCond ; 
 // To access/signal when a thread exited. 
-Lock *joinLock ; 
+Lock	  *joinLock ; 
 Condition *joinCond ; 
 
 
@@ -132,11 +129,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			      noffH.initData.size, noffH.initData.inFileAddr);
       }
 
-	// Init the total of threads created (count the main one).
-	totalThreads = 1 ; 
-	// And the synchronization mechanisms.
-	exitLock = new Semaphore("AddrSpace threads exit lock", 1) ;
-	exitCond = new Semaphore("AddrSpace threads exit cond", 0) ;
+	// Init synchronization mechanisms.
 	joinLock = new Lock("AddrSpace threads join lock") ;
 	joinCond = new Condition("AddrSpace threads join cond") ;
 	// Already contains the main thread. 
@@ -155,9 +148,7 @@ AddrSpace::~AddrSpace ()
 	// delete pageTable;
 	delete [] pageTable;
 	// And the synchronization mechanisms.
-	delete exitLock ;
 	delete joinLock ;
-	delete exitCond ;
 	delete joinCond ;
 	// End of modification
 }
@@ -231,60 +222,29 @@ AddrSpace::RestoreState ()
 //----------------------------------------------------------------------
 
 
-void AddrSpace::JoinCondWait()
+void AddrSpace::ThreadCondWait()
 {
 	joinCond->Wait(joinLock) ;
 }
 
-void AddrSpace::JoinCondSignal()
+void AddrSpace::ThreadCondBroadcast()
 {
 	joinCond->Broadcast(joinLock) ;
 }
 
-void AddrSpace::ExitCondWait()
-{
-	exitCond->P() ;
-}
-
-void AddrSpace::ExitCondSignal()
-{
-	exitCond->V() ;
-}
-
-void AddrSpace::JoinLockAcquire()
+void AddrSpace::ThreadLockAcquire()
 {
 	joinLock->Acquire() ;
 }
 
-void AddrSpace::JoinLockRelease()
+void AddrSpace::ThreadLockRelease()
 {
 	joinLock->Release() ;
 }
 
-void AddrSpace::ExitLockAcquire()
-{
-	exitLock->P() ;
-}
-
-void AddrSpace::ExitLockRelease()
-{
-	exitLock->V() ;
-}
-
-void AddrSpace::SetTotalThreads(unsigned int val)
-{
-	totalThreads = val ;
-
-	if (totalThreads == 1)
-	{
-		// Notify the "Halt"/"Exit" function if only the main thread is left.
-		ExitCondSignal() ;
-	}
-}
-
 int AddrSpace::GetTotalThreads()
 {
-	return totalThreads ;
+	return i_threadIDs ;
 }
 
 void AddrSpace::AddThreadID(unsigned int ID)
@@ -333,8 +293,8 @@ void AddrSpace::RemoveThreadID(unsigned int ID)
 
 			i_threadIDs -- ;
 
-			// Notify the "Join" function that a thread exited.
-			JoinCondSignal() ;
+			// Notify the "Halt"/"Exit"/"Join" function that a thread exited.
+			ThreadCondBroadcast() ;
 
 			DEBUG ('t', "Remove user thread ID \"%d\" at position %d\n", ID, i) ;
 			return ;

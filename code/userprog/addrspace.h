@@ -18,6 +18,7 @@
 #include "translate.h"
 
 #define UserStackSize		1024	// increase this as necessary!
+#define MAX_USER_THREADS    16
 
 class AddrSpace
 {
@@ -33,19 +34,13 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
-	// Manage the "Join"/"Exit"/"Halt" functions.
-	void ExitCondWait() ;
-	void ExitCondSignal() ;
-	void ExitLockRelease() ;
-	void ExitLockAcquire() ;
-	void JoinCondWait() ;
-	void JoinCondSignal() ;
-	void JoinLockRelease() ;
-	void JoinLockAcquire() ;
-	// Total of thread running into this address space.
-	void SetTotalThreads(unsigned int val) ;
-	int GetTotalThreads() ;
+	// Manage the "Create"/"Join"/"Exit"/"Halt" functions.
+	void ThreadCondWait() ;
+	void ThreadCondBroadcast() ;
+	void ThreadLockRelease() ;
+	void ThreadLockAcquire() ;
 	// Manage the thread IDs.
+	int GetTotalThreads() ;
 	void AddThreadID(unsigned int ID) ;
 	void RemoveThreadID(unsigned int ID) ;
 	bool ContainThreadID(unsigned int ID) ;
@@ -59,8 +54,7 @@ class AddrSpace
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
 	
-	unsigned int totalThreads ; // Number of user threads (including the main thread).
-	unsigned int threadIDs[10] ; // Current threads "living" in this addr space.
+	unsigned int threadIDs[MAX_USER_THREADS] ; // Current threads "living" in this addr space.
 	unsigned int i_threadIDs ;
 };
 

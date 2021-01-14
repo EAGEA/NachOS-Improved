@@ -30,47 +30,39 @@ static void StartUserThread(int f)
 int do_UserThreadCreate(int f, int arg)
 {
 	AddrSpace *currentSpace = currentThread->space ;
+	// Get the total of threads currently existing in this addr space. 
+	currentSpace->ThreadLockAcquire() ;
+	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
 	// Check if we can create this thread:
-	if (false)
+	if (totalThreads > MAX_USER_THREADS)
 	{
 		// Error: the maximum of user threads created was reached.
 		return -1 ;
 	}
-	// Create the thread:
-	// Add this one to the total of threads existing.
-	currentSpace->ExitLockAcquire() ;
-	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
-	currentSpace->SetTotalThreads(totalThreads) ;
-	currentSpace->ExitLockRelease() ;
-	// And add this thread to the living ones. 
-	currentSpace->JoinLockAcquire() ;
+	// Add this thread to the living ones. 
 	int tid = currentSpace->GetNextThreadID() ;
 	currentSpace->AddThreadID(tid) ;
-	currentSpace->JoinLockRelease() ;
+	currentSpace->ThreadLockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(f, arg) ;
 	// Then create thread name for debugging.
 	char *name = (char *) malloc(sizeof(char) * 18) ;
 	sprintf(name, "User thread n°%d", tid) ;
-	// To create the object with the same space as the current, and start it.
+	// Create the object with the same space as the current, and start it.
 	Thread *thread = new Thread(name, tid) ;
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
-	return totalThreads ; 
+	return tid ; 
 }
 
 void do_UserThreadExit()
 {
 	AddrSpace *currentSpace = currentThread->space ;
-	// Remove this one from the total of threads existing.
-	currentSpace->ExitLockAcquire() ;
-	currentSpace->SetTotalThreads(currentSpace->GetTotalThreads() - 1) ;
-	currentSpace->ExitLockRelease() ;
-	// And remove this thread from the living ones. 
-	currentSpace->JoinLockAcquire() ;
+	// Remove this thread from the living ones. 
+	currentSpace->ThreadLockAcquire() ;
 	currentSpace->RemoveThreadID(currentThread->getTid()) ;
-	currentSpace->JoinLockRelease() ;
+	currentSpace->ThreadLockRelease() ;
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.
@@ -80,24 +72,16 @@ void do_UserThreadExit()
 void do_UserThreadJoin(int t) 
 {
 	AddrSpace *currentSpace = currentThread->space ;
-	// Put in sleep the joining thread.
-	/*
-	IntStatus oldLevel = interrupt->SetLevel(IntOff) ;
-	currentThread->Sleep() ;
-	interrupt->SetLevel(oldLevel) ;
-	*/
 
-	currentSpace->JoinLockAcquire() ;
+	currentSpace->ThreadLockAcquire() ;
 
 	while (currentSpace->ContainThreadID(t))
 	{
-		printf("HEY %d\n", t) ;
 		// The thread is still living in this addr space.
-		currentSpace->JoinCondWait() ;
+		currentSpace->ThreadCondWait() ;
 	}
 
-	printf("OUUUUUUUUUUT %d\n", t) ;
-	currentSpace->JoinLockRelease() ;
+	currentSpace->ThreadLockRelease() ;
 }
 
 int do_UserThreadId()
