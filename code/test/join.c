@@ -11,7 +11,7 @@ void process(void *c)
 
 	PutString("User thread 3 ending.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 void processAndJoin(void *c)
@@ -29,7 +29,7 @@ void processAndJoin(void *c)
 
 	PutString("User thread 2 ending.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 void join(void *c)
@@ -42,7 +42,7 @@ void join(void *c)
 
 	PutString("User thread 1 ending.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 int main()

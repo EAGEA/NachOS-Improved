@@ -181,6 +181,7 @@ GetInt:
 	.ent	UserThreadCreate
 UserThreadCreate:
 	addiu $2,$0,SC_ThreadCreate
+	addiu $6,$0,UserThreadExit // Auto-parameter (default).
 	syscall
 	j	$31
 	.end UserThreadCreate

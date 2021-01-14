@@ -1,7 +1,7 @@
 #ifndef USERTHREAD_H
 #define USERTHREAD_H
 
-int do_UserThreadCreate(int f, int arg) ;
+int do_UserThreadCreate(int fun, int arg, int returnFun) ;
 
 void do_UserThreadExit() ;
 
@@ -15,14 +15,15 @@ class ThreadParams
 	private :
 
 		int fun ;
+		int returnFun ;
 		int arg ;
 
 	public :
 		
-		ThreadParams(int fun, int arg) ;
-		void SetFun(int fun) ;
-		void SetArg(int arg) ;
+		ThreadParams(int fun, int arg, int returnFun) ;
+
 		int GetFun() ;
+		int GetReturnFun() ;
 		int GetArg() ;
 } ;
 

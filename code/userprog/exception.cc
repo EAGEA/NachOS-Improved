@@ -159,8 +159,9 @@ ExceptionHandler (ExceptionType which)
 					// Params.
 					int f = machine->ReadRegister(4) ; 
 					int arg = machine->ReadRegister(5) ; 
+					int returnF = machine->ReadRegister(6) ; // Get it thanks to start.S. 
 					// Execution.
-					int res = do_UserThreadCreate(f, arg) ; 
+					int res = do_UserThreadCreate(f, arg, returnF) ; 
 					// Return.
 					machine->WriteRegister(2, res) ;
 					break ;

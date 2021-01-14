@@ -19,6 +19,8 @@ static void StartUserThread(int f)
 	machine->WriteRegister(NextPCReg, params->GetFun() + 4) ;
 	// Write the stack pointer (3 pages below the main one, already init int "InitReg").
     machine->WriteRegister(StackReg, machine->ReadRegister(StackReg) - (3 * PageSize)) ; 
+	// Write the function which will be executed at the end of the thread.
+	machine->WriteRegister(RetAddrReg, params->GetReturnFun()) ;
 	// Initialize page table. 
 	currentThread->space->RestoreState() ;
 	// Start.
@@ -27,7 +29,7 @@ static void StartUserThread(int f)
 	ASSERT (FALSE);		
 }
 
-int do_UserThreadCreate(int f, int arg)
+int do_UserThreadCreate(int fun, int arg, int returnFun)
 {
 	AddrSpace *currentSpace = currentThread->space ;
 	// Get the total of threads currently existing in this addr space. 
@@ -44,7 +46,7 @@ int do_UserThreadCreate(int f, int arg)
 	currentSpace->AddThreadID(tid) ;
 	currentSpace->ThreadLockRelease() ;
 	// Create the params for the "Fork" function.
-	ThreadParams *params = new ThreadParams(f, arg) ;
+	ThreadParams *params = new ThreadParams(fun, arg, returnFun) ;
 	// Then create thread name for debugging.
 	char *name = (char *) malloc(sizeof(char) * 18) ;
 	sprintf(name, "User thread n°%d", tid) ;
@@ -93,25 +95,21 @@ int do_UserThreadId()
  * Params of the thread for the "Start" function. 
  */
 
-ThreadParams::ThreadParams(int f, int a)
+ThreadParams::ThreadParams(int f, int a, int rF)
 {
 	fun = f ;
 	arg = a ;
-}
-
-void ThreadParams::SetFun(int f)
-{
-	fun = f ;
-}
-
-void ThreadParams::SetArg(int a)
-{
-	arg = a ;
+	returnFun = rF ;
 }
 
 int ThreadParams::GetFun()
 {
 	return fun ;
+}
+
+int ThreadParams::GetReturnFun()
+{
+	return returnFun ;
 }
 
 int ThreadParams::GetArg()

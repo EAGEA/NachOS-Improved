@@ -11,7 +11,7 @@ void print(void *c)
 
 	PutString("User thread ending.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 void printb(void *c)
@@ -25,7 +25,7 @@ void printb(void *c)
 
 	PutString("User thread ending.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 int main()
