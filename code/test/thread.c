@@ -13,7 +13,7 @@ void print(void *c)
 
 	PutString("\nEnding user thread function.\n") ;
 
-	UserThreadExit() ;
+//	UserThreadExit() ;
 }
 
 int main()

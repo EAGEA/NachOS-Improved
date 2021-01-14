@@ -19,16 +19,8 @@
 #include "system.h"
 #include "addrspace.h"
 #include "noff.h"
-#include "synch.h"
 
 #include <strings.h>		/* for bzero */
-
-
-/** Can't be declared as a private/public member of the class otherwise
- * include errors with synch.h ... **/
-// To access/signal when a thread exited. 
-Lock	  *joinLock ; 
-Condition *joinCond ; 
 
 
 //----------------------------------------------------------------------
@@ -130,8 +122,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
       }
 
 	// Init synchronization mechanisms.
-	joinLock = new Lock("AddrSpace threads join lock") ;
-	joinCond = new Condition("AddrSpace threads join cond") ;
+	threadLock = new Lock("AddrSpace threads join lock") ;
+	threadCond = new Condition("AddrSpace threads join cond") ;
 	// Already contains the main thread. 
 	i_threadIDs = 1 ;
 	threadIDs[0] = 1 ;
@@ -148,8 +140,8 @@ AddrSpace::~AddrSpace ()
 	// delete pageTable;
 	delete [] pageTable;
 	// And the synchronization mechanisms.
-	delete joinLock ;
-	delete joinCond ;
+	delete threadLock ;
+	delete threadCond ;
 	// End of modification
 }
 
@@ -217,29 +209,29 @@ AddrSpace::RestoreState ()
 
 //----------------------------------------------------------------------
 // Functions to manage the user threads. 
-//		The one which access the "totalThreads" must be protected
-//		by the lock.
+//		Every access to a "get" or "set" function must be protected with
+//		the following lock.
 //----------------------------------------------------------------------
 
 
 void AddrSpace::ThreadCondWait()
 {
-	joinCond->Wait(joinLock) ;
+	threadCond->Wait(threadLock) ;
 }
 
 void AddrSpace::ThreadCondBroadcast()
 {
-	joinCond->Broadcast(joinLock) ;
+	threadCond->Broadcast(threadLock) ;
 }
 
 void AddrSpace::ThreadLockAcquire()
 {
-	joinLock->Acquire() ;
+	threadLock->Acquire() ;
 }
 
 void AddrSpace::ThreadLockRelease()
 {
-	joinLock->Release() ;
+	threadLock->Release() ;
 }
 
 int AddrSpace::GetTotalThreads()

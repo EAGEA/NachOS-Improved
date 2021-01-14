@@ -10,12 +10,16 @@ static Semaphore *readAvail;
 static Semaphore *writeDone;
 static void ReadAvail(int arg) { readAvail->V(); }
 static void WriteDone(int arg) { writeDone->V(); }
+// Input/output thread protection.
+// -> allow only one thread to enter a "synch" function of read/write type.
+static Lock *threadWrite ;
+static Lock *threadRead ;
 
 SynchConsole::SynchConsole(char *readFile, char *writeFile)
 {
 	console = new Console(readFile, writeFile, ReadAvail, WriteDone, 0) ;
-	threadWrite = new Semaphore("thread output avail", 1) ;
-	threadRead = new Semaphore("thread input avail", 1) ;
+	threadWrite = new Lock("thread output avail") ;
+	threadRead = new Lock("thread input avail") ;
 	readAvail = new Semaphore("read avail", 0);
 	writeDone = new Semaphore("write done", 0);
 }
@@ -31,12 +35,12 @@ SynchConsole::~SynchConsole()
 
 void SynchConsole::SynchPutChar(const char ch)
 {
-	threadWrite->P() ;
+	threadWrite->Acquire() ;
 
 	console->PutChar(ch) ;
 	writeDone->P() ;
 
-	threadWrite->V() ;
+	threadWrite->Release() ;
 }
 
 /* Updated version to detect only EOF on an end of file.
@@ -48,7 +52,7 @@ int SynchConsole::SynchGetChar(bool isCalledInGetString)
 {
 	if (! isCalledInGetString)
 	{
-		threadRead->P() ;
+		threadRead->Acquire() ;
 	}
 
 	readAvail->P() ;
@@ -56,7 +60,7 @@ int SynchConsole::SynchGetChar(bool isCalledInGetString)
 
 	if (! isCalledInGetString)
 	{
-		threadRead->V() ;
+		threadRead->Release() ;
 	}
 
 	return c ;  
@@ -69,12 +73,12 @@ void SynchConsole::SynchPutString(const char s[])
 		return ;
 	}
 
-	threadWrite->P() ;
+	threadWrite->Acquire() ;
 
 	console->PutString(s) ;	
 	writeDone->P() ;
 
-	threadWrite->V() ;
+	threadWrite->Release() ;
 }
 
 void SynchConsole::SynchGetString(char *s, int n)
@@ -89,7 +93,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 		return ;
 	}
 
-	threadRead->P() ;
+	threadRead->Acquire() ;
 
 	int i = 0 ;
 
@@ -102,7 +106,7 @@ void SynchConsole::SynchGetString(char *s, int n)
 
 	s[i + 1] = '\0' ;
 
-	threadRead->V() ;
+	threadRead->Release() ;
 }
 
 void SynchConsole::SynchPutInt(int i)

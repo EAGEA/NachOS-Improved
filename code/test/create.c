@@ -3,13 +3,14 @@
 void print(void *c)
 {
 	int i ;
+	char ch = *((char *) c) ;
 
 	for (i = 0 ; i < 4 ; i ++)
 	{
-		PutChar(*((char *) c)) ;
+		PutChar(ch) ;
 	}
 
-	PutString("User thread ending.\n") ;
+	PutString("User thread print ending.\n") ;
 
 //	UserThreadExit() ;
 }
@@ -17,13 +18,14 @@ void print(void *c)
 void printb(void *c)
 {
 	int j ;
+	char ch = *((char *) c) ;
 
 	for (j = 0 ; j < 4 ; j ++)
 	{
-		PutChar(*((char *) c)) ;
+		PutChar(ch) ;
 	}
 
-	PutString("User thread ending.\n") ;
+	PutString("User thread print bis ending.\n") ;
 
 //	UserThreadExit() ;
 }
@@ -36,10 +38,7 @@ int main()
 	char b = 'b' ;
 
 	UserThreadCreate(print, &a) ;
-
 	UserThreadCreate(printb, &b) ;
-
-	PutString("Main thread ending.\n") ;
 
 	Halt() ;
 }

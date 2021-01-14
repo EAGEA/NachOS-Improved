@@ -20,6 +20,9 @@
 #define UserStackSize		1024	// increase this as necessary!
 #define MAX_USER_THREADS    16
 
+class Lock ;
+class Condition ;
+
 class AddrSpace
 {
   public:
@@ -54,7 +57,11 @@ class AddrSpace
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
 	
-	unsigned int threadIDs[MAX_USER_THREADS] ; // Current threads "living" in this addr space.
+	// To access/signal when a thread exited. 
+	Lock	  *threadLock ; 
+	Condition *threadCond ; 
+	// Current threads "living" in this addr space.
+	unsigned int threadIDs[MAX_USER_THREADS] ; 
 	unsigned int i_threadIDs ;
 };
 

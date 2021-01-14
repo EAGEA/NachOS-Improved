@@ -155,6 +155,8 @@ class Thread
 #endif
 };
 
+
+
 // Magical machine-dependent routines, defined in switch.s
 
 extern "C"

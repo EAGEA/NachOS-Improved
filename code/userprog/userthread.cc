@@ -11,18 +11,18 @@ static void StartUserThread(int f)
 	ThreadParams *params = (ThreadParams*) f ;
 	// Clean the registers.
 	currentThread->space->InitRegisters() ;
+	// Initialize page table. 
+	currentThread->space->RestoreState() ;
 	// Write the argument of the function. 
 	machine->WriteRegister(4, params->GetArg()) ;
 	// Write PC to the start of the function. 
 	machine->WriteRegister(PCReg, params->GetFun()) ;
 	// Write next PC to the start of the function (because of branch delay). 
 	machine->WriteRegister(NextPCReg, params->GetFun() + 4) ;
-	// Write the stack pointer (3 pages below the main one, already init int "InitReg").
-    machine->WriteRegister(StackReg, machine->ReadRegister(StackReg) - (3 * PageSize)) ; 
 	// Write the function which will be executed at the end of the thread.
 	machine->WriteRegister(RetAddrReg, params->GetReturnFun()) ;
-	// Initialize page table. 
-	currentThread->space->RestoreState() ;
+	// Write the stack pointer (3 pages below the main one, already init int "InitReg").
+    machine->WriteRegister(StackReg, machine->ReadRegister(StackReg) - (2 * PageSize * currentThread->getTid())) ; 
 	// Start.
 	machine->Run() ;
 	// machine->Run never returns.
