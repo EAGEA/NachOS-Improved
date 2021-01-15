@@ -59,7 +59,7 @@ class Console {
 // internal emulation routines -- DO NOT call these. 
     void WriteDone();	 	// internal routines to signal I/O completion
     void CheckCharAvail();
-	int feof() ;
+	bool Feof() ;
 
   private:
     int readFileNo;			// UNIX file emulating the keyboard 

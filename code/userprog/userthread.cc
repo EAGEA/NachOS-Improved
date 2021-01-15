@@ -71,19 +71,28 @@ void do_UserThreadExit()
 	delete currentThread->space ;
 }
 
-void do_UserThreadJoin(int t) 
+int do_UserThreadJoin(int t) 
 {
 	AddrSpace *currentSpace = currentThread->space ;
 
 	currentSpace->ThreadLockAcquire() ;
 
+	if (! currentSpace->ContainThreadID(t))
+	{
+		currentSpace->ThreadLockRelease() ;
+
+		return -1 ; 
+	}
+
 	while (currentSpace->ContainThreadID(t))
 	{
 		// The thread is still living in this addr space.
-		currentSpace->ThreadCondWait() ;
+		currentSpace->GetThreadConditionWait(t) ;
 	}
 
 	currentSpace->ThreadLockRelease() ;
+
+	return 0 ;
 }
 
 int do_UserThreadId()

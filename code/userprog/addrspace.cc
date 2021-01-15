@@ -123,10 +123,12 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 	// Init synchronization mechanisms.
 	threadLock = new Lock("AddrSpace threads join lock") ;
-	threadCond = new Condition("AddrSpace threads join cond") ;
+	exitCond = new Condition("AddrSpace threads exit cond") ;
+	InitThreadConditions() ;
 	// Already contains the main thread. 
-	i_threadIDs = 1 ;
+	nbThreads = 1 ;
 	threadIDs[0] = 1 ;
+	maxTIDGiven = 1 ;
 }
 
 //----------------------------------------------------------------------
@@ -141,7 +143,8 @@ AddrSpace::~AddrSpace ()
 	delete [] pageTable;
 	// And the synchronization mechanisms.
 	delete threadLock ;
-	delete threadCond ;
+	delete exitCond ;
+	DeleteThreadConditions() ;
 	// End of modification
 }
 
@@ -214,14 +217,14 @@ AddrSpace::RestoreState ()
 //----------------------------------------------------------------------
 
 
-void AddrSpace::ThreadCondWait()
+void AddrSpace::ExitCondWait()
 {
-	threadCond->Wait(threadLock) ;
+	exitCond->Wait(threadLock) ;
 }
 
-void AddrSpace::ThreadCondBroadcast()
+void AddrSpace::ExitCondBroadcast()
 {
-	threadCond->Broadcast(threadLock) ;
+	exitCond->Broadcast(threadLock) ;
 }
 
 void AddrSpace::ThreadLockAcquire()
@@ -236,75 +239,57 @@ void AddrSpace::ThreadLockRelease()
 
 int AddrSpace::GetTotalThreads()
 {
-	return i_threadIDs ;
+	return nbThreads ;
 }
 
 void AddrSpace::AddThreadID(unsigned int ID)
 {
-	unsigned int i, j ; 
-
-	for (i = 0 ; i < i_threadIDs ; i ++)
+	if (ContainThreadID(ID))
 	{
-		if (threadIDs[i] > ID)
-		{
-			for (j = i_threadIDs - 1 ; j >= i ; j --)
-			{
-				// Shift the others.
-				threadIDs[j + 1] = threadIDs[j] ;
-			}
-
-			break ;
-		}
-		else if (threadIDs[i] == ID)
-		{
 			// Already contain the ID.
-			DEBUG ('t', "Already contain user thread ID \"%d\" at position %d\n", ID, i) ;
+			DEBUG ('t', "Already contain user thread ID \"%d\"\n", ID) ;
 			return ;
-		}
 	}
 
-	threadIDs[i] = ID ;
-	i_threadIDs ++ ;
+	threadIDs[nbThreads] = ID ;
+	nbThreads ++ ;
 
-	DEBUG ('t', "Add user thread ID \"%d\" at position %d\n", ID, i) ;
+	DEBUG ('t', "Add user thread ID \"%d\" at position %d\n", ID, nbThreads) ;
 }
 
 void AddrSpace::RemoveThreadID(unsigned int ID)
 {
 	unsigned int i, j ; 
 
-	for (i = 0 ; i < i_threadIDs ; i ++)
+	for (i = 0 ; i < nbThreads ; i ++)
 	{
 		if (threadIDs[i] == ID)
 		{
-			for (j = i ; j < i_threadIDs - 1 ; j ++)
+			for (j = i ; j < nbThreads - 1 ; j ++)
 			{
 				// Shift the others.
 				threadIDs[j] = threadIDs[j + 1] ;
 			}
 
-			i_threadIDs -- ;
+			nbThreads -- ;
 
 			// Notify the "Halt"/"Exit"/"Join" function that a thread exited.
-			ThreadCondBroadcast() ;
+			GetThreadConditionBroadcast(ID) ;
+			ExitCondBroadcast() ;
 
 			DEBUG ('t', "Remove user thread ID \"%d\" at position %d\n", ID, i) ;
 			return ;
 		}
-		else if (threadIDs[i] > ID)
-		{
-			// Doesn't contain the ID.
-			DEBUG ('t', "Can't remove user thread ID \"%d\"\n", ID) ;
-			return ;
-		}
 	}
+
+	DEBUG ('t', "Can't remove user thread ID \"%d\"\n", ID) ;
 }
 
 bool AddrSpace::ContainThreadID(unsigned int ID)
 {
 	unsigned int i ;
 
-	for (i = 0 ; i < i_threadIDs ; i ++)
+	for (i = 0 ; i < nbThreads ; i ++)
 	{
 		if (threadIDs[i] == ID)
 		{
@@ -319,17 +304,38 @@ bool AddrSpace::ContainThreadID(unsigned int ID)
 
 unsigned int AddrSpace::GetNextThreadID()
 {
+	return ++ maxTIDGiven ;  
+}
+
+void AddrSpace::InitThreadConditions()
+{
 	unsigned int i ;
 
-	for (i = 0 ; i < i_threadIDs ; i ++)
+	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
 	{
-		if (threadIDs[i] != i + 1)
-		{
-			DEBUG ('t', "Next user thread ID \"%d\"\n", i + 1) ;
-			return i + 1 ;
-		}
-	}
+		char *name = (char *) malloc(sizeof(char) * 35) ;
+		sprintf(name, "Addrspace thread join condition n°%d", i) ;
 
-	DEBUG ('t', "Next user thread ID \"%d\"\n", i_threadIDs + 1) ;
-	return i_threadIDs + 1 ; 
+		threadConditions[i] = new Condition(name) ;
+	}
+}
+
+void AddrSpace::DeleteThreadConditions()
+{
+	unsigned int i ;
+
+	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
+	{
+		delete threadConditions[i] ; 
+	}
+}
+
+void AddrSpace::GetThreadConditionWait(unsigned int ID)
+{
+	threadConditions[ID]->Wait(threadLock) ;
+}
+
+void AddrSpace::GetThreadConditionBroadcast(unsigned int ID)
+{
+	threadConditions[ID]->Broadcast(threadLock) ;
 }

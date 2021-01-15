@@ -127,9 +127,9 @@ void SynchConsole::SynchGetInt(int *i)
 
 /* Return true if EOF reached previously.
 */
-int SynchConsole::feof()
+bool SynchConsole::Feof()
 {
-	return console->feof() ;
+	return console->Feof() ;
 }	
 
 /* MIPS -> Linux string conversion.

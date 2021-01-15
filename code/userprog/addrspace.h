@@ -38,8 +38,8 @@ class AddrSpace
     void RestoreState ();	// info on a context switch 
 
 	// Manage the "Create"/"Join"/"Exit"/"Halt" functions.
-	void ThreadCondWait() ;
-	void ThreadCondBroadcast() ;
+	void ExitCondWait() ;
+	void ExitCondBroadcast() ;
 	void ThreadLockRelease() ;
 	void ThreadLockAcquire() ;
 	// Manage the thread IDs.
@@ -48,6 +48,10 @@ class AddrSpace
 	void RemoveThreadID(unsigned int ID) ;
 	bool ContainThreadID(unsigned int ID) ;
 	unsigned int GetNextThreadID() ;
+	void InitThreadConditions() ;
+	void DeleteThreadConditions() ;
+	void GetThreadConditionWait(unsigned int ID) ;
+	void GetThreadConditionBroadcast(unsigned int ID) ;
 
   private:
 
@@ -59,10 +63,12 @@ class AddrSpace
 	
 	// To access/signal when a thread exited. 
 	Lock	  *threadLock ; 
-	Condition *threadCond ; 
+	Condition *exitCond ; 
 	// Current threads "living" in this addr space.
 	unsigned int threadIDs[MAX_USER_THREADS] ; 
-	unsigned int i_threadIDs ;
+	Condition *threadConditions[MAX_USER_THREADS] ;
+	unsigned int nbThreads ;
+	unsigned int maxTIDGiven ;
 };
 
 #endif // ADDRSPACE_H

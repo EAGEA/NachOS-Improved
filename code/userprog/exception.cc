@@ -89,7 +89,7 @@ ExceptionHandler (ExceptionType which)
 					while (currentSpace->GetTotalThreads() > 1)
 					{
 						// Exit when only the main thread is remaining.
-						currentSpace->ThreadCondWait() ;
+						currentSpace->ExitCondWait() ;
 					}
 
 					currentSpace->ThreadLockRelease() ;
@@ -154,6 +154,14 @@ ExceptionHandler (ExceptionType which)
 					machine->WriteMem(to, sizeof(int), i) ;
 					break;
 				}
+			case SC_Feof: 
+				{
+					// Execution.
+					int res = synchConsole->Feof() ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
 			case SC_ThreadCreate: 
 				{
 					// Params.
@@ -177,7 +185,9 @@ ExceptionHandler (ExceptionType which)
 					// Params.
 					int t = machine->ReadRegister(4) ;
 					// Execution.
-					do_UserThreadJoin(t) ;
+					int res = do_UserThreadJoin(t) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
 					break ;
 				}
 			case SC_ThreadId:

@@ -177,6 +177,14 @@ GetInt:
 	j	$31
 	.end GetInt
 
+	.globl Feof
+	.ent	Feof
+Feof:
+	addiu $2,$0,SC_Feof
+	syscall
+	j	$31
+	.end Feof
+
 	.globl UserThreadCreate
 	.ent	UserThreadCreate
 UserThreadCreate:

@@ -178,7 +178,7 @@ Console::PutString(const char string[])
 
 /* Return true if EOF reached previously.
 */
-int Console::feof()
+bool Console::Feof()
 {
 	return eof ;
 }	

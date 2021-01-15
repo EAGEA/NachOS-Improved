@@ -18,7 +18,7 @@ class SynchConsole
 		void SynchGetString(char *s, int n); // Unix fgets(3S)
 		void SynchPutInt(int i);
 		void SynchGetInt(int *i);
-		int feof() ;
+		bool Feof() ;
 		void CopyStringFromMachine(int from, char *to, unsigned size) ; // MIPS -> LINUX string conversion.
 		void CopyStringToMachine(char *from, int to, unsigned size) ; // LINUX -> MIPS string conversion.
 

@@ -5,7 +5,7 @@ int do_UserThreadCreate(int fun, int arg, int returnFun) ;
 
 void do_UserThreadExit() ;
 
-void do_UserThreadJoin(int t) ;
+int do_UserThreadJoin(int t) ;
 
 int do_UserThreadId() ;
 

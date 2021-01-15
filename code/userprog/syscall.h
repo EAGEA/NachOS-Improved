@@ -35,10 +35,11 @@
 #define SC_GetString		14
 #define SC_PutInt			15
 #define SC_GetInt			16
-#define SC_ThreadCreate		17
-#define SC_ThreadExit		18
-#define SC_ThreadJoin       19
-#define SC_ThreadId         20
+#define SC_Feof			    17
+#define SC_ThreadCreate		18
+#define SC_ThreadExit		19
+#define SC_ThreadJoin       20
+#define SC_ThreadId         21
 
 #ifdef IN_USER_MODE
 
@@ -164,6 +165,10 @@ void PutInt(int i) ;
 /* Get a int from the input buffer.
  */
 void GetInt(int *i) ;
+
+/* Return true if EOF was reached. 
+ */
+int Feof() ;
 
 /* Create a user level thread. 
  */
