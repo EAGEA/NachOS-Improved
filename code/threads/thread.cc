@@ -33,10 +33,11 @@
 //      "threadName" is an arbitrary string, useful for debugging.
 //----------------------------------------------------------------------
 
-Thread::Thread (const char *threadName, int id)
+Thread::Thread (const char *threadName, int id, int sp_)
 {
     name = threadName;
     tid = id; 
+	sp = sp_ ;
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;

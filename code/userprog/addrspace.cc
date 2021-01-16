@@ -122,9 +122,11 @@ AddrSpace::AddrSpace (OpenFile * executable)
       }
 
 	// Init synchronization mechanisms.
-	threadLock = new Lock("AddrSpace threads join lock") ;
-	exitCond = new Condition("AddrSpace threads exit cond") ;
-	InitThreadConditions() ;
+	threadIDLock = new Lock("AddrSpace threads id lock") ;
+	threadStackLock = new Lock("AddrSpace threads stack lock") ;
+	threadExitCond = new Condition("AddrSpace threads exit cond") ;
+	InitThreadJoinConditions() ;
+	InitThreadStackPointer() ;
 	// Already contains the main thread. 
 	nbThreads = 1 ;
 	threadIDs[0] = 1 ;
@@ -142,9 +144,10 @@ AddrSpace::~AddrSpace ()
 	// delete pageTable;
 	delete [] pageTable;
 	// And the synchronization mechanisms.
-	delete threadLock ;
-	delete exitCond ;
-	DeleteThreadConditions() ;
+	delete threadIDLock ;
+	delete threadStackLock ;
+	delete threadExitCond ;
+	DeleteThreadJoinConditions() ;
 	// End of modification
 }
 
@@ -213,33 +216,32 @@ AddrSpace::RestoreState ()
 //----------------------------------------------------------------------
 // Functions to manage the user threads. 
 //		Every access to a "get" or "set" function must be protected with
-//		the following lock.
+//		the following locks.
 //----------------------------------------------------------------------
 
 
-void AddrSpace::ExitCondWait()
-{
-	exitCond->Wait(threadLock) ;
-}
+/* Thread general.
+ */
 
-void AddrSpace::ExitCondBroadcast()
-{
-	exitCond->Broadcast(threadLock) ;
-}
-
-void AddrSpace::ThreadLockAcquire()
-{
-	threadLock->Acquire() ;
-}
-
-void AddrSpace::ThreadLockRelease()
-{
-	threadLock->Release() ;
-}
 
 int AddrSpace::GetTotalThreads()
 {
 	return nbThreads ;
+}
+
+
+/* Thread ID. 
+ */
+
+
+void AddrSpace::ThreadIDLockAcquire()
+{
+	threadIDLock->Acquire() ;
+}
+
+void AddrSpace::ThreadIDLockRelease()
+{
+	threadIDLock->Release() ;
 }
 
 void AddrSpace::AddThreadID(unsigned int ID)
@@ -274,8 +276,8 @@ void AddrSpace::RemoveThreadID(unsigned int ID)
 			nbThreads -- ;
 
 			// Notify the "Halt"/"Exit"/"Join" function that a thread exited.
-			GetThreadConditionBroadcast(ID) ;
-			ExitCondBroadcast() ;
+			ThreadJoinConditionBroadcast(ID) ;
+			ThreadExitConditionBroadcast() ;
 
 			DEBUG ('t', "Remove user thread ID \"%d\" at position %d\n", ID, i) ;
 			return ;
@@ -307,7 +309,12 @@ unsigned int AddrSpace::GetNextThreadID()
 	return ++ maxTIDGiven ;  
 }
 
-void AddrSpace::InitThreadConditions()
+
+/* Thread join.
+ */
+
+
+void AddrSpace::InitThreadJoinConditions()
 {
 	unsigned int i ;
 
@@ -320,7 +327,7 @@ void AddrSpace::InitThreadConditions()
 	}
 }
 
-void AddrSpace::DeleteThreadConditions()
+void AddrSpace::DeleteThreadJoinConditions()
 {
 	unsigned int i ;
 
@@ -330,12 +337,76 @@ void AddrSpace::DeleteThreadConditions()
 	}
 }
 
-void AddrSpace::GetThreadConditionWait(unsigned int ID)
+void AddrSpace::ThreadJoinConditionWait(unsigned int ID)
 {
-	threadConditions[ID]->Wait(threadLock) ;
+	threadConditions[ID]->Wait(threadIDLock) ;
 }
 
-void AddrSpace::GetThreadConditionBroadcast(unsigned int ID)
+void AddrSpace::ThreadJoinConditionBroadcast(unsigned int ID)
 {
-	threadConditions[ID]->Broadcast(threadLock) ;
+	threadConditions[ID]->Broadcast(threadIDLock) ;
+}
+
+
+/* Thread Halt / Exit.
+ */
+
+
+void AddrSpace::ThreadExitConditionWait()
+{
+	threadExitCond->Wait(threadIDLock) ;
+}
+
+void AddrSpace::ThreadExitConditionBroadcast()
+{
+	threadExitCond->Broadcast(threadIDLock) ;
+}
+
+
+/* Thread stack pointer.
+ */
+
+
+void AddrSpace::ThreadStackLockAcquire()
+{
+	threadStackLock->Acquire() ;
+}
+
+void AddrSpace::ThreadStackLockRelease()
+{
+	threadStackLock->Release() ;
+}
+
+void AddrSpace::InitThreadStackPointer()
+{
+	int i = 0 ;
+
+	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
+	{
+		threadStackPointer[i] = false ;
+	}
+}
+
+int AddrSpace::GetThreadStackPointer()
+{
+	int i ;
+
+	for (i = 0 ; i < MAX_USER_THREADS ; i ++)	
+	{
+		if (! threadStackPointer[i])
+		{
+			threadStackPointer[i] = true ;
+
+			return UserStackSize - (i * STACK_SIZE_USER_THREAD) ;  
+		}
+	}
+	// Should never be reached.
+	ASSERT(FALSE) ;
+	return 0 ;
+}
+
+void AddrSpace::RemoveThreadStackPointer(int sp)
+{
+	int i = (UserStackSize - sp) / STACK_SIZE_USER_THREAD ; 
+	threadStackPointer[i] = false ;
 }

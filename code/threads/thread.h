@@ -87,7 +87,7 @@ class Thread
     int machineState[MachineStateSize];	// all registers except for stackTop
 
   public:
-      Thread (const char *debugName, int tid);	// initialize a Thread 
+      Thread (const char *debugName, int tid, int spid);	// initialize a Thread 
      ~Thread ();		// deallocate a Thread
     // NOTE -- thread being deleted
     // must not be running when delete 
@@ -116,15 +116,15 @@ class Thread
 	{
 		printf ("%s, ", name);
 	}
-    //Get the tid of the thread
+	// ID of the thread.
     const int getTid()
     {
         return tid;
     }
-    //Set the tid of the thread
-    void setTid(int id)
+	// SP ID of the thread.
+	const int getSP()
 	{
-		tid = id ;
+		return sp ;
 	}
 
   private:
@@ -135,7 +135,13 @@ class Thread
     // (If NULL, don't deallocate stack)
     ThreadStatus status;	// ready, running or blocked
     const char *name;
-    int tid; //id of the thread
+
+
+	// ID of the thread.
+    int tid ;  
+	// Start stack pointer of the thread.
+	int sp ; 
+
 
     void StackAllocate (VoidFunctionPtr func, int arg);
     // Allocate a stack for thread.

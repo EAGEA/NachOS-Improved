@@ -84,15 +84,15 @@ ExceptionHandler (ExceptionType which)
 				{
 					AddrSpace *currentSpace = currentThread->space ;
 					
-					currentSpace->ThreadLockAcquire() ;
+					currentSpace->ThreadIDLockAcquire() ;
 
 					while (currentSpace->GetTotalThreads() > 1)
 					{
 						// Exit when only the main thread is remaining.
-						currentSpace->ExitCondWait() ;
+						currentSpace->ThreadExitConditionWait() ;
 					}
 
-					currentSpace->ThreadLockRelease() ;
+					currentSpace->ThreadIDLockRelease() ;
 
 					DEBUG('a', "Shutdown, initiated by user program.\n");
 					interrupt->Halt();

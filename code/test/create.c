@@ -15,21 +15,6 @@ void print(void *c)
 //	UserThreadExit() ;
 }
 
-void printb(void *c)
-{
-	int j ;
-	char ch = *((char *) c) ;
-
-	for (j = 0 ; j < 4 ; j ++)
-	{
-		PutChar(ch) ;
-	}
-
-	PutString("User thread print bis ending.\n") ;
-
-//	UserThreadExit() ;
-}
-
 int main()
 {
 	PutString("Starting main thread.\n") ;
@@ -38,7 +23,7 @@ int main()
 	char b = 'b' ;
 
 	UserThreadCreate(print, &a) ;
-	UserThreadCreate(printb, &b) ;
+	UserThreadCreate(print, &b) ;
 
 	Halt() ;
 }

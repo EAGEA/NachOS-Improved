@@ -21,19 +21,19 @@ static void StartUserThread(int f)
 	machine->WriteRegister(NextPCReg, params->GetFun() + 4) ;
 	// Write the function which will be executed at the end of the thread.
 	machine->WriteRegister(RetAddrReg, params->GetReturnFun()) ;
-	// Write the stack pointer (3 pages below the main one, already init int "InitReg").
-    machine->WriteRegister(StackReg, machine->ReadRegister(StackReg) - (2 * PageSize * currentThread->getTid())) ; 
+	// Write the stack pointer. 
+    machine->WriteRegister(StackReg, currentThread->getSP()) ;
 	// Start.
 	machine->Run() ;
 	// machine->Run never returns.
-	ASSERT (FALSE);		
+	ASSERT(FALSE) ;	 	
 }
 
 int do_UserThreadCreate(int fun, int arg, int returnFun)
 {
 	AddrSpace *currentSpace = currentThread->space ;
 	// Get the total of threads currently existing in this addr space. 
-	currentSpace->ThreadLockAcquire() ;
+	currentSpace->ThreadIDLockAcquire() ;
 	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
 	// Check if we can create this thread:
 	if (totalThreads > MAX_USER_THREADS)
@@ -44,14 +44,18 @@ int do_UserThreadCreate(int fun, int arg, int returnFun)
 	// Add this thread to the living ones. 
 	int tid = currentSpace->GetNextThreadID() ;
 	currentSpace->AddThreadID(tid) ;
-	currentSpace->ThreadLockRelease() ;
+	currentSpace->ThreadIDLockRelease() ;
+	// Get the stack pointer.
+	currentSpace->ThreadStackLockAcquire() ;
+    int sp = currentSpace->GetThreadStackPointer() ;
+	currentSpace->ThreadStackLockRelease() ;
 	// Create the params for the "Fork" function.
 	ThreadParams *params = new ThreadParams(fun, arg, returnFun) ;
 	// Then create thread name for debugging.
 	char *name = (char *) malloc(sizeof(char) * 18) ;
 	sprintf(name, "User thread n°%d", tid) ;
 	// Create the object with the same space as the current, and start it.
-	Thread *thread = new Thread(name, tid) ;
+	Thread *thread = new Thread(name, tid, sp) ;
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
 
@@ -62,9 +66,13 @@ void do_UserThreadExit()
 {
 	AddrSpace *currentSpace = currentThread->space ;
 	// Remove this thread from the living ones. 
-	currentSpace->ThreadLockAcquire() ;
+	currentSpace->ThreadIDLockAcquire() ;
 	currentSpace->RemoveThreadID(currentThread->getTid()) ;
-	currentSpace->ThreadLockRelease() ;
+	currentSpace->ThreadIDLockRelease() ;
+	// Remove the stack pointer of this thread.
+	currentSpace->ThreadStackLockAcquire() ;
+	currentSpace->RemoveThreadStackPointer(currentThread->getSP()) ;
+	currentSpace->ThreadStackLockRelease() ;
 	// Finish the thread.
 	currentThread->Finish();
 	// Clean it.
@@ -75,11 +83,11 @@ int do_UserThreadJoin(int t)
 {
 	AddrSpace *currentSpace = currentThread->space ;
 
-	currentSpace->ThreadLockAcquire() ;
+	currentSpace->ThreadIDLockAcquire() ;
 
 	if (! currentSpace->ContainThreadID(t))
 	{
-		currentSpace->ThreadLockRelease() ;
+		currentSpace->ThreadIDLockRelease() ;
 
 		return -1 ; 
 	}
@@ -87,10 +95,10 @@ int do_UserThreadJoin(int t)
 	while (currentSpace->ContainThreadID(t))
 	{
 		// The thread is still living in this addr space.
-		currentSpace->GetThreadConditionWait(t) ;
+		currentSpace->ThreadJoinConditionWait(t) ;
 	}
 
-	currentSpace->ThreadLockRelease() ;
+	currentSpace->ThreadIDLockRelease() ;
 
 	return 0 ;
 }

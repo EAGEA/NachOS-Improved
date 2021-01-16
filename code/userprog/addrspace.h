@@ -17,8 +17,9 @@
 #include "filesys.h"
 #include "translate.h"
 
-#define UserStackSize		1024	// increase this as necessary!
-#define MAX_USER_THREADS    16
+#define UserStackSize				2048				// increase this as necessary!
+#define STACK_SIZE_USER_THREAD		PageSize * 2	    // increase this as necessary!
+#define MAX_USER_THREADS			UserStackSize / STACK_SIZE_USER_THREAD
 
 class Lock ;
 class Condition ;
@@ -37,21 +38,28 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
-	// Manage the "Create"/"Join"/"Exit"/"Halt" functions.
-	void ExitCondWait() ;
-	void ExitCondBroadcast() ;
-	void ThreadLockRelease() ;
-	void ThreadLockAcquire() ;
-	// Manage the thread IDs.
+	// Thread IDs.
+	void ThreadIDLockRelease() ;
+	void ThreadIDLockAcquire() ;
 	int GetTotalThreads() ;
 	void AddThreadID(unsigned int ID) ;
 	void RemoveThreadID(unsigned int ID) ;
 	bool ContainThreadID(unsigned int ID) ;
 	unsigned int GetNextThreadID() ;
-	void InitThreadConditions() ;
-	void DeleteThreadConditions() ;
-	void GetThreadConditionWait(unsigned int ID) ;
-	void GetThreadConditionBroadcast(unsigned int ID) ;
+	// Thread Join.
+	void InitThreadJoinConditions() ;
+	void DeleteThreadJoinConditions() ;
+	void ThreadJoinConditionWait(unsigned int ID) ;
+	void ThreadJoinConditionBroadcast(unsigned int ID) ;
+	// Thread Halt / Exit.
+	void ThreadExitConditionWait() ;
+	void ThreadExitConditionBroadcast() ;
+	// Thread Stack pointer.
+	void ThreadStackLockRelease() ;
+	void ThreadStackLockAcquire() ;
+	void InitThreadStackPointer() ;
+	int GetThreadStackPointer() ;
+	void RemoveThreadStackPointer(int i) ;
 
   private:
 
@@ -61,12 +69,15 @@ class AddrSpace
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
 	
-	// To access/signal when a thread exited. 
-	Lock	  *threadLock ; 
-	Condition *exitCond ; 
+
+	// To protect struct access.
+	Lock	  *threadIDLock ; 
+	Lock	  *threadStackLock ; 
+	Condition *threadExitCond ; 
 	// Current threads "living" in this addr space.
 	unsigned int threadIDs[MAX_USER_THREADS] ; 
 	Condition *threadConditions[MAX_USER_THREADS] ;
+	bool threadStackPointer[MAX_USER_THREADS] ;
 	unsigned int nbThreads ;
 	unsigned int maxTIDGiven ;
 };
