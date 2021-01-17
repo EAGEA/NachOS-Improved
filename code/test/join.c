@@ -56,6 +56,4 @@ int main()
 	UserThreadJoin(tid) ;
 
 	PutString("Main thread ending.\n") ;
-
-	Halt() ;
 }

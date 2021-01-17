@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "userthread.h"
+#include "userprocess.h"
 #include "synch.h"
 
 //----------------------------------------------------------------------
@@ -192,11 +193,26 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_ThreadId:
 				{
-					//Execution
+					// Execution.
 					int res = do_UserThreadId() ;
-					//Return.
+					// Return.
 					machine->WriteRegister(2, res) ;
 					break ;
+				}
+			case SC_ForkExec:
+				{
+					// Params.
+					int a = machine->ReadRegister(4) ;
+					char exec[MAX_EXEC_NAME_LEN] ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(a, exec, MAX_EXEC_NAME_LEN) ;
+					int res = do_UserProcessCreate(exec) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break ;
+				}
+			case SC_ForkExit:
+				{
 				}
 			default:	
 				{

@@ -218,6 +218,22 @@ UserThreadId:
 	j   $31
 	.end UserThreadId
 
+	.globl ForkExec
+	.ent   ForkExec
+ForkExec:
+	addiu $2,$0,SC_ForkExec
+	syscall
+	j   $31
+	.end ForkExec
+
+	.globl ForkExit
+	.ent   ForkExit
+ForkExit:
+	addiu $2,$0,SC_ForkExit
+	syscall
+	j   $31
+	.end ForkExit
+
 /* dummy function to keep gcc happy */
         .globl  __main
         .ent    __main

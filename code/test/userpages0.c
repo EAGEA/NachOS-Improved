@@ -24,6 +24,4 @@ int main()
 	UserThreadCreate(print, &a) ;
 
 	PutString("Main thread ending.\n") ;
-
-	Halt() ;
 }

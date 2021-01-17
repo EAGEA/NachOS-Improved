@@ -16,13 +16,12 @@
 #include "copyright.h"
 #include "filesys.h"
 #include "translate.h"
+#include "frameprovider.h"
 
 #define UserStackSize				2048				// increase this as necessary!
 #define STACK_SIZE_USER_THREAD		PageSize * 2	    // increase this as necessary!
 #define MAX_USER_THREADS			UserStackSize / STACK_SIZE_USER_THREAD
 
-class Lock ;
-class Condition ;
 
 class AddrSpace
 {
@@ -38,6 +37,7 @@ class AddrSpace
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
+	/* Threads. */
 	// Thread IDs.
 	void ThreadIDLockRelease() ;
 	void ThreadIDLockAcquire() ;
@@ -61,6 +61,9 @@ class AddrSpace
 	int GetThreadStackPointer() ;
 	void RemoveThreadStackPointer(int i) ;
 
+	/* Virtual memory. */
+	void FreeFrames() ;
+
   private:
 
 
@@ -69,7 +72,7 @@ class AddrSpace
     unsigned int numPages;	// Number of pages in the virtual 
     // address space
 	
-
+	/* Threads. */
 	// To protect struct access.
 	Lock	  *threadIDLock ; 
 	Lock	  *threadStackLock ; 
@@ -80,6 +83,9 @@ class AddrSpace
 	bool threadStackPointer[MAX_USER_THREADS] ;
 	unsigned int nbThreads ;
 	unsigned int maxTIDGiven ;
+
+	/* Virtual memory. */
+	FrameProvider *frameProvider ;
 };
 
 #endif // ADDRSPACE_H

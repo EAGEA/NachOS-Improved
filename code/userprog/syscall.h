@@ -40,6 +40,8 @@
 #define SC_ThreadExit		19
 #define SC_ThreadJoin       20
 #define SC_ThreadId         21
+#define SC_ForkExec         22
+#define SC_ForkExit         23
 
 #ifdef IN_USER_MODE
 
@@ -185,6 +187,14 @@ int UserThreadJoin(int t) ;
 /* Return the Thread Id of the current thread (caller).
  */
 int UserThreadId() ;
+
+/* Launch the executable "s" concurrently. 
+ */
+int ForkExec(char *s) ;
+
+/* Exit the current process.
+ */
+void ForkExit() ;
 
 #endif // IN_USER_MODE
 
