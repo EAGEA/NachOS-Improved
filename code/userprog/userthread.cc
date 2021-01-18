@@ -2,6 +2,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "userthread.h"
+#include "threadparams.h"
 
 
 
@@ -50,7 +51,7 @@ int do_UserThreadCreate(int fun, int arg, int returnFun)
     int sp = currentSpace->GetThreadStackPointer() ;
 	currentSpace->ThreadStackLockRelease() ;
 	// Create the params for the "Fork" function.
-	ThreadParams *params = new ThreadParams(fun, arg, returnFun) ;
+	ThreadParams *params = new ThreadParams(fun, arg, returnFun, true) ;
 	// Then create thread name for debugging.
 	char *name = (char *) malloc(sizeof(char) * 18) ;
 	sprintf(name, "User thread n°%d", tid) ;
@@ -106,30 +107,4 @@ int do_UserThreadJoin(int t)
 int do_UserThreadId()
 {
 	return currentThread->getTid() ;
-}
-
-/** 
- * Params of the thread for the "Start" function. 
- */
-
-ThreadParams::ThreadParams(int f, int a, int rF)
-{
-	fun = f ;
-	arg = a ;
-	returnFun = rF ;
-}
-
-int ThreadParams::GetFun()
-{
-	return fun ;
-}
-
-int ThreadParams::GetReturnFun()
-{
-	return returnFun ;
-}
-
-int ThreadParams::GetArg()
-{
-	return arg ;
 }

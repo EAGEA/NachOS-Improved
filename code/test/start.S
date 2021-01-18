@@ -222,6 +222,7 @@ UserThreadId:
 	.ent   ForkExec
 ForkExec:
 	addiu $2,$0,SC_ForkExec
+	addiu $5,$0,ForkExit // Auto-parameter (default).
 	syscall
 	j   $31
 	.end ForkExec

@@ -454,16 +454,6 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 	machine->pageTable = pageTable ;
 	machine->pageTableSize = numPages ;
 
-	// int physicalAddress;
-	// machine->Translate(virtualaddr, &physicalAddress, 1, FALSE);    
-	// DEBUG('l', "Start address: %d\n", physicalAddress );
-
-	// machine->Translate(virtualaddr + read_bytes, &physicalAddress, 1, FALSE);
-	// DEBUG('l', "End address: %d\n", physicalAddress );
-
-	// int PC = machine->ReadRegister(PCReg);
-	// machine->Translate(PC , &physicalAddress, 1, FALSE);
-	// DEBUG('l', "PC: %d\n", PC);
 	int i ;
 
 	for (i = 0 ; i < read_bytes ; i++) 

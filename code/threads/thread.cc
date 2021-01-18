@@ -19,7 +19,7 @@
 #include "switch.h"
 #include "synch.h"
 #include "system.h"
-#include <pthread.h>
+#include "threadparams.h"
 
 #define STACK_FENCEPOST 0xdeadbeef	// this is put at the top of the
 					// execution stack, for detecting 
@@ -108,7 +108,15 @@ Thread::Fork (VoidFunctionPtr func, int arg)
     // an already running program, as in the "fork" Unix system call. 
     
     // LB: Observe that currentThread->space may be NULL at that time.
-    this->space = currentThread->space;
+	
+	// Unpack the thread params.
+	ThreadParams *params = (ThreadParams *) arg ;
+
+	if (params->NeedsToSetSpace())
+	{
+		// It's an user thread (and not a process).
+		this->space = currentThread->space;
+	}
 
 #endif // USER_PROGRAM
 

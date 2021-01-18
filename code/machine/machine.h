@@ -25,6 +25,7 @@
 #include "utility.h"
 #include "translate.h"
 #include "disk.h"
+#include "synch.h"
 
 // Definitions related to the size, and format of user memory
 
@@ -182,11 +183,19 @@ class Machine {
     TranslationEntry *pageTable;
     unsigned int pageTableSize;
 
+	void SetNbProcesses(int n) ;
+	int GetNbProcesses() ;
+	void ProcessesLockAcquire() ;
+	void ProcessesLockRelease() ;
+
   private:
     bool singleStep;		// drop back into the debugger after each
 				// simulated instruction
     int runUntilTime;		// drop back into the debugger when simulated
 				// time reaches this value
+
+	int nbProcesses ; // Total of processes currently running on the machine.
+	Lock *processesLock ;
 };
 
 extern void ExceptionHandler(ExceptionType which);

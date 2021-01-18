@@ -30,4 +30,6 @@ int main()
 	UserThreadCreate(f, (void *) THIS) ;
 
 	f((void*) THAT) ;
+
+	PutString("End of userpages1.main.\n") ;
 }

@@ -73,6 +73,9 @@ Machine::Machine(bool debug)
 
     singleStep = debug;
     CheckEndian();
+
+	nbProcesses = 1 ;
+	processesLock = new Lock("Lock processes counter") ;
 }
 
 //----------------------------------------------------------------------
@@ -83,8 +86,13 @@ Machine::Machine(bool debug)
 Machine::~Machine()
 {
     delete [] mainMemory;
+
     if (tlb != NULL)
+	{
         delete [] tlb;
+	}
+
+	delete processesLock ;
 }
 
 //----------------------------------------------------------------------
@@ -218,3 +226,30 @@ void Machine::WriteRegister(int num, int value)
 	registers[num] = value;
     }
 
+
+
+/* Processes counter.
+ */
+
+
+void Machine::ProcessesLockAcquire()
+{
+	processesLock->Acquire() ;
+}
+
+void Machine::ProcessesLockRelease()
+{
+	processesLock->Release() ;
+}
+
+void Machine::SetNbProcesses(int n)
+{
+	nbProcesses = n ;
+}
+
+int Machine::GetNbProcesses()
+{
+	int n = nbProcesses ;
+
+	return n ;
+}

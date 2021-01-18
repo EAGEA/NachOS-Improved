@@ -203,20 +203,23 @@ ExceptionHandler (ExceptionType which)
 				{
 					// Params.
 					int a = machine->ReadRegister(4) ;
+					int returnF = machine->ReadRegister(5) ; // Get it thanks to start.S. 
 					char exec[MAX_EXEC_NAME_LEN] ;
 					// Execution.
 					synchConsole->CopyStringFromMachine(a, exec, MAX_EXEC_NAME_LEN) ;
-					int res = do_UserProcessCreate(exec) ;
+					int res = do_UserProcessCreate(exec, returnF) ;
 					// Return.
 					machine->WriteRegister(2, res) ;
 					break ;
 				}
 			case SC_ForkExit:
 				{
+					// Execution.
+					do_UserProcessExit() ;
 				}
 			default:	
 				{
-					printf("Unexpected user mode exception %d %d\n", which, type);
+					printf("Unexpected user mode exception %d | %d\n", which, type);
 					ASSERT(FALSE);
 				}
 		}
