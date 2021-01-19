@@ -11,9 +11,10 @@ Lock *lock = new Lock("User process lock") ;
 static void StartUserProcess(int arg) 
 {
 	// Similar to userthread.startUserThread method.
-	currentThread->space->InitRegisters();
-	//currentThread->space->RestoreState();
-	machine->Run();
+	currentThread->space->InitRegisters() ;
+	currentThread->space->RestoreState() ;
+	// Start.
+	machine->Run() ;
 	// Should never be reached.
 	ASSERT(FALSE) ;
 }

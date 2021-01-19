@@ -12,7 +12,7 @@ static void StartUserThread(int f)
 	ThreadParams *params = (ThreadParams*) f ;
 	// Clean the registers.
 	currentThread->space->InitRegisters() ;
-	// Initialize page table. 
+	// Init page table.
 	currentThread->space->RestoreState() ;
 	// Write the argument of the function. 
 	machine->WriteRegister(4, params->GetArg()) ;

@@ -91,7 +91,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			numPages, size);
 	// first, set up the translation 
 	pageTable = new TranslationEntry[numPages];
-	// And the frame provider.
+	// And the page to frame translation.
 	frameProvider = new FrameProvider(NumPhysPages) ;
 
 	for (i = 0 ; i < numPages ; i ++)
@@ -99,8 +99,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		if (frameProvider->IsFrameAvail()) 
 		{
 			// Get a map on a physical frame.
-			int nFrame = frameProvider->GetEmptyFrame() ;
-			pageTable[i].physicalPage = nFrame ;
+			pageTable[i].physicalPage = frameProvider->GetEmptyFrame() ;
 		} 
 		else 
 		{
@@ -117,10 +116,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		// a separate page, we could set its 
 		// pages to be read-only
 	}
-
-	// zero out the entire address space, to zero the unitialized data segment 
-	// and the stack segment
-	bzero (machine->mainMemory, size);
 
 	// then, copy in the code and data segments into memory
 	if (noffH.code.size > 0)
@@ -157,16 +152,17 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
+	// Free virtual memory associated frames.
+	FreeFrames() ;
+	delete frameProvider ;
 	// LB: Missing [] for delete
 	// delete pageTable;
 	delete [] pageTable;
 	// And the synchronization mechanisms.
 	delete threadIDLock ;
 	delete threadStackLock ;
-	delete threadExitCond ;
-	// Release the mapped frames. 
-	FreeFrames() ;
-
+	delete threadExitCond ;	
+	// Delete the synch mechanisms for thread.join.
 	DeleteThreadJoinConditions() ;
 	// End of modification
 }
@@ -208,21 +204,19 @@ AddrSpace::InitRegisters ()
 // AddrSpace::SaveState
 //      On a context switch, save any machine state, specific
 //      to this address space, that needs saving.
-//
-//      For now, nothing!
 //----------------------------------------------------------------------
 
 	void
 AddrSpace::SaveState ()
 {
+	pageTable = machine->pageTable ;
+	numPages = machine->pageTableSize ;
 }
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
 //      On a context switch, restore the machine state so that
 //      this address space can run.
-//
-//      For now, tell the machine where to find the page table.
 //----------------------------------------------------------------------
 
 	void
@@ -441,29 +435,24 @@ static void ReadAtVirtual(OpenFile *executable, int virtualaddr,
 		int numBytes, int position, 
 		TranslationEntry *pageTable, unsigned numPages) 
 {
-
-	// Start by reading from the physical memory into a temporary buffer
-	char temp_buffer[numBytes] ;
-	int read_bytes = executable->ReadAt(temp_buffer, numBytes, position) ;
-
-	// Since we need to write to pageTable, we need to keep a reference of the current table (entry) and size
-	TranslationEntry *old_table = machine->pageTable ;
-	int old_size = machine->pageTableSize ;
-
-	// Now change the machine to pageTable and proceed to write
+	int i ;
+	// Read physical memory.
+	char buf[numBytes] ;
+	int nbBytes = executable->ReadAt(buf, numBytes, position) ;
+	// Keep the old page table version.
+	TranslationEntry *oldTable = machine->pageTable ;
+	int oldTableSize = machine->pageTableSize ;
+	// Put the page table to the machine to be able to write.
 	machine->pageTable = pageTable ;
 	machine->pageTableSize = numPages ;
-
-	int i ;
-
-	for (i = 0 ; i < read_bytes ; i++) 
+	// Write.
+	for (i = 0 ; i < nbBytes ; i ++) 
 	{
-		machine->WriteMem(virtualaddr + i, 1, temp_buffer[i]) ;
+		machine->WriteMem(virtualaddr + i, 1, buf[i]) ;
 	}
-
-	// Go back
-	machine->pageTable = old_table ;
-	machine->pageTableSize = old_size ;
+	// Restore previous state.
+	machine->pageTable = oldTable ;
+	machine->pageTableSize = oldTableSize ;
 }
 
 void AddrSpace::FreeFrames()
@@ -475,6 +464,19 @@ void AddrSpace::FreeFrames()
 		if (pageTable[i].valid) 
 		{
 			frameProvider->ReleaseFrame(pageTable[i].physicalPage) ;
+		}
+	}
+}
+
+void AddrSpace::RestoreFrames()
+{
+	unsigned int i ;
+
+	for (i = 0 ; i < numPages ; i ++) 
+	{
+		if (pageTable[i].valid) 
+		{
+			frameProvider->SetFrame(pageTable[i].physicalPage) ;
 		}
 	}
 }

@@ -50,6 +50,11 @@ int FrameProvider::GetEmptyFrame()
 	return nFrame ;
 }
 
+void FrameProvider::SetFrame(int nFrame) 
+{
+	bitmap->Mark(nFrame) ;
+}
+
 void FrameProvider::ReleaseFrame(int nFrame) 
 {
 	bitmap->Clear(nFrame) ;

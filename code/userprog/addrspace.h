@@ -18,8 +18,8 @@
 #include "translate.h"
 #include "frameprovider.h"
 
-#define UserStackSize				2048				// increase this as necessary!
-#define STACK_SIZE_USER_THREAD		PageSize * 2	    // increase this as necessary!
+#define UserStackSize				1024 * 2			// increase this as necessary!
+#define STACK_SIZE_USER_THREAD		PageSize * 2 	    // increase this as necessary!
 #define MAX_USER_THREADS			UserStackSize / STACK_SIZE_USER_THREAD
 
 
@@ -63,6 +63,7 @@ class AddrSpace
 
 	/* Virtual memory. */
 	void FreeFrames() ;
+	void RestoreFrames() ;
 
   private:
 
