@@ -77,26 +77,12 @@ ExceptionHandler (ExceptionType which)
 		{
 			case SC_Exit: 
 				{
-					DEBUG('a', "The program ended correctly.\n") ;
-					interrupt->Halt() ;
+					do_UserProcessExit() ;
 					break;
 				}
 			case SC_Halt: 
 				{
-					AddrSpace *currentSpace = currentThread->space ;
-					
-					currentSpace->ThreadIDLockAcquire() ;
-
-					while (currentSpace->GetTotalThreads() > 1)
-					{
-						// Exit when only the main thread is remaining.
-						currentSpace->ThreadExitConditionWait() ;
-					}
-
-					currentSpace->ThreadIDLockRelease() ;
-
-					DEBUG('a', "Shutdown, initiated by user program.\n");
-					interrupt->Halt();
+					do_UserProcessHalt() ;
 					break;
 				}
 			case SC_PutChar: 
@@ -203,19 +189,13 @@ ExceptionHandler (ExceptionType which)
 				{
 					// Params.
 					int a = machine->ReadRegister(4) ;
-					int returnF = machine->ReadRegister(5) ; // Get it thanks to start.S. 
 					char exec[MAX_EXEC_NAME_LEN] ;
 					// Execution.
 					synchConsole->CopyStringFromMachine(a, exec, MAX_EXEC_NAME_LEN) ;
-					int res = do_UserProcessCreate(exec, returnF) ;
+					int res = do_UserProcessCreate(exec) ;
 					// Return.
 					machine->WriteRegister(2, res) ;
 					break ;
-				}
-			case SC_ForkExit:
-				{
-					// Execution.
-					do_UserProcessExit() ;
 				}
 			default:	
 				{

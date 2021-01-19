@@ -2,7 +2,9 @@
 #define USERPROCESS_H
 
 
-int do_UserProcessCreate(char *exec, int returnFun) ;
+int do_UserProcessCreate(char *exec) ;
+
+void do_UserProcessHalt() ;
 
 void do_UserProcessExit() ;
 

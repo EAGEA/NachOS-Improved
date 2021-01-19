@@ -5,10 +5,7 @@
 #include "threadparams.h"
 
 
-Lock *lock = new Lock("User process lock") ;
-
-
-static void StartUserProcess(int arg) 
+static void StartUserProcess(int f) 
 {
 	// Similar to userthread.startUserThread method.
 	currentThread->space->InitRegisters() ;
@@ -19,18 +16,15 @@ static void StartUserProcess(int arg)
 	ASSERT(FALSE) ;
 }
 
-int do_UserProcessCreate(char *execFile, int returnFun)
+int do_UserProcessCreate(char *execFile)
 {
 	// Similar to progtest.startProcess method.
-	lock->Acquire();
-
 	// Get the executable.
 	OpenFile *exec = fileSystem->Open(execFile) ;
 
 	if (! exec) 
 	{
 		// A wrong executable was specified.
-		lock->Release();
 		return -1 ;
 	}
 	// Create the associated addr space.
@@ -42,27 +36,40 @@ int do_UserProcessCreate(char *execFile, int returnFun)
 	machine->SetNbProcesses(machine->GetNbProcesses() + 1) ;
 	machine->ProcessesLockRelease() ;
 	// Create the params for the "Fork" function.
-	ThreadParams *params = new ThreadParams(0, 0, returnFun, false) ;
+	ThreadParams *params = new ThreadParams(0, 0, 0, false) ;
 	// Create the object with the same space as the current, and start it.
 	Thread *thread = new Thread(execFile, 1, 0) ;
 	thread->space = addrSpace ; 
 	thread->Fork(StartUserProcess, (int) params) ;
-
-	lock->Release();
 
 	return 0 ;
 }
 
 void do_UserProcessExit()
 {
+	// Wait for all the children.
+	AddrSpace *currentSpace = currentThread->space ;
+
+	currentSpace->ThreadIDLockAcquire() ;
+
+	while (currentSpace->GetTotalThreads() > 1)
+	{
+		// Exit when only the main thread is remaining.
+		currentSpace->ThreadExitConditionWait() ;
+	}
+
+	currentSpace->ThreadIDLockRelease() ;
+
 	// Remove this process from the process count.
 	machine->ProcessesLockAcquire() ;
-	machine->SetNbProcesses(machine->GetNbProcesses() - 1) ;
+	int nbProcesses = machine->GetNbProcesses() - 1 ;
+	machine->SetNbProcesses(nbProcesses) ;
 	machine->ProcessesLockRelease() ;
-	
-	if (machine->GetNbProcesses() == 0)
+
+	if (nbProcesses == 0)
 	{
-		// The last one needs to stop the machin.
+		// The last one needs to stop the machine.
+		DEBUG('a', "The process ended up correctly.\n");
 		interrupt->Halt() ;
 	}
 	else
@@ -73,4 +80,10 @@ void do_UserProcessExit()
 		// Clean it.
 		delete currentThread->space ;
 	}
+}
+
+void do_UserProcessHalt()
+{
+	DEBUG('a', "Shutdown, initiated by user program.\n");
+	interrupt->Halt() ;
 }

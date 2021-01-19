@@ -222,18 +222,9 @@ UserThreadId:
 	.ent   ForkExec
 ForkExec:
 	addiu $2,$0,SC_ForkExec
-	addiu $5,$0,ForkExit // Auto-parameter (default).
 	syscall
 	j   $31
 	.end ForkExec
-
-	.globl ForkExit
-	.ent   ForkExit
-ForkExit:
-	addiu $2,$0,SC_ForkExit
-	syscall
-	j   $31
-	.end ForkExit
 
 /* dummy function to keep gcc happy */
         .globl  __main
