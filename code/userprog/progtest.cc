@@ -14,6 +14,7 @@
 #include "synchconsole.h"
 #include "addrspace.h"
 #include "synch.h"
+#include "syscall.h"
 
 //----------------------------------------------------------------------
 // StartProcess
@@ -24,6 +25,8 @@
 	void
 StartProcess (char *filename)
 {
+	
+	
 	OpenFile *executable = fileSystem->Open (filename);
 	AddrSpace *space;
 

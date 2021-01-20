@@ -27,6 +27,7 @@
 #include "userthread.h"
 #include "userprocess.h"
 #include "synch.h"
+#include <stdio.h>
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -188,6 +189,7 @@ ExceptionHandler (ExceptionType which)
 			case SC_ForkExec:
 				{
 					// Params.
+					//printf("I got here\n");
 					int a = machine->ReadRegister(4) ;
 					char exec[MAX_EXEC_NAME_LEN] ;
 					// Execution.

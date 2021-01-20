@@ -30,6 +30,7 @@ SynchDisk *synchDisk;
 #ifdef USER_PROGRAM		// requires either FILESYS or FILESYS_STUB
 Machine *machine;		// user program memory and registers
 SynchConsole *synchConsole ;
+FrameProvider* fprovider;
 #endif
 
 #ifdef NETWORK
@@ -157,8 +158,9 @@ Initialize (int argc, char **argv)
     CallOnUserAbort (Cleanup);	// if user hits ctl-C
 
 #ifdef USER_PROGRAM
-    machine = new Machine (debugUserProg);	// this must come first
+    	machine = new Machine (debugUserProg);	// this must come first
 	synchConsole = new SynchConsole(NULL, NULL) ;
+	fprovider = new FrameProvider(NumPhysPages);
 #endif
 
 #ifdef FILESYS

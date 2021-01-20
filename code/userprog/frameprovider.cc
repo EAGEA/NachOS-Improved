@@ -3,7 +3,7 @@
 #include "bitmap.h"
 #include "synch.h"
 #include "time.h"
-
+#include <stdio.h>
 
 FrameProvider::FrameProvider(int nFrames) 
 {
@@ -36,11 +36,14 @@ int FrameProvider::GetEmptyFrame()
 	{
 		if (! bitmap->Test(i))
 		{
+			//printf("yep\n");
 			emptyFrames[j ++] = i ;
 		}
 	}
 	// Get a random frame among them.
+	
 	nFrame = emptyFrames[rand() % j] ;	
+	//printf("%d\n", nFrame);
 	bitmap->Mark(nFrame) ;
 	// Set the frame to "zero" ('\0').
 	bzero(&(machine->mainMemory[nFrame * PageSize]), PageSize) ;

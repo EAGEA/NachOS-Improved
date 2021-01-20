@@ -33,9 +33,10 @@ extern Timer *timer;		// the hardware alarm clock
 #ifdef USER_PROGRAM
 #include "machine.h"
 #include "synchconsole.h"
+#include "frameprovider.h"
 extern Machine *machine;	// user program memory and registers
 extern SynchConsole *synchConsole ;
-
+extern FrameProvider *fprovider;
 #define MAX_EXEC_NAME_LEN 100
 
 #endif

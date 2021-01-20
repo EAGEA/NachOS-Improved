@@ -3,11 +3,12 @@
 #include "syscall.h"
 #include "userprocess.h"
 #include "threadparams.h"
-
+#include <stdio.h>
 
 static void StartUserProcess(int f) 
 {
 	// Similar to userthread.startUserThread method.
+	//printf("oh yes I'm again here\n");
 	currentThread->space->InitRegisters() ;
 	currentThread->space->RestoreState() ;
 	// Start.
@@ -21,9 +22,10 @@ int do_UserProcessCreate(char *execFile)
 	// Similar to progtest.startProcess method.
 	// Get the executable.
 	OpenFile *exec = fileSystem->Open(execFile) ;
-
+	//printf("and then here\n");
 	if (! exec) 
 	{
+		//printf("Nope\n");
 		// A wrong executable was specified.
 		return -1 ;
 	}
@@ -41,7 +43,6 @@ int do_UserProcessCreate(char *execFile)
 	Thread *thread = new Thread(execFile, 1, 0) ;
 	thread->space = addrSpace ; 
 	thread->Fork(StartUserProcess, (int) params) ;
-
 	return 0 ;
 }
 

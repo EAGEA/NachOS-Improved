@@ -21,7 +21,7 @@
 #include "noff.h"
 
 #include <strings.h>		/* for bzero */
-
+#include <stdio.h>
 
 static void ReadAtVirtual(OpenFile *executable, int virtualaddr, 
 		int numBytes, int position, 
@@ -86,20 +86,21 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	// to run anything too big --
 	// at least until we have
 	// virtual memory
-
+	//printf("Num pages %d\n",numPages);
+	//printf("NumPhysPages %d\n",NumPhysPages);
 	DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 			numPages, size);
 	// first, set up the translation 
 	pageTable = new TranslationEntry[numPages];
 	// And the page to frame translation.
-	frameProvider = new FrameProvider(NumPhysPages) ;
-
+	printf("Another one\n");
 	for (i = 0 ; i < numPages ; i ++)
 	{
-		if (frameProvider->IsFrameAvail()) 
+		if (fprovider->IsFrameAvail()) 
 		{
 			// Get a map on a physical frame.
-			pageTable[i].physicalPage = frameProvider->GetEmptyFrame() ;
+			pageTable[i].physicalPage = fprovider->GetEmptyFrame() ;
+			//printf("NumAvailFrame: %d\n",fprovider->NumAvailFrame());
 		} 
 		else 
 		{
@@ -107,7 +108,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			ASSERT(FALSE) ;
 			return ;
 		} 
-
+		printf("Page %d\n",pageTable[i].physicalPage);
 		pageTable[i].virtualPage = i;
 		pageTable[i].valid = TRUE;
 		pageTable[i].use = FALSE;
@@ -143,6 +144,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	nbThreads = 1 ;
 	threadIDs[0] = 1 ;
 	maxTIDGiven = 1 ;
+	//printf("Hasta aqui llegue\n");
 }
 
 //----------------------------------------------------------------------
@@ -154,7 +156,6 @@ AddrSpace::~AddrSpace ()
 {
 	// Free virtual memory associated frames.
 	FreeFrames() ;
-	delete frameProvider ;
 	// LB: Missing [] for delete
 	// delete pageTable;
 	delete [] pageTable;
@@ -463,7 +464,7 @@ void AddrSpace::FreeFrames()
 	{
 		if (pageTable[i].valid) 
 		{
-			frameProvider->ReleaseFrame(pageTable[i].physicalPage) ;
+			fprovider->ReleaseFrame(pageTable[i].physicalPage) ;
 		}
 	}
 }
@@ -476,7 +477,7 @@ void AddrSpace::RestoreFrames()
 	{
 		if (pageTable[i].valid) 
 		{
-			frameProvider->SetFrame(pageTable[i].physicalPage) ;
+			fprovider->SetFrame(pageTable[i].physicalPage) ;
 		}
 	}
 }

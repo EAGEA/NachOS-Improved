@@ -12,10 +12,11 @@ void print(void *c)
 
 int main()
 {
-	char a = 'a' ;
+	//char a = 'a' ;
+	PutString("FUUUUCK\n");
+	//UserThreadCreate(print, &a) ;
+	//UserThreadCreate(print, &a) ;
 
-	UserThreadCreate(print, &a) ;
-	UserThreadCreate(print, &a) ;
-
-	PutString("End of userpages0.main.\n") ;
+	//PutString("End of userpages0.main.\n") ;
+	Halt();
 }

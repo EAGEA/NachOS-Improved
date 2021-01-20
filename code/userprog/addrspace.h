@@ -16,7 +16,7 @@
 #include "copyright.h"
 #include "filesys.h"
 #include "translate.h"
-#include "frameprovider.h"
+
 
 #define UserStackSize				1024 * 2			// increase this as necessary!
 #define STACK_SIZE_USER_THREAD		PageSize * 2 	    // increase this as necessary!
@@ -85,8 +85,7 @@ class AddrSpace
 	unsigned int nbThreads ;
 	unsigned int maxTIDGiven ;
 
-	/* Virtual memory. */
-	FrameProvider *frameProvider ;
+	
 };
 
 #endif // ADDRSPACE_H
