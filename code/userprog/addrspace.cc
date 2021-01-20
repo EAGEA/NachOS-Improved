@@ -93,7 +93,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	// first, set up the translation 
 	pageTable = new TranslationEntry[numPages];
 	// And the page to frame translation.
-	printf("Another one\n");
+	
 	for (i = 0 ; i < numPages ; i ++)
 	{
 		if (fprovider->IsFrameAvail()) 
@@ -108,7 +108,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 			ASSERT(FALSE) ;
 			return ;
 		} 
-		printf("Page %d\n",pageTable[i].physicalPage);
+		//printf("Page %d\n",pageTable[i].physicalPage);
 		pageTable[i].virtualPage = i;
 		pageTable[i].valid = TRUE;
 		pageTable[i].use = FALSE;

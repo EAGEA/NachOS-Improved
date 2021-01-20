@@ -16,7 +16,12 @@ int main()
 	PutString("FUUUUCK\n");
 	//UserThreadCreate(print, &a) ;
 	//UserThreadCreate(print, &a) ;
-
+	int i;
+	for(i=0;i<15;i++){
+		PutString("Userpages: ");
+		PutInt(i);
+		PutChar('\n');
+	}
 	//PutString("End of userpages0.main.\n") ;
 	Halt();
 }
