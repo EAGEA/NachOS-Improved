@@ -136,3 +136,10 @@ Network::Receive(char* data)
     	bcopy(inbox, data, hdr.length);
     return hdr;
 }
+
+// return the ident of the current machine
+NetworkAddress 
+Network::GetIdent() 
+{
+    return ident ;
+}

@@ -80,6 +80,8 @@ class Network {
 				// sent
     void CheckPktAvail();	// Check if there is an incoming packet
 
+    NetworkAddress GetIdent() ; // Return the ident of the calling machine
+
   private:
     NetworkAddress ident;	// This machine's network address
     double chanceToWork;	// Likelihood packet will be dropped

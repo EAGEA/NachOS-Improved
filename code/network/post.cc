@@ -345,3 +345,14 @@ PostOffice::PacketSent()
     messageSent->V();
 }
 
+//----------------------------------------------------------------------
+// PostOffice::GetNetwork
+//  Return the network
+//----------------------------------------------------------------------
+
+Network* 
+PostOffice::GetNetwork()
+{
+    return network ;
+}
+
