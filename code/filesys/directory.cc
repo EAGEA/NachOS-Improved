@@ -124,25 +124,28 @@ void
 Directory::List()
 {
 	int i ;
+	bool print = false ;
 	FileHeader *header = new FileHeader() ;
 
 	printf("Name       | IsDir | Size (bytes)\n") ;
 	printf("---------------------------------\n") ;
 
-	if (! table[2].inUse) // Contains "." and "..".
-	{
-		printf("             EMPTY\n") ;
-	}
-
 	for (i = 0 ; i < tableSize ; i ++)
 	{
 		if (table[i].inUse)
 		{
+			print = true ;
+
 			header->FetchFrom(table[i].sector) ;
 			printf("%-10s | %s | %d\n", table[i].name, 
-					table[i].isDirectory ? "true" : "false", 
+					table[i].isDirectory ? "true " : "false", 
 					header->FileLength() / 8) ;
 		}
+	}
+
+	if (! print) // Contains "." and "..".
+	{
+		printf("             EMPTY\n") ;
 	}
 
 	printf("---------------------------------\n") ;
@@ -242,7 +245,7 @@ bool Directory::AddSpecialDir(int sector, int sector_)
 {
 	// Add "." and ".." on the 1st and 2nd sectors of the table.
 	// Check if theses sectors are already used.
-    if (! table[0].inUse || ! table[1].inUse)
+    if (table[0].inUse || table[1].inUse)
 	{
 		return false ;
 	}

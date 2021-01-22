@@ -377,8 +377,12 @@ bool FileSystem::CreateDir(const char *name)
 		}
 		else 
 		{
-			// Add the special register "." and ".." to the new dir.
-			newDir->AddSpecialDir(sector, directory->Find(".")) ;
+			if (! newDir->AddSpecialDir(sector, directory->Find(".")))
+			{
+				DEBUG('f', "Can't be created: special directories are not added\n") ;
+				success = false ;
+				directory->RemoveDir(name) ; // Was added just before ... 
+			}
 			// Everthing worked, flush all changes back to disk.
 			header->WriteBack(sector) ;
 			OpenFile *fileDir = new OpenFile(sector) ;
@@ -496,7 +500,7 @@ bool FileSystem::RemoveDir(const char *name)
     if (sector == -1) 
 	{
 		DEBUG('f', "Can't be removed: directory not found\n") ;
-		delete directory;
+		delete directory ;
 		return false ; 
     }
 
@@ -515,12 +519,12 @@ bool FileSystem::RemoveDir(const char *name)
 		return false ;
 	}
 
-    freeMap = new BitMap(NumSectors);
-    freeMap->FetchFrom(freeMapFile);
+	freeMap = new BitMap(NumSectors);
+	freeMap->FetchFrom(freeMapFile);
 
-    header->Deallocate(freeMap);  		// remove data blocks
-    freeMap->Clear(sector);			// remove header block
-    directory->Remove(name);
+	header->Deallocate(freeMap);  		// remove data blocks
+	freeMap->Clear(sector);			// remove header block
+	directory->Remove(name);
 
     freeMap->WriteBack(freeMapFile);		// flush to disk
     directory->WriteBack(currentDirectory);        // flush to disk
