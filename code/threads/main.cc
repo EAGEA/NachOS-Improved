@@ -145,7 +145,7 @@ main (int argc, char **argv)
 		else if (!strcmp (*argv, "-r"))
 		{			// remove Nachos file
 			ASSERT (argc > 1);
-			fileSystem->Remove (*(argv + 1));
+			fileSystem->RemoveFile (*(argv + 1));
 			argCount = 2;
 		}
 		else if (!strcmp (*argv, "-l"))
@@ -159,6 +159,18 @@ main (int argc, char **argv)
 		else if (!strcmp (*argv, "-t"))
 		{			// performance test
 			PerformanceTest ();
+		}
+		else if (!strcmp (*argv, "-rmdir"))
+		{			// remove Nachos directory
+			ASSERT (argc > 1);
+			fileSystem->RemoveDir (*(argv + 1));
+			argCount = 2;
+		}
+		else if (!strcmp (*argv, "-mkdir"))
+		{			// create Nachos directory
+			ASSERT (argc > 1);
+			fileSystem->CreateDir (*(argv + 1));
+			argCount = 2;
 		}
 #endif // FILESYS
 #ifdef NETWORK

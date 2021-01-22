@@ -13,7 +13,6 @@ void print(void *c)
 int main()
 {
 	//char a = 'a' ;
-	PutString("FUUUUCK\n");
 	//UserThreadCreate(print, &a) ;
 	//UserThreadCreate(print, &a) ;
 	int i;
@@ -23,5 +22,4 @@ int main()
 		PutChar('\n');
 	}
 	//PutString("End of userpages0.main.\n") ;
-	Halt();
 }

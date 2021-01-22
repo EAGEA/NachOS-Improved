@@ -28,44 +28,49 @@
 // 	Copy the contents of the UNIX file "from" to the Nachos file "to"
 //----------------------------------------------------------------------
 
-void
-Copy(const char *from, const char *to)
+void Copy(const char *from, const char *to)
 {
-    FILE *fp;
-    OpenFile* openFile;
-    int amountRead, fileLength;
-    char *buffer;
+	FILE *fp;
+	OpenFile* openFile;
+	int amountRead, fileLength;
+	char *buffer;
 
-// Open UNIX file
-    if ((fp = fopen(from, "r")) == NULL) {	 
-	printf("Copy: couldn't open input file %s\n", from);
-	return;
-    }
+	DEBUG('f', "Copying file \"%s\" to file \"%s\"\n", from, to);
 
-// Figure out length of UNIX file
-    fseek(fp, 0, 2);		
-    fileLength = ftell(fp);
-    fseek(fp, 0, 0);
+	// Open UNIX file.
+	if ((fp = fopen(from, "r")) == NULL) 
+	{	
+		DEBUG('f', "Can't open input file \"%s\"\n", from) ; 
+		return;
+	}
+	// Figure out length of UNIX file.
+	fseek(fp, 0, 2);		
+	fileLength = ftell(fp);
+	fseek(fp, 0, 0);
+	DEBUG('f', "Copy of size %d\n", fileLength) ;
 
-// Create a Nachos file of the same length
-    DEBUG('f', "Copying file %s, size %d, to file %s\n", from, fileLength, to);
-    if (!fileSystem->Create(to, fileLength)) {	 // Create Nachos file
-	printf("Copy: couldn't create output file %s\n", to);
-	fclose(fp);
-	return;
-    }
-    
-    openFile = fileSystem->Open(to);
-    ASSERT(openFile != NULL);
-    
-// Copy the data in TransferSize chunks
-    buffer = new char[TransferSize];
-    while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0)
-	openFile->Write(buffer, amountRead);	
-    delete [] buffer;
+	// Create a Nachos file of the same length
+	if (! fileSystem->CreateFile(to, fileLength)) 
+	{	 
+		// Create Nachos file.
+		DEBUG('f', "Can't create output file \"%s\"\n", to) ; 
+		fclose(fp);
+		return;
+	}
+	// Copy the data in TransferSize chunks.
+	openFile = fileSystem->Open(to);
+	ASSERT(openFile != NULL);
+	buffer = new char[TransferSize];
 
-// Close the UNIX and the Nachos files
-    delete openFile;
+	while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0)
+	{
+		openFile->Write(buffer, amountRead);	
+	}
+
+	delete [] buffer;
+	delete openFile;
+
+	DEBUG('f', "Copy of \"%s\" to \"%s\" done\n", from, to) ; 
     fclose(fp);
 }
 
@@ -74,25 +79,31 @@ Copy(const char *from, const char *to)
 // 	Print the contents of the Nachos file "name".
 //----------------------------------------------------------------------
 
-void
-Print(char *name)
+void Print(char *name)
 {
     OpenFile *openFile;    
     int i, amountRead;
     char *buffer;
 
-    if ((openFile = fileSystem->Open(name)) == NULL) {
-	printf("Print: unable to open file %s\n", name);
-	return;
+    if ((openFile = fileSystem->Open(name)) == NULL) 
+	{
+		DEBUG('f', "Can't open \"%s\" to print\n", name) ;
+		return ;
     }
     
     buffer = new char[TransferSize];
-    while ((amountRead = openFile->Read(buffer, TransferSize)) > 0)
-	for (i = 0; i < amountRead; i++)
-	    printf("%c", buffer[i]);
-    delete [] buffer;
 
-    delete openFile;		// close the Nachos file
+    while ((amountRead = openFile->Read(buffer, TransferSize)) > 0)
+	{
+		for (i = 0; i < amountRead; i++)
+		{
+			printf("%c", buffer[i]);
+		}
+	}
+
+    delete [] buffer;
+    delete openFile;		
+
     return;
 }
 
@@ -121,7 +132,7 @@ FileWrite()
 
     printf("Sequential write of %d byte file, in %zd byte chunks\n", 
 	FileSize, ContentSize);
-    if (!fileSystem->Create(FileName, 0)) {
+    if (! fileSystem->CreateFile(FileName, 0)) {
       printf("Perf test: can't create %s\n", FileName);
       return;
     }
@@ -176,7 +187,7 @@ PerformanceTest()
     stats->Print();
     FileWrite();
     FileRead();
-    if (!fileSystem->Remove(FileName)) {
+    if (! fileSystem->RemoveFile(FileName)) {
       printf("Perf test: unable to remove %s\n", FileName);
       return;
     }

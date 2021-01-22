@@ -36,6 +36,7 @@ class DirectoryEntry {
 					//   FileHeader for this file 
     char name[FileNameMaxLen + 1];	// Text name for file, with +1 for 
 					// the trailing '\0'
+	bool isDirectory ;
 };
 
 // The following class defines a UNIX-like "directory".  Each entry in
@@ -61,15 +62,24 @@ class Directory {
     int Find(const char *name);		// Find the sector number of the 
 					// FileHeader for file: "name"
 
-    bool Add(const char *name, int newSector);  // Add a file name into the directory
-
-    bool Remove(const char *name);	// Remove a file from the directory
-
     void List();			// Print the names of all the files
 					//  in the directory
     void Print();			// Verbose print of the contents
 					//  of the directory -- all the file
 					//  names and their contents.
+
+	void Add(const char *name, bool isDirectory, int i, int sector) ;
+	bool AddFile(const char *name, int sector) ;
+	bool AddDir(const char *name, int sector) ;
+	bool AddSpecialDir(int sector, int sector_) ;
+
+	bool Remove(const char *name) ;
+	bool RemoveFile(const char *name) ;
+	bool RemoveDir(const char *name) ;
+
+	bool IsADir(int sector) ; 
+	bool IsEmpty() ;
+	bool IsFull() ;
 
   private:
     int tableSize;			// Number of directory entries

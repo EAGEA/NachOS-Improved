@@ -116,52 +116,6 @@ Directory::Find(const char *name)
 }
 
 //----------------------------------------------------------------------
-// Directory::Add
-// 	Add a file into the directory.  Return TRUE if successful;
-//	return FALSE if the file name is already in the directory, or if
-//	the directory is completely full, and has no more space for
-//	additional file names.
-//
-//	"name" -- the name of the file being added
-//	"newSector" -- the disk sector containing the added file's header
-//----------------------------------------------------------------------
-
-bool
-Directory::Add(const char *name, int newSector)
-{ 
-    if (FindIndex(name) != -1)
-	return FALSE;
-
-    for (int i = 0; i < tableSize; i++)
-        if (!table[i].inUse) {
-            table[i].inUse = TRUE;
-            strncpy(table[i].name, name, FileNameMaxLen); 
-            table[i].sector = newSector;
-        return TRUE;
-	}
-    return FALSE;	// no space.  Fix when we have extensible files.
-}
-
-//----------------------------------------------------------------------
-// Directory::Remove
-// 	Remove a file name from the directory.  Return TRUE if successful;
-//	return FALSE if the file isn't in the directory. 
-//
-//	"name" -- the file name to be removed
-//----------------------------------------------------------------------
-
-bool
-Directory::Remove(const char *name)
-{ 
-    int i = FindIndex(name);
-
-    if (i == -1)
-	return FALSE; 		// name not in directory
-    table[i].inUse = FALSE;
-    return TRUE;	
-}
-
-//----------------------------------------------------------------------
 // Directory::List
 // 	List all the file names in the directory. 
 //----------------------------------------------------------------------
@@ -169,9 +123,31 @@ Directory::Remove(const char *name)
 void
 Directory::List()
 {
-   for (int i = 0; i < tableSize; i++)
-	if (table[i].inUse)
-	    printf("%s\n", table[i].name);
+	int i ;
+	FileHeader *header = new FileHeader() ;
+
+	printf("Name       | IsDir | Size (bytes)\n") ;
+	printf("---------------------------------\n") ;
+
+	if (! table[2].inUse) // Contains "." and "..".
+	{
+		printf("             EMPTY\n") ;
+	}
+
+	for (i = 0 ; i < tableSize ; i ++)
+	{
+		if (table[i].inUse)
+		{
+			header->FetchFrom(table[i].sector) ;
+			printf("%-10s | %s | %d\n", table[i].name, 
+					table[i].isDirectory ? "true" : "false", 
+					header->FileLength() / 8) ;
+		}
+	}
+
+	printf("---------------------------------\n") ;
+
+	delete header ;
 }
 
 //----------------------------------------------------------------------
@@ -188,10 +164,178 @@ Directory::Print()
     printf("Directory contents:\n");
     for (int i = 0; i < tableSize; i++)
 	if (table[i].inUse) {
-	    printf("Name: %s, Sector: %d\n", table[i].name, table[i].sector);
+	    printf("Name: %s, IsDir: %s, Sector: %d\n", table[i].name, 
+				table[i].isDirectory ? "true" : "false", table[i].sector);
 	    hdr->FetchFrom(table[i].sector);
 	    hdr->Print();
 	}
     printf("\n");
     delete hdr;
+}
+
+
+///----------------------------------------------------------------------
+// Directory::Add*
+// 	Add a file/dir into the directory.  Return TRUE if successful;
+//	return FALSE if the file/dir name is already in the directory, or if
+//	the directory is completely full, and has no more space for
+//	additional file/dir.
+//----------------------------------------------------------------------
+
+
+void Directory::Add(const char *name, bool isDirectory, int i, int sector)
+{
+	table[i].inUse = true ;
+	table[i].isDirectory = isDirectory ;
+	table[i].sector = sector ;
+	strncpy(table[i].name, name, FileNameMaxLen) ;
+}
+
+bool Directory::AddFile(const char *name, int sector)
+{ 
+    if (FindIndex(name) != -1)
+	{
+		// Already exits.
+		return false ;	
+	}
+
+	int i ;
+
+    for (i = 0 ; i < tableSize ; i ++)
+	{
+        if (! table[i].inUse) 
+		{
+			// Add it.
+			Add(name, false, i, sector) ;
+			return true ;
+		}
+	}
+	// No place on the system left to add this directory.
+	return false ; 
+}
+
+bool Directory::AddDir(const char *name, int sector)
+{
+	if (FindIndex(name) != -1)
+	{
+		// Already exists.
+		return false ;
+	}
+
+	int i ;
+
+	for (i = 0 ; i < tableSize ; i ++)
+	{
+		if (! table[i].inUse) 
+		{
+			// Add it.
+			Add(name, true, i, sector) ;
+			return true ;
+		}
+	}
+	// No place on the system left to add this directory.
+	return false ; 
+}
+
+
+bool Directory::AddSpecialDir(int sector, int sector_)
+{
+	// Add "." and ".." on the 1st and 2nd sectors of the table.
+	// Check if theses sectors are already used.
+    if (! table[0].inUse || ! table[1].inUse)
+	{
+		return false ;
+	}
+
+	Add(".", true, 0, sector) ;
+   	Add("..", true, 1, sector_) ;
+
+	return true ;
+}
+
+//----------------------------------------------------------------------
+// Directory::Remove*
+// 	Remove a file/dir from the directory.  Return TRUE if successful;
+//	return FALSE if the file/dir isn't in the directory. 
+//----------------------------------------------------------------------
+
+bool Directory::Remove(const char *name)
+{ 
+    int i = FindIndex(name) ;
+
+    if (i == -1)
+	{
+		// Not in the dir.
+		return false ;
+	}
+	// Remove it.
+    table[i].inUse = false ;
+    return true ;	
+}
+
+bool Directory::RemoveFile(const char *name)
+{
+	return Remove(name) ;
+}
+
+bool Directory::RemoveDir(const char *name)
+{
+	if (Remove(name))
+	{
+		// Now remove the file in the directory.
+		// TODO
+		return true ;
+	}
+
+	return false ;
+}
+
+//----------------------------------------------------------------------
+// Directory::Is*
+//	Getters to check the state of a sector/current dir.
+//----------------------------------------------------------------------
+
+bool Directory::IsADir(int sector) 
+{
+	int i ;
+
+    for (i = 0 ; i < tableSize ; i ++)
+	{
+		if (table[i].sector == sector)
+		{
+			return table[i].isDirectory ;
+		}
+	}
+	// This sector was not found.
+	return false ;
+}
+
+bool Directory::IsEmpty()
+{
+	int i ;
+
+    for (i = 2 ; i < tableSize ; i ++)
+	{
+		if (table[i].inUse)
+		{
+			return false ;
+		}
+	}
+	
+	return true ;
+}
+
+bool Directory::IsFull()
+{
+	int i ;
+
+    for (i = 2 ; i < tableSize ; i ++)
+	{
+		if (! table[i].inUse)
+		{
+			return false ;
+		}
+	}
+	
+	return true ;
 }

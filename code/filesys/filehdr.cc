@@ -61,10 +61,12 @@ FileHeader::Allocate(BitMap *freeMap, int fileSize)
 void 
 FileHeader::Deallocate(BitMap *freeMap)
 {
-    for (int i = 0; i < numSectors; i++) {
-	ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
-	freeMap->Clear((int) dataSectors[i]);
-    }
+    for (int i = 0; i < numSectors; i++) 
+	{
+		printf("!%d!\n", (int) dataSectors[i]) ;
+		ASSERT(freeMap->Test((int) dataSectors[i]));  // ought to be marked!
+		freeMap->Clear((int) dataSectors[i]);
+	}
 }
 
 //----------------------------------------------------------------------
