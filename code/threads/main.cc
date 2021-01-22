@@ -172,6 +172,12 @@ main (int argc, char **argv)
 			fileSystem->CreateDir (*(argv + 1));
 			argCount = 2;
 		}
+		else if (!strcmp (*argv, "-touch"))
+		{			// create Nachos directory
+			ASSERT (argc > 1);
+			fileSystem->CreateFile (*(argv + 1), 0);
+			argCount = 2;
+		}
 #endif // FILESYS
 #ifdef NETWORK
 		if (!strcmp (*argv, "-o"))
