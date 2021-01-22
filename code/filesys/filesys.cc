@@ -382,13 +382,14 @@ bool FileSystem::CreateDir(const char *name)
 			// Everthing worked, flush all changes back to disk.
 			header->WriteBack(sector) ;
 			OpenFile *fileDir = new OpenFile(sector) ;
-			newDir->WriteBack(filrDir) ;
+			newDir->WriteBack(fileDir) ;
+			directory->WriteBack(currentDirectory);
 			freeMap->WriteBack(freeMapFile) ;
 
 			DEBUG('f', "Directory \"%s\" created\n", name) ;
 			success = true ;
 
-			delete openFileDir ;
+			delete fileDir ;
 		}
 	}
 
@@ -453,7 +454,7 @@ bool FileSystem::RemoveFile(const char *name)
 	directory->Remove(name);
 
 	freeMap->WriteBack(freeMapFile);		// flush to disk
-	directory->WriteBack(directoryFile);        // flush to disk
+    directory->WriteBack(currentDirectory);        // flush to disk
 
 	DEBUG('f', "File \"%s\" removed\n") ;
 
@@ -471,15 +472,17 @@ bool FileSystem::RemoveFile(const char *name)
 
 bool FileSystem::RemoveDir(const char *name)
 { 
-    Directory *directory;
+    Directory *directory, *rmDir ;
     BitMap *freeMap;
-    FileHeader *fileHdr;
+    FileHeader *header;
+	OpenFile *fileDir ;
     int sector;
 	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
     DEBUG('f', "Removing directory \"%s\"...\n", name) ;
     
     directory = new Directory(NumDirEntries);
+    rmDir = new Directory(NumDirEntries);
 
 	// Get only the name of the file and the path without the name.
 	GetNameInPath(name, fileName) ;
@@ -497,25 +500,38 @@ bool FileSystem::RemoveDir(const char *name)
 		return false ; 
     }
 
-    fileHdr = new FileHeader;
-    fileHdr->FetchFrom(sector);
+    header = new FileHeader() ;
+    header->FetchFrom(sector) ;
+
+	fileDir = new OpenFile(sector) ;
+	rmDir->FetchFrom(fileDir) ;
+
+	if (! rmDir->IsEmpty()) 
+	{ 
+		DEBUG('f', "Can't be removed: directory not empty\n") ;
+		delete directory ;
+		delete header ;
+		delete fileDir ;
+		return false ;
+	}
 
     freeMap = new BitMap(NumSectors);
     freeMap->FetchFrom(freeMapFile);
 
-    fileHdr->Deallocate(freeMap);  		// remove data blocks
+    header->Deallocate(freeMap);  		// remove data blocks
     freeMap->Clear(sector);			// remove header block
     directory->Remove(name);
 
     freeMap->WriteBack(freeMapFile);		// flush to disk
-    directory->WriteBack(directoryFile);        // flush to disk
+    directory->WriteBack(currentDirectory);        // flush to disk
 
 	DEBUG('f', "Directory \"%s\" removed\n") ;
 
-    delete fileHdr;
     delete directory;
+    delete header ;
+    delete fileDir ;
     delete freeMap;
-    return TRUE;
+    return true ;
 } 
 
 //----------------------------------------------------------------------
