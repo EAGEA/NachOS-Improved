@@ -357,7 +357,7 @@ bool FileSystem::CreateDir(const char *name)
 		// Find a sector to hold the directory header.
         freeMap->FetchFrom(freeMapFile);
         sector = freeMap->Find();	
-		printf("!%d!\n", sector) ;
+		freeMap->Mark(sector) ; // ... Bug (otherwise the bit is not marked, and the ASSERT in header.Deallocate is false) ...
 
     	if (sector == -1) 		
 		{
