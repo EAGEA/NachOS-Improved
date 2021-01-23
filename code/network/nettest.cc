@@ -21,6 +21,7 @@
 #include "system.h"
 #include "network.h"
 #include "post.h"
+#include "reliable.h"
 #include "interrupt.h"
 
 // Test out message delivery, by doing the following:
@@ -109,7 +110,7 @@ LogicCycle (int networkID)
 	    printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr.from,inMailHdr.from);
 	    fflush(stdout);
 
-	    if(id < 2)
+	    if(id < 1)
 	    {
 		    // construct packet, mail header for original message
 		    // To: destination machine, mailbox 0
@@ -128,4 +129,52 @@ LogicCycle (int networkID)
 
 
 	interrupt->Halt();
+}
+
+
+void
+TestWait(int farAddr)
+{
+    PacketHeader outPktHdr, inPktHdr;
+    MailHeader outMailHdr, inMailHdr;
+    const char *data = "Hello there!";
+    const char *ack = "Got it!";
+    char buffer[MaxMailSize];
+
+	Network *network = postOffice->GetNetwork() ;
+	int id = network->GetIdent() ;
+
+	if(id == 0)
+	{
+		// construct packet, mail header for original message
+		// To: destination machine, mailbox 0
+		// From: our machine, reply to: mailbox 1
+		outPktHdr.to = farAddr;		
+		outMailHdr.to = 1;
+		outMailHdr.from = 0;
+		outMailHdr.length = strlen(data) + 1;
+
+		ReliableSend(postOffice,outPktHdr,outMailHdr,data,0,&inPktHdr,&inMailHdr,buffer) ;
+	}
+
+	else
+	{
+
+		// Wait for the message from the other machine.
+		postOffice->Receive(1, &inPktHdr, &inMailHdr, buffer);
+		printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr.from,inMailHdr.from);
+		fflush(stdout);
+
+		// Send acknowledgement to the other machine (using "reply to" mailbox
+		// in the message that just arrived
+		outPktHdr.to = inPktHdr.from;
+		outMailHdr.to = inMailHdr.from;
+		outMailHdr.length = strlen(ack) + 1;
+		postOffice->Send(outPktHdr, outMailHdr, ack); 
+		printf("Ack sended\n");
+
+	}	
+
+    // Then we're done!
+    interrupt->Halt();
 }

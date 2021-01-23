@@ -33,6 +33,10 @@ class SynchList
     // the list, waiting if the list is empty
     // apply function to every item in the list
     void Mapcar (VoidFunctionPtr func);
+    
+    Lock* GetLock();		//Return the lock of the synchlist
+    
+    Condition* GetlistEmpty(); //Return the listEmpty of the synchlist
 
   private:
       List * list;		// the unsynchronized list
