@@ -10,8 +10,6 @@ void process(void *c)
 	}
 
 	PutString("User thread 3 ending.\n") ;
-
-//	UserThreadExit() ;
 }
 
 void processAndJoin(void *c)
@@ -23,35 +21,27 @@ void processAndJoin(void *c)
 		// Process a task.
 	}
 
-	int tid = UserThreadCreate(process, &i) ;
+	int tid = UserThreadCreate(process, 0) ;
 
 	UserThreadJoin(tid) ;
 
 	PutString("User thread 2 ending.\n") ;
-
-//	UserThreadExit() ;
 }
 
 void join(void *c)
 {
-	int i = 2 ;
-
-	int tid = UserThreadCreate(processAndJoin, &i) ;
+	int tid = UserThreadCreate(processAndJoin, 0) ;
 
 	UserThreadJoin(tid) ;
 
 	PutString("User thread 1 ending.\n") ;
-
-//	UserThreadExit() ;
 }
 
 int main()
 {
 	PutString("Starting main thread.\n") ;
 
-	int i = 1 ;
-
-	int tid = UserThreadCreate(join, &i) ;
+	int tid = UserThreadCreate(join, 0) ;
 
 	UserThreadJoin(tid) ;
 

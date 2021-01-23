@@ -11,8 +11,6 @@ void print(void *c)
 	}
 
 	PutString("User thread print ending.\n") ;
-
-//	UserThreadExit() ;
 }
 
 int main()
