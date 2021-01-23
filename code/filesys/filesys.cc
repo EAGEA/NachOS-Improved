@@ -543,49 +543,49 @@ bool FileSystem::RemoveDir(const char *name)
 //	Change the current workspace.	
 //----------------------------------------------------------------------
 
-void FileSystem::ChangeCurrentDir(const char *name)
+void FileSystem::ChangeCurrentDir(const char *path)
 {
-	/*
-	int sector ;
-	int nbDir = GetNbDirInPath((char *) name) ;
+	char dirName[FileNameMaxLen] ;
+	int len = strlen(path) ;
 	int i, j = 0 ;
-	// Save the current directory if error.
-	OpenFile *oldDirectory = currentDirectory ;
 
-	for (i = 0 ; i <= nbDir ; i ++) 
+	DEBUG('f', "Changing current directory by \"%s\"\n", path) ;
+
+	for (i = 0 ; i < len + 1 ; i ++)
 	{
-		// Get the next path directory name.
-		char dirName[FileNameMaxLen] ;
-		int k ;
-
-		for (k = 0 ; name[j] != '\0' && name[j] != '/' ; j ++, k ++) 
+		if (path[i] == '/' || path[i] == '\0')
 		{
-			dirName[k] = name[j] ;
+			if (dirName[j - 1] != '\0')
+			{
+				dirName[j] = '\0' ;
+				j = 0 ;
+				// Go to the directory just readed in the path.
+				SetCurrentDir(dirName) ; 
+			}
 		}
-
-		dirName[k] = '\0';
-		j ++ ; // May be a '\'.
-
-		// Get the next path directory metadata.
-		Directory *dir = new Directory(NumDirEntries) ;
-		dir->FetchFrom(currentDirectory) ;
-		sector = dir->Find(dirName) ;
-
-		if (sector == -1 || ! dir->IsADir(sector)) 
+		else
 		{
-			// The directory was not found.
-			currentDirectory = oldDirectory ;
-			delete dir ;
-			return ;
+			dirName[j ++] = path[i] ;
 		}
-
-		currentDirectory = new OpenFile(sector) ;
-
-		delete dir ;
-
-		i ++ ;
 	}
-	*/
+}
+
+void FileSystem::SetCurrentDir(const char *dirName)
+{
+	// Get a current directory instance.
+	Directory *dir = new Directory(NumDirEntries) ;
+	dir->FetchFrom(currentDirectory) ;
+	// Get the sector of the directory wanted.
+	int sector = dir->Find(dirName) ;
+
+	if (sector == -1)
+	{
+		DEBUG('f', "Can't go to the directory \"%s\" : it doesn't exist\n", dirName) ;
+	}
+
+	// Set it as the new directory.
+	OpenFile* dirFile = new OpenFile(sector) ;
+	currentDirectory = dirFile ;
 }
 
 //----------------------------------------------------------------------
@@ -595,24 +595,27 @@ void FileSystem::ChangeCurrentDir(const char *name)
 
 void FileSystem::GetNameInPath(const char *name, char *res)
 {
-	int i = 0, j, nbDir ; 
-	
-	if ((nbDir = GetNbDirInPath(name)) <= 0)
-	{
-		strcpy(res, name) ;
-		return ;
-	}	
+	/*
+	   int i = 0, j, nbDir ; 
 
-	for (j = 0 ; i < nbDir ; j ++) 
-	{
-		i = name[j] == '/' ? i + 1 : i ;
-	}
+	   if ((nbDir = GetNbDirInPath(name)) <= 0)
+	   {
+	   strcpy(res, name) ;
+	   return ;
+	   }	
+
+	   for (j = 0 ; i < nbDir ; j ++) 
+	   {
+	   i = name[j] == '/' ? i + 1 : i ;
+	   }
 	// Get only the directory/file name (without path).
 	strcpy(res, name + j) ;
+	*/
 }
 
 void FileSystem::GetPathWithoutName(const char *name, char *res)
 {
+	/*
 	int i = 0, j, nbDir ; 
 
 	strcpy(res, name) ;
@@ -628,23 +631,5 @@ void FileSystem::GetPathWithoutName(const char *name, char *res)
 	}
 	// Get only the directory path (without file name).
 	res[j] = '\0' ;
-}
-
-int FileSystem::GetNbDirInPath(const char *name) 
-{
-	int i, n = 0 ;
-    int len = strlen(name) ;
-	
-	if (name[len - 1] == '/') 
-	{
-		((char *) name)[len - 1] = '\0' ;
-		len -- ;
-	}
-		
-	for (i = 0 ; i < len && name[i] != '\0' ; i ++) 
-	{
-		n = name[i] == '/' ? n + 1 : n ;
-	}
-			
-	return n  ;
+	*/
 }

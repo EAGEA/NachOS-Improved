@@ -173,9 +173,15 @@ main (int argc, char **argv)
 			argCount = 2;
 		}
 		else if (!strcmp (*argv, "-touch"))
-		{			// create Nachos directory
+		{			// create Nachos file
 			ASSERT (argc > 1);
 			fileSystem->CreateFile (*(argv + 1), 0);
+			argCount = 2;
+		}
+		else if (!strcmp (*argv, "-cd"))
+		{			// change current Nachos directory
+			ASSERT (argc > 1);
+			fileSystem->ChangeCurrentDir (*(argv + 1));
 			argCount = 2;
 		}
 #endif // FILESYS
