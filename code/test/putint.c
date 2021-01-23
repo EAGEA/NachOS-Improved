@@ -13,6 +13,11 @@ void print(int n)
 	
 int main()
 {
+	int a , b ;
 	print(20) ;
+	a = 20 ;
+	b = 22 ;
+	PutInt(a+b) ;
+	PutChar('\n') ;
 	Exit(0) ;
 }

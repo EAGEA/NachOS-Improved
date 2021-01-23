@@ -24,6 +24,5 @@ int main()
 
 	UserThreadCreate(print, &a) ;
 	UserThreadCreate(print, &b) ;
-
-	Halt() ;
+	
 }

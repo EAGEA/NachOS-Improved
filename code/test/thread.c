@@ -32,6 +32,4 @@ int main()
 	}
 
 	PutString("Waiting for ending main thread.\n") ;
-
-	Halt() ;
 }
