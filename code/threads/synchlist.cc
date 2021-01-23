@@ -96,3 +96,19 @@ SynchList::Mapcar (VoidFunctionPtr func)
     list->Mapcar (func);
     lock->Release ();
 }
+
+
+//Return the lock of the synchlist
+Lock*
+SynchList::GetLock()
+{
+    return lock ;
+}
+
+
+//Return the listEmpty of the synchlist
+Condition*
+SynchList::GetlistEmpty()
+{
+    return listEmpty ;
+}

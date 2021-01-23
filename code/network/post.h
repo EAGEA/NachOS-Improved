@@ -86,6 +86,8 @@ class MailBox {
    				// Atomically get a message out of the 
 				// mailbox (and wait if there is no message 
 				// to get!)
+				
+    SynchList* GetMessages(); //Return the synchlist messages ( within the box )
   private:
     SynchList *messages;	// A mailbox is just a list of arrived messages
 };
@@ -116,7 +118,6 @@ class PostOffice {
 		MailHeader *mailHdr, char *data);
     				// Retrieve a message from "box".  Wait if
 				// there is no message in the box.
-
     void PostalDelivery();	// Wait for incoming messages, 
 				// and then put them in the correct mailbox
 
@@ -128,6 +129,8 @@ class PostOffice {
 				// off of network (i.e., time to call 
 				// PostalDelivery)
     Network* GetNetwork();	//Return the network of the postOffice
+    
+    MailBox GetBox(int i); //Return the box of index i
 
   private:
     Network *network;		// Physical network connection

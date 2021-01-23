@@ -50,7 +50,7 @@ VM_SRC          :=
 FILESYS_SRC     :=      directory.cc filehdr.cc filesys.cc fstest.cc openfile.cc \
                         synchdisk.cc disk.cc
 
-NETWORK_SRC     :=      nettest.cc post.cc network.cc
+NETWORK_SRC     :=      nettest.cc post.cc network.cc reliable.cc
 #
 ###########################################################################
 
