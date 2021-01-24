@@ -91,9 +91,7 @@ class FileSystem
 	bool RemoveDirInCurrentDirectory(const char *name) ;
 	void ChangeCurrentDir(const char *path) ;
 	void SetCurrentDir(const char *dirName) ;
-	void GetNameInPath(const char *name, char *res) ;
-	void GetPathWithoutName(const char *name, char *res) ;
-	void SplitPathAndName(const char* path, char* resPath, char* resName);
+	void SplitPathAndName(const char* path, char* resPath, char* resName) ;
 
   private:
    OpenFile* freeMapFile;		// Bit map of free disk blocks,

@@ -140,7 +140,7 @@ FileSystem::FileSystem(bool format)
         directoryFile = new OpenFile(DirectorySector);
     }
 	// Save the current working directory.
-	currentDirectory = directoryFile ;
+	currentDirectory = directoryFile ; 
 }
 
 //----------------------------------------------------------------------
@@ -159,16 +159,8 @@ FileSystem::Open(const char *name)
     Directory *directory = new Directory(NumDirEntries);
     OpenFile *openFile = NULL;
     int sector;
-	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
     DEBUG('f', "Opening file %s\n", name);
-
-	// Get only the name of the file and the path without the name.
-	GetNameInPath(name, fileName) ;
-	GetPathWithoutName(name, path) ;
-	// Go to the directory.
-	ChangeCurrentDir(path) ;
-    directory->FetchFrom(currentDirectory) ;
 
     sector = directory->Find(name); 
     if (sector >= 0) 		
@@ -259,17 +251,23 @@ FileSystem::Print()
 //	"initialSize" -- size of file to be created
 //----------------------------------------------------------------------
 
-bool FileSystem::CreateFile(const char * path, int initialSize){
-	char tmppath[140];
-	char name[35];
-	SplitPathAndName(path,tmppath,name);
-	OpenFile tmpDir= *currentDirectory;
-	if(tmppath[0]!='\0'){
-		ChangeCurrentDir(tmppath);
+bool FileSystem::CreateFile(const char *path, int initialSize)
+{
+	char tmpPath[140] ;
+	char name[35] ;
+
+	SplitPathAndName(path, name, tmpPath) ;
+	OpenFile *tmpDir = currentDirectory ;
+
+	if (tmpPath[0] != '\0')
+	{
+		ChangeCurrentDir(tmpPath) ;
 	}
-	bool success=CreateFileInCurrentDirectory((const char*) name, initialSize);
-	*currentDirectory=tmpDir;
-	return success;
+
+	bool success = CreateFileInCurrentDirectory((const char *) name, initialSize) ;
+	currentDirectory = tmpDir ;
+
+	return success ;
 }
 
 bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
@@ -279,16 +277,10 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
     FileHeader *hdr = new FileHeader() ;
     int sector;
     bool success ;
-	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
     DEBUG('f', "Creating file \"%s\", size %d...\n", name, initialSize);
 
-	// Get only the name of the file and the path without the name.
-	GetNameInPath(name, fileName) ;
-	GetPathWithoutName(name, path) ;
-	// Go to the directory.
-	//ChangeCurrentDir(path) ;
-    directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentDirectory) ;
 
     if (directory->Find(name) != -1)
 	{
@@ -314,7 +306,6 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 		else if (! hdr->Allocate(freeMap, initialSize))
 		{
 			DEBUG('f', "Can't be created: no space on disk for this file\n") ;
-			directory->RemoveFile(name) ; // Was added just before ... 
 			success = false ;
 		}
 		else 
@@ -343,16 +334,21 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 
 bool FileSystem::CreateDir(const char *path)
 {
-	char tmppath[140];
-	char name[35];
-	SplitPathAndName(path,tmppath,name);
-	OpenFile tmpDir= *currentDirectory;
-	if(tmppath[0]!='\0'){
-		ChangeCurrentDir(tmppath);
+	char tmpPath[140] ;
+	char name[35] ;
+
+	SplitPathAndName(path, name, tmpPath) ;
+	OpenFile *tmpDir = currentDirectory ;
+
+	if (tmpPath[0] != '\0')
+	{
+		ChangeCurrentDir(tmpPath) ;
 	}
-	bool success=CreateDirInCurrentDirectory((const char*)name);
-	*currentDirectory=tmpDir;
-	return success;
+
+	bool success = CreateDirInCurrentDirectory((const char *) name) ;
+	currentDirectory = tmpDir ;
+
+	return success ;
 }
 
 bool FileSystem::CreateDirInCurrentDirectory(const char *name)
@@ -363,16 +359,10 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 	FileHeader *header = new FileHeader() ;
     int sector;
 	bool success ;
-	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
 	DEBUG('f', "Creating directory \"%s\"...\n", name) ;
 
-	// Get only the name of the file and the path without the name.
-	GetNameInPath(name, fileName) ;
-	GetPathWithoutName(name, path) ;
-	// Go to the directory.
-	//ChangeCurrentDir(path) ;
-    directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentDirectory) ;
 
     if (directory->Find(name) != -1)
 	{
@@ -384,7 +374,6 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 		// Find a sector to hold the directory header.
         freeMap->FetchFrom(freeMapFile);
         sector = freeMap->Find();	
-		freeMap->Mark(sector) ; // ... Bug (otherwise the bit is not marked, and the ASSERT in header.Deallocate is false) ...
 
     	if (sector == -1) 		
 		{
@@ -400,7 +389,6 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 		{
 			DEBUG('f', "Can't be created: no space on the disk for this directory\n") ;
 			success = false ;
-			directory->RemoveDir(name) ; // Was added just before ... 
 		}
 		else 
 		{
@@ -408,19 +396,21 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 			{
 				DEBUG('f', "Can't be created: special directories are not added\n") ;
 				success = false ;
-				directory->RemoveDir(name) ; // Was added just before ... 
 			}
-			// Everthing worked, flush all changes back to disk.
-			header->WriteBack(sector) ;
-			OpenFile *fileDir = new OpenFile(sector) ;
-			newDir->WriteBack(fileDir) ;
-			directory->WriteBack(currentDirectory);
-			freeMap->WriteBack(freeMapFile) ;
+			else
+			{
+				// Everthing worked, flush all changes back to disk.
+				OpenFile *fileDir = new OpenFile(sector) ;
+				newDir->WriteBack(fileDir) ;
+				header->WriteBack(sector) ;
+				directory->WriteBack(currentDirectory) ;
+				freeMap->WriteBack(freeMapFile) ;
 
-			DEBUG('f', "Directory \"%s\" created\n", name) ;
-			success = true ;
+				DEBUG('f', "Directory \"%s\" created\n", name) ;
+				success = true ;
 
-			delete fileDir ;
+				delete fileDir ;
+			}
 		}
 	}
 
@@ -448,36 +438,35 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 
 bool FileSystem::RemoveFile(const char *path)
 { 
-	char tmppath[140];
-	char name[35];
-	SplitPathAndName(path,tmppath,name);
-	OpenFile tmpDir= *currentDirectory;
+	char tmpPath[140] ;
+	char name[35] ;
+
+	SplitPathAndName(path, name, tmpPath) ;
+	OpenFile *tmpDir = currentDirectory ;
+
 	//If path is not empty
-	if(tmppath[0]!='\0'){
-		ChangeCurrentDir(tmppath);
+	if (tmpPath[0] != '\0')
+	{
+		ChangeCurrentDir(tmpPath) ;
 	}
-	bool success=RemoveFileInCurrentDirectory((const char*) name);
-	*currentDirectory=tmpDir;
-	return success;
+
+	bool success = RemoveFileInCurrentDirectory((const char*) name) ;
+	currentDirectory = tmpDir ;
+
+	return success ;
 }
+
 bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
 { 
     Directory *directory;
     BitMap *freeMap;
     FileHeader *fileHdr;
     int sector;
-	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
     DEBUG('f', "Removing file \"%s\"...\n", name) ;
     
     directory = new Directory(NumDirEntries);
-
-	// Get only the name of the file and the path without the name.
-	GetNameInPath(name, fileName) ;
-	GetPathWithoutName(name, path) ;
-	// Go to the directory.
-	//ChangeCurrentDir(path) ;
-    directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentDirectory) ;
 
     sector = directory->Find(name);
 
@@ -517,17 +506,21 @@ bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
 
 bool FileSystem::RemoveDir(const char *path)
 { 
-	char tmppath[140];
-	char name[35];
-	SplitPathAndName(path,tmppath,name);
-	OpenFile tmpDir= *currentDirectory;
-	//If path is not empty
-	if(tmppath[0]!='\0'){
-		ChangeCurrentDir(tmppath);
+	char tmpPath[140] ;
+	char name[35] ;
+
+	SplitPathAndName(path, name, tmpPath) ;
+	OpenFile *tmpDir = currentDirectory ;
+	//If path is not empty.
+	if (tmpPath[0] != '\0')
+	{
+		ChangeCurrentDir(tmpPath) ;
 	}
-	bool success=RemoveDirInCurrentDirectory((const char*) name);
-	*currentDirectory=tmpDir;
-	return success;
+
+	bool success = RemoveDirInCurrentDirectory((const char*) name) ;
+	currentDirectory = tmpDir ;
+
+	return success ;
 }
 
 bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
@@ -537,18 +530,12 @@ bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
     FileHeader *header;
 	OpenFile *fileDir ;
     int sector;
-	char fileName[FileNameMaxLen], path[MAX_PATH_LEN] ; 
 
     DEBUG('f', "Removing directory \"%s\"...\n", name) ;
     
     directory = new Directory(NumDirEntries);
     rmDir = new Directory(NumDirEntries);
 
-	// Get only the name of the file and the path without the name.
-	GetNameInPath(name, fileName) ;
-	GetPathWithoutName(name, path) ;
-	// Go to the directory.
-	//ChangeCurrentDir(path) ;
     directory->FetchFrom(currentDirectory) ;
 
     sector = directory->Find(name);
@@ -649,52 +636,12 @@ void FileSystem::SetCurrentDir(const char *dirName)
 //	Getters.
 //----------------------------------------------------------------------
 
-void FileSystem::GetNameInPath(const char *name, char *res)
-{
-	/*
-	   int i = 0, j, nbDir ; 
-
-	   if ((nbDir = GetNbDirInPath(name)) <= 0)
-	   {
-	   strcpy(res, name) ;
-	   return ;
-	   }	
-
-	   for (j = 0 ; i < nbDir ; j ++) 
-	   {
-	   i = name[j] == '/' ? i + 1 : i ;
-	   }
-	// Get only the directory/file name (without path).
-	strcpy(res, name + j) ;
-	*/
-}
-
-void FileSystem::GetPathWithoutName(const char *name, char *res)
-{
-	/*
-	int i = 0, j, nbDir ; 
-
-	strcpy(res, name) ;
-	
-	if ((nbDir = GetNbDirInPath(name)) <= 0)
-	{
-		return ;
-	}	
-
-	for (j = 0 ; i < nbDir ; j ++) 
-	{
-		i = name[j] == '/' ? i + 1 : i ;
-	}
-	// Get only the directory path (without file name).
-	res[j] = '\0' ;
-	*/
-}
-
-void FileSystem::SplitPathAndName(const char *path, char *resName, char * resPath )
+void FileSystem::SplitPathAndName(const char *path, char *resName, char *resPath)
 {
 	int lastSlash=-1;
 	int i;
-	if(path[0]=='/') ASSERT(false);
+
+	if(path[0]=='/') ASSERT(false); // Can't start a path with '/' (only relative pathes are allowed).
 	for(i=0;path[i]!='\0';i++){
 		if(path[i]=='/') lastSlash=i;
 		resPath[i]=path[i];
@@ -725,8 +672,8 @@ void FileSystem::SplitPathAndName(const char *path, char *resName, char * resPat
 		
 		return;
 	}
+
 	strcpy(resName,&resPath[lastSlash+1]);
-	
 	resPath[lastSlash]='\0';
 	
 	return;
