@@ -62,6 +62,7 @@ class FileSystem {
 
     bool Remove(char *name) { return Unlink(name) == 0; }
 
+	OpenFile *GetDirectoryFile() { return NULL ; }
 };
 
 #else // FILESYS
@@ -69,6 +70,7 @@ class FileSystem {
 class FileSystem 
 {
   public:
+
     FileSystem(bool format);		// Initialize the file system.
 					// Must be called *after* "synchDisk" 
 					// has been initialized.
@@ -92,15 +94,13 @@ class FileSystem
 	void ChangeCurrentDir(const char *path) ;
 	void SetCurrentDir(const char *dirName) ;
 	void SplitPathAndName(const char* path, char* resPath, char* resName) ;
+	OpenFile *GetDirectoryFile() ;
 
   private:
    OpenFile* freeMapFile;		// Bit map of free disk blocks,
 					// represented as a file
    OpenFile* directoryFile;		// "Root" directory -- list of 
 					// file names, represented as a file
-
-    OpenFile* currentDirectory ;
-
 } ;
 
 #endif // FILESYS

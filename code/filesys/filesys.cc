@@ -50,6 +50,7 @@
 #include "directory.h"
 #include "filehdr.h"
 #include "filesys.h"
+#include "thread.h"
 
 // Sectors containing the file headers for the bitmap of free sectors,
 // and the directory of files.  These file headers are placed in well-known 
@@ -64,6 +65,9 @@
 #define NumDirEntries 		10
 #define DirectoryFileSize 	(sizeof(DirectoryEntry) * NumDirEntries)
 #define MAX_PATH_LEN        128
+
+// To get the current directory used by the current thread.
+extern Thread *currentThread ;
 
 //----------------------------------------------------------------------
 // FileSystem::FileSystem
@@ -140,7 +144,7 @@ FileSystem::FileSystem(bool format)
         directoryFile = new OpenFile(DirectorySector);
     }
 	// Save the current working directory.
-	currentDirectory = directoryFile ; 
+	currentThread->setCurrentDirectory(directoryFile) ; 
 }
 
 //----------------------------------------------------------------------
@@ -178,7 +182,7 @@ void
 FileSystem::List()
 {
     Directory *directory = new Directory(NumDirEntries);
-    directory->FetchFrom(currentDirectory) ;
+    directory->FetchFrom(currentThread->getCurrentDirectory()) ;
     directory->List();
 
     delete directory;
@@ -213,7 +217,7 @@ FileSystem::Print()
     freeMap->FetchFrom(freeMapFile);
     freeMap->Print();
 
-    directory->FetchFrom(directoryFile);// -------------------------TODO
+    directory->FetchFrom(currentThread->getCurrentDirectory()) ;
     directory->Print();
 
     delete bitHdr;
@@ -257,7 +261,7 @@ bool FileSystem::CreateFile(const char *path, int initialSize)
 	char name[35] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
-	OpenFile *tmpDir = currentDirectory ;
+	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
 
 	if (tmpPath[0] != '\0')
 	{
@@ -265,7 +269,7 @@ bool FileSystem::CreateFile(const char *path, int initialSize)
 	}
 
 	bool success = CreateFileInCurrentDirectory((const char *) name, initialSize) ;
-	currentDirectory = tmpDir ;
+	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return success ;
 }
@@ -280,7 +284,7 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 
     DEBUG('f', "Creating file \"%s\", size %d...\n", name, initialSize);
 
-	directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentThread->getCurrentDirectory()) ;
 
     if (directory->Find(name) != -1)
 	{
@@ -312,7 +316,7 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 		{	
 			// Everthing worked, flush all changes back to disk.
 			hdr->WriteBack(sector); 		
-			directory->WriteBack(directoryFile);
+			directory->WriteBack(currentThread->getCurrentDirectory());
 			freeMap->WriteBack(freeMapFile);
 
 			DEBUG('f', "File \"%s\" created\n", name) ;
@@ -338,7 +342,7 @@ bool FileSystem::CreateDir(const char *path)
 	char name[35] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
-	OpenFile *tmpDir = currentDirectory ;
+	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
 
 	if (tmpPath[0] != '\0')
 	{
@@ -346,7 +350,7 @@ bool FileSystem::CreateDir(const char *path)
 	}
 
 	bool success = CreateDirInCurrentDirectory((const char *) name) ;
-	currentDirectory = tmpDir ;
+	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return success ;
 }
@@ -362,7 +366,7 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 
 	DEBUG('f', "Creating directory \"%s\"...\n", name) ;
 
-	directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentThread->getCurrentDirectory()) ;
 
     if (directory->Find(name) != -1)
 	{
@@ -403,7 +407,7 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 				OpenFile *fileDir = new OpenFile(sector) ;
 				newDir->WriteBack(fileDir) ;
 				header->WriteBack(sector) ;
-				directory->WriteBack(currentDirectory) ;
+				directory->WriteBack(currentThread->getCurrentDirectory()) ;
 				freeMap->WriteBack(freeMapFile) ;
 
 				DEBUG('f', "Directory \"%s\" created\n", name) ;
@@ -442,7 +446,7 @@ bool FileSystem::RemoveFile(const char *path)
 	char name[35] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
-	OpenFile *tmpDir = currentDirectory ;
+	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
 
 	//If path is not empty
 	if (tmpPath[0] != '\0')
@@ -451,7 +455,7 @@ bool FileSystem::RemoveFile(const char *path)
 	}
 
 	bool success = RemoveFileInCurrentDirectory((const char*) name) ;
-	currentDirectory = tmpDir ;
+	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return success ;
 }
@@ -466,7 +470,7 @@ bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
     DEBUG('f', "Removing file \"%s\"...\n", name) ;
     
     directory = new Directory(NumDirEntries);
-	directory->FetchFrom(currentDirectory) ;
+	directory->FetchFrom(currentThread->getCurrentDirectory()) ;
 
     sector = directory->Find(name);
 
@@ -488,7 +492,7 @@ bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
 	directory->Remove(name);
 
 	freeMap->WriteBack(freeMapFile);		// flush to disk
-    directory->WriteBack(currentDirectory);        // flush to disk
+    directory->WriteBack(currentThread->getCurrentDirectory());        // flush to disk
 
 	DEBUG('f', "File \"%s\" removed\n") ;
 
@@ -510,7 +514,7 @@ bool FileSystem::RemoveDir(const char *path)
 	char name[35] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
-	OpenFile *tmpDir = currentDirectory ;
+	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
 	//If path is not empty.
 	if (tmpPath[0] != '\0')
 	{
@@ -518,7 +522,7 @@ bool FileSystem::RemoveDir(const char *path)
 	}
 
 	bool success = RemoveDirInCurrentDirectory((const char*) name) ;
-	currentDirectory = tmpDir ;
+	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return success ;
 }
@@ -536,7 +540,7 @@ bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
     directory = new Directory(NumDirEntries);
     rmDir = new Directory(NumDirEntries);
 
-    directory->FetchFrom(currentDirectory) ;
+    directory->FetchFrom(currentThread->getCurrentDirectory()) ;
 
     sector = directory->Find(name);
 
@@ -570,7 +574,7 @@ bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
 	directory->Remove(name);
 
     freeMap->WriteBack(freeMapFile);		// flush to disk
-    directory->WriteBack(currentDirectory);        // flush to disk
+    directory->WriteBack(currentThread->getCurrentDirectory());        // flush to disk
 
 	DEBUG('f', "Directory \"%s\" removed\n") ;
 
@@ -617,7 +621,7 @@ void FileSystem::SetCurrentDir(const char *dirName)
 {
 	// Get a current directory instance.
 	Directory *dir = new Directory(NumDirEntries) ;
-	dir->FetchFrom(currentDirectory) ;
+	dir->FetchFrom(currentThread->getCurrentDirectory()) ;
 	// Get the sector of the directory wanted.
 	int sector = dir->Find(dirName) ;
 
@@ -628,7 +632,7 @@ void FileSystem::SetCurrentDir(const char *dirName)
 
 	// Set it as the new directory.
 	OpenFile* dirFile = new OpenFile(sector) ;
-	currentDirectory = dirFile ;
+	currentThread->setCurrentDirectory(dirFile) ;
 }
 
 //----------------------------------------------------------------------
@@ -679,3 +683,7 @@ void FileSystem::SplitPathAndName(const char *path, char *resName, char *resPath
 	return;
 }
 
+OpenFile *FileSystem::GetDirectoryFile()
+{
+	return directoryFile ;
+}

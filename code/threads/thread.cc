@@ -25,6 +25,7 @@
 					// execution stack, for detecting 
 					// stack overflows
 
+
 //----------------------------------------------------------------------
 // Thread::Thread
 //      Initialize a thread control block, so that we can then call
@@ -48,6 +49,11 @@ Thread::Thread (const char *threadName, int id, int sp_)
     // user threads.
     for (int r=NumGPRegs; r<NumTotalRegs; r++)
       userRegisters[r] = 0;
+#endif
+
+#ifdef FILESYS_NEEDED
+	// Init file system.
+	//currentDirectory = fileSystem->GetDirectoryFile() ;
 #endif
 }
 

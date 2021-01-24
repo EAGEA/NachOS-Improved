@@ -39,6 +39,7 @@
 
 #include "copyright.h"
 #include "utility.h"
+#include "../filesys/openfile.h"
 
 #ifdef USER_PROGRAM
 #include "machine.h"
@@ -126,6 +127,16 @@ class Thread
 	{
 		return sp ;
 	}
+	// File system current directory
+	OpenFile *getCurrentDirectory()
+	{
+		return currentDirectory ;
+	}
+
+	void setCurrentDirectory(OpenFile *dir)
+	{
+		currentDirectory = dir ;
+	}
 
   private:
     // some of the private data for this class is listed above
@@ -146,6 +157,9 @@ class Thread
     void StackAllocate (VoidFunctionPtr func, int arg);
     // Allocate a stack for thread.
     // Used internally by Fork()
+	
+	// Current directory used by the file system.
+	OpenFile *currentDirectory ;
 
 #ifdef USER_PROGRAM
 // A thread running a user program actually has *two* sets of CPU registers -- 
