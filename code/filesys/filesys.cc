@@ -259,7 +259,20 @@ FileSystem::Print()
 //	"initialSize" -- size of file to be created
 //----------------------------------------------------------------------
 
-bool FileSystem::CreateFile(const char *name, int initialSize)
+bool FileSystem::CreateFile(const char * path, int initialSize){
+	char tmppath[140];
+	char name[35];
+	SplitPathAndName(path,tmppath,name);
+	OpenFile tmpDir= *currentDirectory;
+	if(tmppath[0]!='\0'){
+		ChangeCurrentDir(tmppath);
+	}
+	bool success=CreateFileInCurrentDirectory((const char*) name, initialSize);
+	*currentDirectory=tmpDir;
+	return success;
+}
+
+bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 {
     Directory *directory = new Directory(NumDirEntries);
     BitMap *freeMap = new BitMap(NumSectors);
@@ -274,7 +287,7 @@ bool FileSystem::CreateFile(const char *name, int initialSize)
 	GetNameInPath(name, fileName) ;
 	GetPathWithoutName(name, path) ;
 	// Go to the directory.
-	ChangeCurrentDir(path) ;
+	//ChangeCurrentDir(path) ;
     directory->FetchFrom(currentDirectory) ;
 
     if (directory->Find(name) != -1)
@@ -328,7 +341,21 @@ bool FileSystem::CreateFile(const char *name, int initialSize)
 // 	Create a directory in the Nachos file system. 
 //----------------------------------------------------------------------
 
-bool FileSystem::CreateDir(const char *name)
+bool FileSystem::CreateDir(const char *path)
+{
+	char tmppath[140];
+	char name[35];
+	SplitPathAndName(path,tmppath,name);
+	OpenFile tmpDir= *currentDirectory;
+	if(tmppath[0]!='\0'){
+		ChangeCurrentDir(tmppath);
+	}
+	bool success=CreateDirInCurrentDirectory((const char*)name);
+	*currentDirectory=tmpDir;
+	return success;
+}
+
+bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 {
 	Directory *directory = new Directory(NumDirEntries) ;
 	Directory *newDir = new Directory(DirectoryFileSize) ;
@@ -344,7 +371,7 @@ bool FileSystem::CreateDir(const char *name)
 	GetNameInPath(name, fileName) ;
 	GetPathWithoutName(name, path) ;
 	// Go to the directory.
-	ChangeCurrentDir(path) ;
+	//ChangeCurrentDir(path) ;
     directory->FetchFrom(currentDirectory) ;
 
     if (directory->Find(name) != -1)
@@ -419,7 +446,21 @@ bool FileSystem::CreateDir(const char *name)
 //	"name" -- the text name of the file to be removed
 //----------------------------------------------------------------------
 
-bool FileSystem::RemoveFile(const char *name)
+bool FileSystem::RemoveFile(const char *path)
+{ 
+	char tmppath[140];
+	char name[35];
+	SplitPathAndName(path,tmppath,name);
+	OpenFile tmpDir= *currentDirectory;
+	//If path is not empty
+	if(tmppath[0]!='\0'){
+		ChangeCurrentDir(tmppath);
+	}
+	bool success=RemoveFileInCurrentDirectory((const char*) name);
+	*currentDirectory=tmpDir;
+	return success;
+}
+bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
 { 
     Directory *directory;
     BitMap *freeMap;
@@ -435,7 +476,7 @@ bool FileSystem::RemoveFile(const char *name)
 	GetNameInPath(name, fileName) ;
 	GetPathWithoutName(name, path) ;
 	// Go to the directory.
-	ChangeCurrentDir(path) ;
+	//ChangeCurrentDir(path) ;
     directory->FetchFrom(currentDirectory) ;
 
     sector = directory->Find(name);
@@ -474,7 +515,22 @@ bool FileSystem::RemoveFile(const char *name)
 // 	Delete a directory from the file system. 
 //----------------------------------------------------------------------
 
-bool FileSystem::RemoveDir(const char *name)
+bool FileSystem::RemoveDir(const char *path)
+{ 
+	char tmppath[140];
+	char name[35];
+	SplitPathAndName(path,tmppath,name);
+	OpenFile tmpDir= *currentDirectory;
+	//If path is not empty
+	if(tmppath[0]!='\0'){
+		ChangeCurrentDir(tmppath);
+	}
+	bool success=RemoveDirInCurrentDirectory((const char*) name);
+	*currentDirectory=tmpDir;
+	return success;
+}
+
+bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
 { 
     Directory *directory, *rmDir ;
     BitMap *freeMap;
@@ -492,7 +548,7 @@ bool FileSystem::RemoveDir(const char *name)
 	GetNameInPath(name, fileName) ;
 	GetPathWithoutName(name, path) ;
 	// Go to the directory.
-	ChangeCurrentDir(path) ;
+	//ChangeCurrentDir(path) ;
     directory->FetchFrom(currentDirectory) ;
 
     sector = directory->Find(name);
@@ -633,3 +689,46 @@ void FileSystem::GetPathWithoutName(const char *name, char *res)
 	res[j] = '\0' ;
 	*/
 }
+
+void FileSystem::SplitPathAndName(const char *path, char *resName, char * resPath )
+{
+	int lastSlash=-1;
+	int i;
+	if(path[0]=='/') ASSERT(false);
+	for(i=0;path[i]!='\0';i++){
+		if(path[i]=='/') lastSlash=i;
+		resPath[i]=path[i];
+	}
+	resPath[i]='\0';
+	//If only the name of a file/directory was given
+	if(lastSlash==-1){
+		strcpy(resName,path);//name is the whole path
+		resPath[0]='\0';//path is empty
+		return;
+	}
+	//If the name of a directory is given with a / ending the path
+	if(lastSlash==i-1){
+		resPath[lastSlash]='\0';
+		while(i>-1 && resPath[i]!='/'){
+			i--;
+		}
+		// Name of a directory with the form: "dir/"
+		if(i==-1){
+			strcpy(resName,resPath); //We write "dir" in resName
+			resPath[0]='\0'; //resPath is kept empty
+			
+			return;
+		}
+		//else, the path has the form "dir1/dir2/.../dirn/"
+		resPath[i]='\0';
+		strcpy(resName,&resPath[i+1]);
+		
+		return;
+	}
+	strcpy(resName,&resPath[lastSlash+1]);
+	
+	resPath[lastSlash]='\0';
+	
+	return;
+}
+

@@ -81,16 +81,19 @@ class FileSystem
     void List();			// List all the files in the file system
 
     void Print();			// List all the files and their contents
-
-	bool CreateFile(const char *name, int initialSize) ;   	
+	bool CreateFile(const char* name, int initialSize);
+	bool CreateFileInCurrentDirectory(const char *name, int initialSize) ;   	
 	bool CreateDir(const char *name) ;
+	bool CreateDirInCurrentDirectory(const char *name) ;
     bool RemoveFile(const char *name) ;
+    bool RemoveFileInCurrentDirectory(const char *name) ;
 	bool RemoveDir(const char *name) ;
+	bool RemoveDirInCurrentDirectory(const char *name) ;
 	void ChangeCurrentDir(const char *path) ;
 	void SetCurrentDir(const char *dirName) ;
 	void GetNameInPath(const char *name, char *res) ;
 	void GetPathWithoutName(const char *name, char *res) ;
-
+	void SplitPathAndName(const char* path, char* resPath, char* resName);
 
   private:
    OpenFile* freeMapFile;		// Bit map of free disk blocks,
