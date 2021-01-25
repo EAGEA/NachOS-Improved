@@ -37,70 +37,75 @@
 
 #include "copyright.h"
 #include "openfile.h"
+#include "openfiletable.h"
 
 #ifdef FILESYS_STUB 		// Temporarily implement file system calls as 
-				// calls to UNIX, until the real file system
-				// implementation is available
+// calls to UNIX, until the real file system
+// implementation is available
 class FileSystem {
-  public:
-    FileSystem(bool format) {}
+	public:
+		FileSystem(bool format) {}
 
-    bool Create(const char *name, int initialSize) { 
-	int fileDescriptor = OpenForWrite(name);
+		bool Create(const char *name, int initialSize) { 
+			int fileDescriptor = OpenForWrite(name);
 
-	if (fileDescriptor == -1) return FALSE;
-	Close(fileDescriptor); 
-	return TRUE; 
-	}
+			if (fileDescriptor == -1) return FALSE;
+			Close(fileDescriptor); 
+			return TRUE; 
+		}
 
-    OpenFile* Open(char *name) {
-	  int fileDescriptor = OpenForReadWrite(name, FALSE);
+		OpenFile* Open(char *name) {
+			int fileDescriptor = OpenForReadWrite(name, FALSE);
 
-	  if (fileDescriptor == -1) return NULL;
-	  return new OpenFile(fileDescriptor);
-      }
+			if (fileDescriptor == -1) return NULL;
+			return new OpenFile(fileDescriptor);
+		}
 
-    bool Remove(char *name) { return Unlink(name) == 0; }
+		bool Remove(char *name) { return Unlink(name) == 0; }
 
-	OpenFile *GetDirectoryFile() { return NULL ; }
+		OpenFile *GetDirectoryFile() { return NULL ; }
 };
 
 #else // FILESYS
 
 class FileSystem 
 {
-  public:
+	public :
+		// Initialize the file system.
+		// Must be called *after* "synchDisk" 
+		// has been initialized.
+		// If "format", there is nothing on
+		// the disk, so initialize the directory
+		// and the bitmap of free blocks.
+		FileSystem(bool format);
+		// Open a file (UNIX open).
+		OpenFile* Open(const char *name);
+		// List all the files in the file system.
+		void List();			
+		// List all the files and their contents.
+		void Print();		
+		// Main operations in the file system.
+		bool CreateFile(const char* name, int initialSize);
+		bool CreateFileInCurrentDirectory(const char *name, int initialSize) ;   	
+		bool CreateDir(const char *name) ;
+		bool CreateDirInCurrentDirectory(const char *name) ;
+		bool RemoveFile(const char *name) ;
+		bool RemoveFileInCurrentDirectory(const char *name) ;
+		bool RemoveDir(const char *name) ;
+		bool RemoveDirInCurrentDirectory(const char *name) ;
+		void ChangeCurrentDir(const char *path) ;
+		// Getters, utilities..
+		void SetCurrentDir(const char *dirName) ;
+		void SplitPathAndName(const char* path, char* resPath, char* resName) ;
+		OpenFile *GetDirectoryFile() ;
 
-    FileSystem(bool format);		// Initialize the file system.
-					// Must be called *after* "synchDisk" 
-					// has been initialized.
-    					// If "format", there is nothing on
-					// the disk, so initialize the directory
-    					// and the bitmap of free blocks.
-
-    OpenFile* Open(const char *name); 	// Open a file (UNIX open)
-
-    void List();			// List all the files in the file system
-
-    void Print();			// List all the files and their contents
-	bool CreateFile(const char* name, int initialSize);
-	bool CreateFileInCurrentDirectory(const char *name, int initialSize) ;   	
-	bool CreateDir(const char *name) ;
-	bool CreateDirInCurrentDirectory(const char *name) ;
-    bool RemoveFile(const char *name) ;
-    bool RemoveFileInCurrentDirectory(const char *name) ;
-	bool RemoveDir(const char *name) ;
-	bool RemoveDirInCurrentDirectory(const char *name) ;
-	void ChangeCurrentDir(const char *path) ;
-	void SetCurrentDir(const char *dirName) ;
-	void SplitPathAndName(const char* path, char* resPath, char* resName) ;
-	OpenFile *GetDirectoryFile() ;
-
-  private:
-   OpenFile* freeMapFile;		// Bit map of free disk blocks,
-					// represented as a file
-   OpenFile* directoryFile;		// "Root" directory -- list of 
-					// file names, represented as a file
+	private :
+		// Bit map of free disk blocks, represented as a file.
+		OpenFile* freeMapFile;		
+		// "Root" directory -- list of file names, represented as a file.
+		OpenFile* directoryFile;	
+		// Contains all the opened files.
+		OpenFileTable *fileTable ;
 } ;
 
 #endif // FILESYS

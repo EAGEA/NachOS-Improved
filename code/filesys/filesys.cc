@@ -51,6 +51,7 @@
 #include "filehdr.h"
 #include "filesys.h"
 #include "thread.h"
+#include "openfiletable.h"
 
 // Sectors containing the file headers for the bitmap of free sectors,
 // and the directory of files.  These file headers are placed in well-known 
@@ -64,7 +65,7 @@
 #define FreeMapFileSize 	(NumSectors / BitsInByte)
 #define NumDirEntries 		10
 #define DirectoryFileSize 	(sizeof(DirectoryEntry) * NumDirEntries)
-#define MAX_PATH_LEN        128
+#define PathLenMax          128
 
 // To get the current directory used by the current thread.
 extern Thread *currentThread ;
@@ -143,7 +144,12 @@ FileSystem::FileSystem(bool format)
         freeMapFile = new OpenFile(FreeMapSector);
         directoryFile = new OpenFile(DirectorySector);
     }
-	// Save the current working directory.
+
+	// Init the open file table.
+	fileTable = new OpenFileTable() ;
+	// Save the current working directory for the main thread (otherwise
+	// the main directory is set dynamicaly depending on the current
+	// thread, and is init in the Thread constructor).
 	currentThread->setCurrentDirectory(directoryFile) ; 
 }
 

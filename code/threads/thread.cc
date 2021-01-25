@@ -53,7 +53,7 @@ Thread::Thread (const char *threadName, int id, int sp_)
 
 #ifdef FILESYS_NEEDED
 	// Init file system.
-	//currentDirectory = fileSystem->GetDirectoryFile() ;
+//	currentDirectory = fileSystem->GetDirectoryFile() ;
 #endif
 }
 

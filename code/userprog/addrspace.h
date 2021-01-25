@@ -18,7 +18,7 @@
 #include "translate.h"
 
 
-#define UserStackSize				1024 * 3
+#define UserStackSize				1024 * 2
 #define UserThreadStackSize  		PageSize * 3 	    
 #define UserThreadMax 	 		    UserStackSize / UserThreadStackSize  
 
@@ -70,8 +70,6 @@ class AddrSpace
 		bool IsCreated() ;
 
 	private:
-
-
 
 		/* Threads. */
 		// To protect struct access.

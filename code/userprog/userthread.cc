@@ -40,6 +40,7 @@ int do_UserThreadCreate(int fun, int arg, int returnFun)
 	if (totalThreads > UserThreadMax)
 	{
 		// Error: the maximum of user threads created was reached.
+		currentSpace->ThreadIDLockRelease() ;
 		return -1 ;
 	}
 	// Add this thread to the living ones. 

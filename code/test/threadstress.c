@@ -2,12 +2,12 @@
 
 void print()
 {
-	for (int i = 0 ; i < 50000 ; i ++)
+	for (int i = 0 ; i < 10000 ; i ++)
 	{
 		// To delay.
 	}
 
-	PutString("Thread\n") ;
+	PutString("End thread\n") ;
 }
 
 int main()
@@ -18,6 +18,7 @@ int main()
 
 	for (i = 0 ; i < 16 ; i ++)
 	{
+		PutString("Create thread.\n") ;
 		UserThreadCreate(print, 0) ;
 	}
 }
