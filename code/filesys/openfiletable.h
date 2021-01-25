@@ -10,6 +10,8 @@
 // The maximum of files which can be opened at the same time.
 #define NbFileTableEntries			10 
 
+/* A unique identifier for an open Nachos file. */
+typedef int OpenFileId;
 
 // The following classes define a table of "open file entries" which are representing 
 // an open file. This table should be managed by the system.
@@ -43,11 +45,11 @@ class OpenFileTable
 		// Display the table content.
 		void Print() ;
 		// Open a file and return its index in the table (or -1).
-		int Open(const char *name, char mode) ;
+		OpenFileId Open(const char *name, char mode) ;
 		// Close a file and return 0 (or -1). 
-		int Close(int i) ;
+		int Close(OpenFileId i) ;
 		// Get the file at the index i.
-		OpenFileEntry *Get(int i) ;
+		OpenFileEntry *Get(OpenFileId i) ;
 
 	private :
 

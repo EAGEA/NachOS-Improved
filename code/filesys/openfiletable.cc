@@ -40,7 +40,7 @@ void OpenFileTable::Print()
 	printf("---------------------------------\n") ;
 }
 
-int OpenFileTable::Open(const char *name, char mode)
+OpenFileId OpenFileTable::Open(const char *name, char mode)
 {
 	int i, res, sector ;
 
@@ -76,7 +76,7 @@ int OpenFileTable::Open(const char *name, char mode)
 	return res ;
 }
 
-int OpenFileTable::Close(int i)
+int OpenFileTable::Close(OpenFileId i)
 {
 	lock->Acquire() ;
 
@@ -92,7 +92,7 @@ int OpenFileTable::Close(int i)
 	return res ;
 }
 
-OpenFileEntry *OpenFileTable::Get(int i)
+OpenFileEntry *OpenFileTable::Get(OpenFileId i)
 {
 	if (i >= NbFileTableEntries || i < 0)
 	{

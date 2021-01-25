@@ -86,6 +86,58 @@ ExceptionHandler (ExceptionType which)
 					do_UserProcessHalt() ;
 					break;
 				}
+#ifdef FILESYS
+			case SC_Open: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					char mode = machine->ReadRegister(5) ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					OpenFileId res = fileSystem->Open(string, mode) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
+			case SC_Write: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					int n = machine->ReadRegister(5) ;
+					OpenFileId i = machine->ReadRegister(6) ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					fileSystem->Read(i, string, n) ;
+					break;
+				}
+			case SC_Read: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					int n = machine->ReadRegister(5) ;
+					OpenFileId i = machine->ReadRegister(6) ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					int res = fileSystem->Read(i, string, n) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
+			case SC_Close: 
+				{
+					// Params.
+					OpenFileId i = machine->ReadRegister(4) ;
+					// Execution.
+					fileSystem->Close(i) ;
+					break;
+				}
+#endif
 			case SC_PutChar: 
 				{
 					// Params.

@@ -112,12 +112,12 @@ class FileSystem
 		void ChangeCurrentDir(const char *path) ;
 
 		// File operations with the table.
-		int Open(const char *path, char mode) ;
-		int OpenInCurrentDirectory(const char *name, char mode) ;
-		int Close(int i) ;
-		int Read(int i, char *buf, int nbOctets) ;
-		int Write(int i, char *buf, int nbOctets) ;
-		OpenFile *GetOpenFile(int i) ; // Should not be used...
+		OpenFileId Open(const char *path, char mode) ;
+		OpenFileId OpenInCurrentDirectory(const char *name, char mode) ;
+		int Close(OpenFileId i) ;
+		int Read(OpenFileId i, char *buf, int nbOctets) ;
+		int Write(OpenFileId i, char *buf, int nbOctets) ;
+		OpenFile *GetOpenFile(OpenFileId i) ; // Should not be used...
 
 	private :
 		// Bit map of free disk blocks, represented as a file.

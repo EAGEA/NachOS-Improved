@@ -17,6 +17,11 @@
 #include "timer.h"
 #include "../userprog/allocate.h"
 
+
+/* A unique identifier for an open Nachos file. */
+typedef int OpenFileId;
+
+
 // Initialization and cleanup routines
 extern void Initialize (int argc, char **argv);	// Initialization,
 						// called before anything else

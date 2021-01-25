@@ -108,7 +108,7 @@ void Create (char *name);
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
  * be used to read and write to the file.
  */
-OpenFileId Open (char *name);
+OpenFileId Open (char *name, char mode);
 
 /* Write "size" bytes from "buffer" to the open file. */
 void Write (char *buffer, int size, OpenFileId id);
@@ -123,7 +123,6 @@ int Read (char *buffer, int size, OpenFileId id);
 
 /* Close the file, we're done reading and writing to it. */
 void Close (OpenFileId id);
-
 
 
 /* User-level thread operations: Fork and Yield.  To allow multiple

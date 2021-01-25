@@ -559,7 +559,7 @@ bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
 // 	file table.  
 //----------------------------------------------------------------------
 
-int
+OpenFileId
 FileSystem::Open(const char *path, char mode)
 { 
 	char tmpPath[PathLenMax] ;
@@ -573,13 +573,13 @@ FileSystem::Open(const char *path, char mode)
 		ChangeCurrentDir(tmpPath) ;
 	}
 
-	int i = OpenInCurrentDirectory((const char *) name, mode) ;
+	OpenFileId i = OpenInCurrentDirectory((const char *) name, mode) ;
 	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return i ;
 }
 
-int
+OpenFileId
 FileSystem::OpenInCurrentDirectory(const char *name, char mode)
 { 
 	return fileTable->Open(name, mode) ;	
@@ -591,7 +591,7 @@ FileSystem::OpenInCurrentDirectory(const char *name, char mode)
 //----------------------------------------------------------------------
 
 int
-FileSystem::Close(int i)
+FileSystem::Close(OpenFileId i)
 { 
 	return fileTable->Close(i) ;	
 }
@@ -602,7 +602,7 @@ FileSystem::Close(int i)
 //----------------------------------------------------------------------
 
 int
-FileSystem::Read(int i, char *buf, int nbOctets) 
+FileSystem::Read(OpenFileId i, char *buf, int nbOctets) 
 {
 	OpenFileEntry *entry = fileTable->Get(i) ;
 
@@ -623,7 +623,7 @@ FileSystem::Read(int i, char *buf, int nbOctets)
 //----------------------------------------------------------------------
 
 int
-FileSystem::Write(int i, char *buf, int nbOctets) 
+FileSystem::Write(OpenFileId i, char *buf, int nbOctets) 
 {
 	OpenFileEntry *entry = fileTable->Get(i) ;
 
@@ -645,7 +645,7 @@ FileSystem::Write(int i, char *buf, int nbOctets)
 //----------------------------------------------------------------------
 
 OpenFile *
-FileSystem::GetOpenFile(int i)
+FileSystem::GetOpenFile(OpenFileId i)
 {
 	return fileTable->Get(i)->GetOpenFile() ;
 }
