@@ -8,7 +8,7 @@
 
 #define TEMPO 2
 
-#define MAXREEMISSIONS 10
+#define MAXREEMISSIONS 5
 
 
 class AcknoData{

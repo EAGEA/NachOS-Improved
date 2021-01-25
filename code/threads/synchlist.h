@@ -36,12 +36,15 @@ class SynchList
     
     Lock* GetLock();		//Return the lock of the synchlist
     
+    List* GetList() ;
+    
     Condition* GetlistEmpty(); //Return the listEmpty of the synchlist
 
   private:
       List * list;		// the unsynchronized list
     Lock *lock;			// enforce mutual exclusive access to the list
     Condition *listEmpty;	// wait in Remove if the list is empty
+    
 };
 
 #endif // SYNCHLIST_H

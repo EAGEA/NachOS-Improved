@@ -106,6 +106,13 @@ SynchList::GetLock()
 }
 
 
+//Return the list of the synchlist
+List*
+SynchList::GetList()
+{
+    return list ;
+}
+
 //Return the listEmpty of the synchlist
 Condition*
 SynchList::GetlistEmpty()
