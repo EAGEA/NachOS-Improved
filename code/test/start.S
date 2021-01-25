@@ -225,6 +225,40 @@ ForkExec:
 	syscall
 	j   $31
 	.end ForkExec
+	
+
+	.globl SemCreate
+	.ent   SemCreate
+SemCreate:
+	addiu $2,$0,SC_SemCreate
+	syscall
+	j   $31
+	.end SemCreate
+	
+	.globl SemPost
+	.ent   SemPost
+SemPost:
+	addiu $2,$0,SC_SemPost
+	syscall
+	j   $31
+	.end SemPost
+	
+	.globl SemWait
+	.ent   SemWait
+SemWait:
+	addiu $2,$0,SC_SemWait
+	syscall
+	j   $31
+	.end SemWait
+
+	.globl SemDelete
+	.ent   SemDelete
+SemDelete:
+	addiu $2,$0,SC_SemDelete
+	syscall
+	j   $31
+	.end SemDelete
+
 
 /* dummy function to keep gcc happy */
         .globl  __main

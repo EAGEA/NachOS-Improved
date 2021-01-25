@@ -41,6 +41,10 @@
 #define SC_ThreadJoin       20
 #define SC_ThreadId         21
 #define SC_ForkExec         22
+#define SC_SemCreate 23
+#define SC_SemPost 24
+#define SC_SemWait 25
+#define SC_SemDelete 26
 
 #ifdef IN_USER_MODE
 
@@ -189,6 +193,15 @@ int UserThreadId() ;
 /* Launch the executable "s" concurrently. 
  */
 int ForkExec(char *s) ;
+
+
+int SemCreate(int val);
+
+void SemPost(int sid);
+
+void SemWait(int sid);
+
+void SemDelete(int sid);
 
 #endif // IN_USER_MODE
 

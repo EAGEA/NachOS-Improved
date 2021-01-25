@@ -251,6 +251,41 @@ ExceptionHandler (ExceptionType which)
 					machine->WriteRegister(2, res) ;
 					break ;
 				}
+			case SC_SemCreate:
+				{
+					int val = machine->ReadRegister(4) ;
+					int i;
+					for(i=0;i<64;i++){
+						if(UserSemaphores[i]==NULL){
+							machine->WriteRegister(2,i);
+							UserSemaphores[i]=new Semaphore("User semaphore", val);
+							break;
+						}
+					}
+					if(i==64){
+						ASSERT(false);
+					}
+					
+					break ;
+				}
+			case SC_SemPost:
+				{
+					int sid = machine->ReadRegister(4);
+					UserSemaphores[sid]->V();
+					break ;
+				}
+			case SC_SemWait:
+				{
+					int sid = machine->ReadRegister(4);
+					UserSemaphores[sid]->P();
+					break;
+				}
+			case SC_SemDelete:
+				{
+					int sid = machine->ReadRegister(4);
+					delete UserSemaphores[sid];					
+					break;
+				}
 			default:	
 				{
 					printf("Unexpected user mode exception %d | %d\n", which, type);

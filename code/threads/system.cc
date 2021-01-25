@@ -31,6 +31,7 @@ SynchDisk *synchDisk;
 Machine *machine;		// user program memory and registers
 SynchConsole *synchConsole ;
 FrameProvider* fprovider;
+Semaphore* UserSemaphores[64];
 #endif
 
 #ifdef NETWORK
