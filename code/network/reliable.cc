@@ -3,6 +3,7 @@
 #include "thread.h"
 #include "reliable.h"
 #include "synchlist.h"
+#include "list.h"
 
 #include <strings.h> /* for bzero */
 
@@ -18,6 +19,7 @@ AcknoData::AcknoData(PostOffice *post,int b,PacketHeader *pktH, MailHeader *mail
 void
 DelayAck(int arg)
 {
+	int i ;
 	PacketHeader outPktHdr;
 	MailHeader outMailHdr;
 	const char *buff = "Resend";
@@ -31,46 +33,56 @@ DelayAck(int arg)
 
 	Delay(TEMPO) ;
 
-	ackdata->postOffice->Send(outPktHdr,outMailHdr,buff) ;
-	printf("Box : %d\n",ackdata->box);
+	for(i = 0 ; i < MAXREEMISSIONS ; i ++)
+	{
+
+		ackdata->postOffice->Send(outPktHdr,outMailHdr,buff) ;
+
+	}	
+
+	printf("End of ackno thread\n") ;
 }
 
 void 
 ReliableSend(PostOffice *postOffice, PacketHeader ouPktHdr, MailHeader ouMailHdr, const char* data, 
 	int box, PacketHeader *inPktHdr, MailHeader *inMailHdr, char* buffer)
 {
-	int sended , reem ;
+	int sent , reem ;
 	reem = 0 ;
-	sended = 0 ;
+	sent = 0 ;
 
-	while(reem < MAXREEMISSIONS && sended == 0)
+	PacketHeader tempoPktHdr ;
+	MailHeader tempoMailHdr ;
+
+	while(reem < MAXREEMISSIONS && sent == 0)
 	{
 
 		//Message to be sent
 		postOffice->Send(ouPktHdr,ouMailHdr,data) ;
 		printf("Message sended\n");
 
-
 		AcknoData *ackdata = new AcknoData(postOffice,box,inPktHdr,inMailHdr);
-		
-		Thread *delay = new Thread("ack receiver", 1, 0);
+			
+		Thread *delay = new Thread("ack receiver", reem + 1, 0);
 
 	    delay->Fork(DelayAck, (int) ackdata);
 
 		// Waiting for the aknowledgment coming from the receiver
-		postOffice->Receive(box, inPktHdr, inMailHdr, buffer);
-		
+		postOffice->Receive(0, &tempoPktHdr, &tempoMailHdr, buffer);
+
+		printf("Recu : %s\n",buffer);
+
 		if(strcmp(buffer,"Resend") == 0)
 		{
 			printf("Not sended ! Retry ... \n") ;
-			reem ++ ;
 		}
 
 		else
 		{
-			sended = 1 ;
+			sent = 1 ;
 			printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr->from,inMailHdr->from);
 			fflush(stdout);
 		}
+		reem ++ ;
 	}
 }
