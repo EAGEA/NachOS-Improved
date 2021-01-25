@@ -37,7 +37,22 @@
 
 #include "copyright.h"
 #include "openfile.h"
-#include "openfiletable.h"
+
+
+// Sectors containing the file headers for the bitmap of free sectors,
+// and the directory of files.  These file headers are placed in well-known 
+// sectors, so that they can be located on boot-up.
+#define FreeMapSector 		0
+#define DirectorySector 	1
+
+// Initial file sizes for the bitmap and directory; until the file system
+// supports extensible files, the directory size sets the maximum number 
+// of files that can be loaded onto the disk.
+#define FreeMapFileSize 	(NumSectors / BitsInByte)
+#define NumDirEntries 		10
+#define DirectoryFileSize 	(sizeof(DirectoryEntry) * NumDirEntries)
+#define PathLenMax          128
+
 
 #ifdef FILESYS_STUB 		// Temporarily implement file system calls as 
 // calls to UNIX, until the real file system
@@ -68,6 +83,8 @@ class FileSystem {
 
 #else // FILESYS
 
+#include "openfiletable.h"
+
 class FileSystem 
 {
 	public :
@@ -78,13 +95,12 @@ class FileSystem
 		// the disk, so initialize the directory
 		// and the bitmap of free blocks.
 		FileSystem(bool format);
-		// Open a file (UNIX open).
-		OpenFile* Open(const char *name);
+
 		// List all the files in the file system.
 		void List();			
-		// List all the files and their contents.
 		void Print();		
-		// Main operations in the file system.
+
+		// Main operations in the file system (create/remove).
 		bool CreateFile(const char* name, int initialSize);
 		bool CreateFileInCurrentDirectory(const char *name, int initialSize) ;   	
 		bool CreateDir(const char *name) ;
@@ -94,10 +110,14 @@ class FileSystem
 		bool RemoveDir(const char *name) ;
 		bool RemoveDirInCurrentDirectory(const char *name) ;
 		void ChangeCurrentDir(const char *path) ;
-		// Getters, utilities..
-		void SetCurrentDir(const char *dirName) ;
-		void SplitPathAndName(const char* path, char* resPath, char* resName) ;
-		OpenFile *GetDirectoryFile() ;
+
+		// File operations with the table.
+		int Open(const char *path, char mode) ;
+		int OpenInCurrentDirectory(const char *name, char mode) ;
+		int Close(int i) ;
+		int Read(int i, char *buf, int nbOctets) ;
+		int Write(int i, char *buf, int nbOctets) ;
+		OpenFile *GetOpenFile(int i) ; // Should not be used...
 
 	private :
 		// Bit map of free disk blocks, represented as a file.
@@ -106,6 +126,11 @@ class FileSystem
 		OpenFile* directoryFile;	
 		// Contains all the opened files.
 		OpenFileTable *fileTable ;
+
+		// Getters, utilities..
+		void SetCurrentDir(const char *dirName) ;
+		void SplitPathAndName(const char* path, char* resPath, char* resName) ;
+		OpenFile *GetDirectoryFile() ;
 } ;
 
 #endif // FILESYS

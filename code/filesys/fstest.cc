@@ -31,7 +31,7 @@
 void Copy(const char *from, const char *to)
 {
 	FILE *fp;
-	OpenFile* openFile;
+	int openFile;
 	int amountRead, fileLength;
 	char *buffer;
 
@@ -58,17 +58,17 @@ void Copy(const char *from, const char *to)
 		return;
 	}
 	// Copy the data in TransferSize chunks.
-	openFile = fileSystem->Open(to);
-	ASSERT(openFile != NULL);
+	openFile = fileSystem->Open(to, 'w') ;
+	ASSERT(openFile != -1) ;
 	buffer = new char[TransferSize];
 
 	while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0)
 	{
-		openFile->Write(buffer, amountRead);	
+		fileSystem->Write(openFile, buffer, amountRead);	
 	}
 
 	delete [] buffer;
-	delete openFile;
+	fileSystem->Close(openFile) ;
 
 	DEBUG('f', "Copy of \"%s\" to \"%s\" done\n", from, to) ; 
     fclose(fp);
@@ -81,11 +81,11 @@ void Copy(const char *from, const char *to)
 
 void Print(char *name)
 {
-    OpenFile *openFile;    
+    int openFile;    
     int i, amountRead;
     char *buffer;
 
-    if ((openFile = fileSystem->Open(name)) == NULL) 
+    if ((openFile = fileSystem->Open(name, 'r')) == -1) 
 	{
 		DEBUG('f', "Can't open \"%s\" to print\n", name) ;
 		return ;
@@ -93,7 +93,7 @@ void Print(char *name)
     
     buffer = new char[TransferSize];
 
-    while ((amountRead = openFile->Read(buffer, TransferSize)) > 0)
+    while ((amountRead = fileSystem->Read(openFile, buffer, TransferSize)) > 0)
 	{
 		for (i = 0; i < amountRead; i++)
 		{
@@ -102,7 +102,7 @@ void Print(char *name)
 	}
 
     delete [] buffer;
-    delete openFile;		
+	fileSystem->Close(openFile) ;
 
     return;
 }
@@ -127,7 +127,7 @@ void Print(char *name)
 static void 
 FileWrite()
 {
-    OpenFile *openFile;    
+    int openFile;    
     int i, numBytes;
 
     printf("Sequential write of %d byte file, in %zd byte chunks\n", 
@@ -136,48 +136,50 @@ FileWrite()
       printf("Perf test: can't create %s\n", FileName);
       return;
     }
-    openFile = fileSystem->Open(FileName);
-    if (openFile == NULL) {
+    openFile = fileSystem->Open(FileName, 'w');
+    if (openFile == -1) {
 	printf("Perf test: unable to open %s\n", FileName);
 	return;
     }
     for (i = 0; i < FileSize; i += ContentSize) {
-        numBytes = openFile->Write(Contents, ContentSize);
+        numBytes = fileSystem->Write(openFile, (char *)Contents, ContentSize);
 	if (numBytes < 10) {
-	    printf("Perf test: unable to write %s\n", FileName);
-	    delete openFile;
+		printf("Perf test: unable to write %s\n", FileName);
+		fileSystem->Close(openFile) ;
 	    return;
 	}
     }
-    delete openFile;	// close file
+
+	fileSystem->Close(openFile) ;
 }
 
 static void 
 FileRead()
 {
-    OpenFile *openFile;    
+    int openFile;    
     char *buffer = new char[ContentSize];
     int i, numBytes;
 
     printf("Sequential read of %d byte file, in %zd byte chunks\n", 
 	FileSize, ContentSize);
 
-    if ((openFile = fileSystem->Open(FileName)) == NULL) {
+    if ((openFile = fileSystem->Open(FileName, 'r')) == -1) {
 	printf("Perf test: unable to open file %s\n", FileName);
 	delete [] buffer;
 	return;
     }
     for (i = 0; i < FileSize; i += ContentSize) {
-        numBytes = openFile->Read(buffer, ContentSize);
+        numBytes = fileSystem->Read(openFile, buffer, ContentSize);
 	if ((numBytes < 10) || strncmp(buffer, Contents, ContentSize)) {
 	    printf("Perf test: unable to read %s\n", FileName);
-	    delete openFile;
+		fileSystem->Close(openFile) ;
 	    delete [] buffer;
 	    return;
 	}
     }
     delete [] buffer;
-    delete openFile;	// close file
+
+	fileSystem->Close(openFile) ;
 }
 
 void

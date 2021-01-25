@@ -53,22 +53,10 @@
 #include "thread.h"
 #include "openfiletable.h"
 
-// Sectors containing the file headers for the bitmap of free sectors,
-// and the directory of files.  These file headers are placed in well-known 
-// sectors, so that they can be located on boot-up.
-#define FreeMapSector 		0
-#define DirectorySector 	1
-
-// Initial file sizes for the bitmap and directory; until the file system
-// supports extensible files, the directory size sets the maximum number 
-// of files that can be loaded onto the disk.
-#define FreeMapFileSize 	(NumSectors / BitsInByte)
-#define NumDirEntries 		10
-#define DirectoryFileSize 	(sizeof(DirectoryEntry) * NumDirEntries)
-#define PathLenMax          128
 
 // To get the current directory used by the current thread.
 extern Thread *currentThread ;
+
 
 //----------------------------------------------------------------------
 // FileSystem::FileSystem
@@ -151,32 +139,6 @@ FileSystem::FileSystem(bool format)
 	// the main directory is set dynamicaly depending on the current
 	// thread, and is init in the Thread constructor).
 	currentThread->setCurrentDirectory(directoryFile) ; 
-}
-
-//----------------------------------------------------------------------
-// FileSystem::Open
-// 	Open a file for reading and writing.  
-//	To open a file:
-//	  Find the location of the file's header, using the directory 
-//	  Bring the header into memory
-//
-//	"name" -- the text name of the file to be opened
-//----------------------------------------------------------------------
-
-OpenFile *
-FileSystem::Open(const char *name)
-{ 
-    Directory *directory = new Directory(NumDirEntries);
-    OpenFile *openFile = NULL;
-    int sector;
-
-    DEBUG('f', "Opening file %s\n", name);
-
-    sector = directory->Find(name); 
-    if (sector >= 0) 		
-	openFile = new OpenFile(sector);	// name was found in directory 
-    delete directory;
-    return openFile;				// return NULL if not found
 }
 
 //----------------------------------------------------------------------
@@ -263,8 +225,8 @@ FileSystem::Print()
 
 bool FileSystem::CreateFile(const char *path, int initialSize)
 {
-	char tmpPath[140] ;
-	char name[35] ;
+	char tmpPath[PathLenMax] ;
+	char name[FileNameMaxLen] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
 	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
@@ -344,8 +306,8 @@ bool FileSystem::CreateFileInCurrentDirectory(const char *name, int initialSize)
 
 bool FileSystem::CreateDir(const char *path)
 {
-	char tmpPath[140] ;
-	char name[35] ;
+	char tmpPath[PathLenMax] ;
+	char name[FileNameMaxLen] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
 	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
@@ -448,8 +410,8 @@ bool FileSystem::CreateDirInCurrentDirectory(const char *name)
 
 bool FileSystem::RemoveFile(const char *path)
 { 
-	char tmpPath[140] ;
-	char name[35] ;
+	char tmpPath[PathLenMax] ;
+	char name[FileNameMaxLen] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
 	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
@@ -516,8 +478,8 @@ bool FileSystem::RemoveFileInCurrentDirectory(const char *name)
 
 bool FileSystem::RemoveDir(const char *path)
 { 
-	char tmpPath[140] ;
-	char name[35] ;
+	char tmpPath[PathLenMax] ;
+	char name[FileNameMaxLen] ;
 
 	SplitPathAndName(path, name, tmpPath) ;
 	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
@@ -590,6 +552,103 @@ bool FileSystem::RemoveDirInCurrentDirectory(const char *name)
     delete freeMap;
     return true ;
 } 
+
+//----------------------------------------------------------------------
+// FileSystem::Open
+// 	Open a file for reading or writing and return its index in the 
+// 	file table.  
+//----------------------------------------------------------------------
+
+int
+FileSystem::Open(const char *path, char mode)
+{ 
+	char tmpPath[PathLenMax] ;
+	char name[FileNameMaxLen] ;
+
+	SplitPathAndName(path, name, tmpPath) ;
+	OpenFile *tmpDir = currentThread->getCurrentDirectory() ;
+
+	if (tmpPath[0] != '\0')
+	{
+		ChangeCurrentDir(tmpPath) ;
+	}
+
+	int i = OpenInCurrentDirectory((const char *) name, mode) ;
+	currentThread->setCurrentDirectory(tmpDir) ;
+
+	return i ;
+}
+
+int
+FileSystem::OpenInCurrentDirectory(const char *name, char mode)
+{ 
+	return fileTable->Open(name, mode) ;	
+}
+
+//----------------------------------------------------------------------
+// FileSystem::Close
+// 	Close a file using its index in the table and return -1 on error. 
+//----------------------------------------------------------------------
+
+int
+FileSystem::Close(int i)
+{ 
+	return fileTable->Close(i) ;	
+}
+
+//----------------------------------------------------------------------
+// FileSystem::Read
+// 	Read in a file using its index in the table and return -1 on error.
+//----------------------------------------------------------------------
+
+int
+FileSystem::Read(int i, char *buf, int nbOctets) 
+{
+	OpenFileEntry *entry = fileTable->Get(i) ;
+
+	if (! entry || entry->GetMode() != 'r')
+	{
+		// Doesn't exist or opened in the wrong mode.
+		DEBUG('f', "Can't read in file described by \"%d\" : not found"\
+				   " / opened with wrong mode.\n", i) ;
+		return -1 ;
+	}
+
+	return entry->GetOpenFile()->Read(buf, nbOctets);
+}
+
+//----------------------------------------------------------------------
+// FileSystem::Write
+// 	Write in a file using its index in the table and return -1 on error.
+//----------------------------------------------------------------------
+
+int
+FileSystem::Write(int i, char *buf, int nbOctets) 
+{
+	OpenFileEntry *entry = fileTable->Get(i) ;
+
+	if (! entry || entry->GetMode() != 'w')
+	{
+		// Doesn't exist or opened in the wrong mode.
+		DEBUG('f', "Can't write in file described by \"%d\" : not found"\
+			       " / opened with wrong mode.\n", i) ;
+		return -1 ;
+	}
+
+	return entry->GetOpenFile()->Write(buf, nbOctets);
+}
+
+//----------------------------------------------------------------------
+// FileSystem::GetOpenFile
+//	Should not be used but needed to create an AddrSpace (it needs an 
+//	OpenFile as an argument).
+//----------------------------------------------------------------------
+
+OpenFile *
+FileSystem::GetOpenFile(int i)
+{
+	return fileTable->Get(i)->GetOpenFile() ;
+}
 
 //----------------------------------------------------------------------
 // FileSystem::ChangeCurrentDir
@@ -693,3 +752,4 @@ OpenFile *FileSystem::GetDirectoryFile()
 {
 	return directoryFile ;
 }
+

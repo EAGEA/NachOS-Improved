@@ -25,21 +25,35 @@
 	void
 StartProcess (char *filename)
 {
-	
-	
-	OpenFile *executable = fileSystem->Open (filename);
 	AddrSpace *space;
 
-	if (executable == NULL)
+#ifdef FILESYS_STUB
+	OpenFile* f = fileSystem->Open(filename);
+
+	if (! f)
 	{
 		printf ("Unable to open file %s\n", filename);
 		return;
 	}
 
-	space = new AddrSpace (executable);
-	currentThread->space = space;
+	space = new AddrSpace(f) ;
+	// Close file.
+	delete f ;
+#else // FILESYS
+	int i = fileSystem->Open(filename, 'r');
 
-	delete executable;		// close file
+	if (i == -1)
+	{
+		printf ("Unable to open file %s\n", filename);
+		return;
+	}
+
+	space = new AddrSpace(fileSystem->GetOpenFile(i));
+	// Close file.
+	fileSystem->Close(i) ;
+#endif
+
+	currentThread->space = space;
 
 	space->InitRegisters ();	// set the initial register values
 	space->RestoreState ();	// load page table register

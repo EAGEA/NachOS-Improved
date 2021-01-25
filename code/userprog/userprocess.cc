@@ -20,6 +20,7 @@ int do_UserProcessCreate(char *execFile)
 {
 	// Similar to progtest.startProcess method.
 	
+#ifdef FILESYS_STUB
 	// Get the executable.
 	OpenFile *exec = fileSystem->Open(execFile) ;
 	// And check if exists.
@@ -29,9 +30,20 @@ int do_UserProcessCreate(char *execFile)
 		return -1 ;
 	}
 	// Create the associated addr space.
-	AddrSpace *addrSpace ;
-	addrSpace = new AddrSpace(exec) ;
+	AddrSpace *addrSpace = new AddrSpace(exec);
 	delete exec ;
+#else // FILESYS
+	// Get the executable.
+	int i = fileSystem->Open(execFile, 'r') ;
+	// And check if exists.
+	if (i == -1) 
+	{
+		// A wrong executable was specified.
+		return -1 ;
+	}
+	// Create the associated addr space.
+	AddrSpace *addrSpace = new AddrSpace(fileSystem->GetOpenFile(i)) ;
+#endif
 	// Check if enough frames are available to run this process.
 	if (! addrSpace->IsCreated())
 	{
