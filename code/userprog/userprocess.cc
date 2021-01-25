@@ -8,7 +8,6 @@
 static void StartUserProcess(int f) 
 {
 	// Similar to userthread.startUserThread method.
-	//printf("oh yes I'm again here\n");
 	currentThread->space->InitRegisters() ;
 	currentThread->space->RestoreState() ;
 	// Start.
@@ -20,12 +19,12 @@ static void StartUserProcess(int f)
 int do_UserProcessCreate(char *execFile)
 {
 	// Similar to progtest.startProcess method.
+	
 	// Get the executable.
 	OpenFile *exec = fileSystem->Open(execFile) ;
-	//printf("and then here\n");
+	// And check if exists.
 	if (! exec) 
 	{
-		//printf("Nope\n");
 		// A wrong executable was specified.
 		return -1 ;
 	}
@@ -33,6 +32,13 @@ int do_UserProcessCreate(char *execFile)
 	AddrSpace *addrSpace ;
 	addrSpace = new AddrSpace(exec) ;
 	delete exec ;
+	// Check if enough frames are available to run this process.
+	if (! addrSpace->IsCreated())
+	{
+		// The address space can't be correctly created.
+		delete addrSpace ;
+		return -1 ;
+	}
 	// Add this process to the process count.
 	machine->ProcessesLockAcquire() ;
 	machine->SetNbProcesses(machine->GetNbProcesses() + 1) ;
@@ -43,6 +49,7 @@ int do_UserProcessCreate(char *execFile)
 	Thread *thread = new Thread(execFile, 1, 0) ;
 	thread->space = addrSpace ; 
 	thread->Fork(StartUserProcess, (int) params) ;
+
 	return 0 ;
 }
 

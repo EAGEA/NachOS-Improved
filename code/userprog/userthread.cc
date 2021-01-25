@@ -37,7 +37,7 @@ int do_UserThreadCreate(int fun, int arg, int returnFun)
 	currentSpace->ThreadIDLockAcquire() ;
 	int totalThreads = currentSpace->GetTotalThreads() + 1 ;
 	// Check if we can create this thread:
-	if (totalThreads > MAX_USER_THREADS)
+	if (totalThreads > UserThreadMax)
 	{
 		// Error: the maximum of user threads created was reached.
 		return -1 ;

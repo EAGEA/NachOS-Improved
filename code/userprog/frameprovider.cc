@@ -27,21 +27,27 @@ int FrameProvider::GetEmptyFrame()
 {
 	int nFrame ;
 	int i, j = 0 ;
-	unsigned int emptyFrames[totalFrames] ;
+	bool isFull = true ;
 
 	bitmapLock->Acquire() ;
+
 	// Random allocation:
+	unsigned int emptyFrames[totalFrames] ;
 	// Get the "free" frames.
 	for (i = 0 ; i < totalFrames ; i ++)
 	{
 		if (! bitmap->Test(i))
 		{
-			//printf("yep\n");
 			emptyFrames[j ++] = i ;
+			isFull = false ;
 		}
 	}
-	// Get a random frame among them.
-	
+	// Check if the frame provider is not full.
+	if (isFull)
+	{
+		return -1 ;
+	}
+	// Otherwise get a random frame among them.
 	nFrame = emptyFrames[rand() % j] ;	
 	//printf("%d\n", nFrame);
 	bitmap->Mark(nFrame) ;
@@ -63,7 +69,7 @@ void FrameProvider::ReleaseFrame(int nFrame)
 	bitmap->Clear(nFrame) ;
 }
 
-int FrameProvider::NumAvailFrame() 
+unsigned int FrameProvider::NumAvailFrame() 
 {
 	bitmapLock->Acquire() ;
 

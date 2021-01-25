@@ -16,7 +16,7 @@ class FrameProvider
 		int GetEmptyFrame() ;
 		void SetFrame(int nFrame) ;
 		void ReleaseFrame(int nFrame) ;
-		int NumAvailFrame() ;
+		unsigned int NumAvailFrame() ;
 		bool IsFrameAvail() ;
 
 	private :

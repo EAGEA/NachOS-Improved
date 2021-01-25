@@ -90,25 +90,31 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	//printf("NumPhysPages %d\n",NumPhysPages);
 	DEBUG ('a', "Initializing address space, num pages %d, size %d\n",
 			numPages, size);
-	// first, set up the translation 
+	// First, set up the translation 
 	pageTable = new TranslationEntry[numPages];
+	// Check if enough frames are available to make the translation.
+	if (fprovider->NumAvailFrame() < numPages)
+	{
+		// The address space can't be correctly created.
+		isCreated = false ;
+		return ; 
+	}
 	// And the page to frame translation.
-	
 	for (i = 0 ; i < numPages ; i ++)
 	{
 		if (fprovider->IsFrameAvail()) 
 		{
 			// Get a map on a physical frame.
 			pageTable[i].physicalPage = fprovider->GetEmptyFrame() ;
-			//printf("NumAvailFrame: %d\n",fprovider->NumAvailFrame());
+
+			DEBUG ('a', "Address space %d frame(s) left\n", fprovider->NumAvailFrame());
 		} 
 		else 
 		{
-			// Error, no frame available.
+			// Error, no frame available despite the previous check.
 			ASSERT(FALSE) ;
 			return ;
 		} 
-		//printf("Page %d\n",pageTable[i].physicalPage);
 		pageTable[i].virtualPage = i;
 		pageTable[i].valid = TRUE;
 		pageTable[i].use = FALSE;
@@ -144,7 +150,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	nbThreads = 1 ;
 	threadIDs[0] = 1 ;
 	maxTIDGiven = 1 ;
-	//printf("Hasta aqui llegue\n");
+	// Correctly created.
+	isCreated = true ;
 }
 
 //----------------------------------------------------------------------
@@ -333,7 +340,7 @@ void AddrSpace::InitThreadJoinConditions()
 {
 	unsigned int i ;
 
-	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
+	for (i = 0 ; i < UserThreadMax ; i ++)
 	{
 		char *name = (char *) malloc(sizeof(char) * 35) ;
 		sprintf(name, "Addrspace thread join condition n°%d", i) ;
@@ -346,7 +353,7 @@ void AddrSpace::DeleteThreadJoinConditions()
 {
 	unsigned int i ;
 
-	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
+	for (i = 0 ; i < UserThreadMax ; i ++)
 	{
 		delete threadConditions[i] ; 
 	}
@@ -396,7 +403,7 @@ void AddrSpace::InitThreadStackPointer()
 {
 	int i = 0 ;
 
-	for (i = 0 ; i < MAX_USER_THREADS ; i ++)
+	for (i = 0 ; i < UserThreadMax ; i ++)
 	{
 		threadStackPointer[i] = false ;
 	}
@@ -406,13 +413,13 @@ int AddrSpace::GetThreadStackPointer()
 {
 	int i ;
 
-	for (i = 0 ; i < MAX_USER_THREADS ; i ++)	
+	for (i = 0 ; i < UserThreadMax ; i ++)	
 	{
 		if (! threadStackPointer[i])
 		{
 			threadStackPointer[i] = true ;
 
-			return UserStackSize - (i * STACK_SIZE_USER_THREAD) ;  
+			return numPages * PageSize - 16 - ((i + 1) * UserThreadStackSize) ;  
 		}
 	}
 	// Should never be reached.
@@ -422,7 +429,7 @@ int AddrSpace::GetThreadStackPointer()
 
 void AddrSpace::RemoveThreadStackPointer(int sp)
 {
-	int i = (UserStackSize - sp) / STACK_SIZE_USER_THREAD ; 
+	int i = (UserStackSize - sp) / UserThreadStackSize ; 
 	threadStackPointer[i] = false ;
 }
 
@@ -480,4 +487,9 @@ void AddrSpace::RestoreFrames()
 			fprovider->SetFrame(pageTable[i].physicalPage) ;
 		}
 	}
+}
+
+bool AddrSpace::IsCreated()
+{
+	return isCreated ;
 }
