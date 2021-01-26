@@ -241,7 +241,6 @@ ExceptionHandler (ExceptionType which)
 			case SC_ForkExec:
 				{
 					// Params.
-					//printf("I got here\n");
 					int a = machine->ReadRegister(4) ;
 					char exec[MAX_EXEC_NAME_LEN] ;
 					// Execution.
@@ -253,37 +252,46 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_SemCreate:
 				{
+					// Params.
 					int val = machine->ReadRegister(4) ;
-					int i;
-					for(i=0;i<64;i++){
-						if(UserSemaphores[i]==NULL){
-							machine->WriteRegister(2,i);
-							UserSemaphores[i]=new Semaphore("User semaphore", val);
-							break;
+					int i, res = -1 ; // -> -1 if error.
+					// Execution.
+					for (i = 0 ; i < 64 ; i ++)
+					{
+						if (! UserSemaphores[i])
+						{
+							res = i ;
+							UserSemaphores[i] = new Semaphore("User semaphore", val) ;
+							break ;
 						}
 					}
-					if(i==64){
-						ASSERT(false);
-					}
-					
+					// Return.
+					machine->WriteRegister(2, res) ;
 					break ;
 				}
 			case SC_SemPost:
 				{
+					// Params.
 					int sid = machine->ReadRegister(4);
+					// Execution.
 					UserSemaphores[sid]->V();
 					break ;
 				}
 			case SC_SemWait:
 				{
+					// Params.
 					int sid = machine->ReadRegister(4);
+					// Execution.
 					UserSemaphores[sid]->P();
 					break;
 				}
 			case SC_SemDelete:
 				{
+					// Params.
 					int sid = machine->ReadRegister(4);
+					// Execution.
 					delete UserSemaphores[sid];					
+					UserSemaphores[sid] = NULL ; // Force.
 					break;
 				}
 			default:	
