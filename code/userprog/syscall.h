@@ -22,29 +22,32 @@
 #define SC_Exit				1
 #define SC_Exec				2
 #define SC_Join				3
-#define SC_Create			4
-#define SC_Open				5
-#define SC_Read				6
-#define SC_Write			7
-#define SC_Close			8
-#define SC_Fork				9
-#define SC_Yield			10
-#define SC_PutChar			11
-#define SC_GetChar			12
-#define SC_PutString		13
-#define SC_GetString		14
-#define SC_PutInt			15
-#define SC_GetInt			16
-#define SC_Feof			    17
-#define SC_ThreadCreate		18
-#define SC_ThreadExit		19
-#define SC_ThreadJoin       20
-#define SC_ThreadId         21
-#define SC_ForkExec         22
-#define SC_SemCreate 23
-#define SC_SemPost 24
-#define SC_SemWait 25
-#define SC_SemDelete 26
+#define SC_CreateFile		4
+#define SC_CreateDir		5
+#define SC_RemoveFile		6
+#define SC_RemoveDir		7
+#define SC_Open				8
+#define SC_Read				9
+#define SC_Write			10	
+#define SC_Close			11
+#define SC_Fork				12
+#define SC_Yield			13
+#define SC_PutChar			14
+#define SC_GetChar			15
+#define SC_PutString		16
+#define SC_GetString		17
+#define SC_PutInt			18
+#define SC_GetInt			19
+#define SC_Feof			    20
+#define SC_ThreadCreate		21
+#define SC_ThreadExit		22
+#define SC_ThreadJoin       23
+#define SC_ThreadId         24
+#define SC_ForkExec         25
+#define SC_SemCreate		26
+#define SC_SemPost			27
+#define SC_SemWait			28
+#define SC_SemDelete		29
 
 #ifdef IN_USER_MODE
 
@@ -107,7 +110,16 @@ typedef int OpenFileId;
 #define ConsoleOutput	1
 
 /* Create a Nachos file, with "name" */
-void Create (char *name);
+_Bool CreateFile (char *name, int bytes) ;
+
+/* Create a Nachos directory, with "name" */
+_Bool CreateDir (char *name) ; 
+
+/* Remove a Nachos file, with "name" */
+_Bool RemoveFile (char *name) ;
+
+/* Remove a Nachos directory, with "name" */
+_Bool RemoveDir (char *name) ; 
 
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
  * be used to read and write to the file.

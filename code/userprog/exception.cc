@@ -87,6 +87,59 @@ ExceptionHandler (ExceptionType which)
 					break;
 				}
 #ifdef FILESYS
+			case SC_CreateFile: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					int b = machine->ReadRegister(5) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					bool res = fileSystem->CreateFile(string, b) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
+			case SC_CreateDir: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					bool res = fileSystem->CreateDir(string) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
+			case SC_RemoveFile: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					bool res = fileSystem->RemoveFile(string) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
+			case SC_RemoveDir: 
+				{
+					// Params.
+					int from = machine->ReadRegister(4) ;
+					unsigned size = MAX_STRING_SIZE ; 
+					char string[size] ;
+					// Execution.
+					synchConsole->CopyStringFromMachine(from, string, size) ;
+					bool res = fileSystem->RemoveDir(string) ;
+					// Return.
+					machine->WriteRegister(2, res) ;
+					break;
+				}
 			case SC_Open: 
 				{
 					// Params.

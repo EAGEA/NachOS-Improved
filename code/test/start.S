@@ -2,8 +2,8 @@
  *	Assembly language assist for user programs running on top of Nachos.
  *
  *	Since we don't want to pull in the entire C library, we define
- *	what we need for a user program here, namely Start and the system
- *	calls.
+*	what we need for a user program here, namely Start and the system
+*	calls.
  */
 
 #include "syscall.h"
@@ -73,13 +73,37 @@ Join:
 	j	$31
 	.end Join
 
-	.globl Create
-	.ent	Create
-Create:
-	addiu $2,$0,SC_Create
+	.globl CreateFile
+	.ent	CreateFile
+CreateFile:
+	addiu $2,$0,SC_CreateFile
 	syscall
 	j	$31
-	.end Create
+	.end CreateFile
+
+	.globl CreateDir
+	.ent	CreateDir
+CreateDir:
+	addiu $2,$0,SC_CreateDir
+	syscall
+	j	$31
+	.end CreateDir
+
+	.globl RemoveFile
+	.ent	RemoveFile
+RemoveFile:
+	addiu $2,$0,SC_RemoveFile
+	syscall
+	j	$31
+	.end RemoveFile
+
+	.globl RemoveDir
+	.ent	RemoveDir
+RemoveDir:
+	addiu $2,$0,SC_RemoveDir
+	syscall
+	j	$31
+	.end RemoveDir
 
 	.globl Open
 	.ent	Open
