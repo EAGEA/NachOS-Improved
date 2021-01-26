@@ -3,6 +3,10 @@
 
 int main()
 {
+	char alphabet[26] ;
+
 	OpenFileId id = Open("test/putchar.c", 'w') ;
-	Write("abcdefghijklmnopqrstuvwxyz", 26, id) ;
+	Read(alphabet, 26, id)
+
+	PutString(alphabet) ;
 }
