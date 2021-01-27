@@ -29,13 +29,13 @@ SynchDisk *synchDisk;
 
 #ifdef USER_PROGRAM		// requires either FILESYS or FILESYS_STUB
 Machine *machine;		// user program memory and registers
-SynchConsole *synchConsole ;
-FrameProvider* fprovider;
-Semaphore* UserSemaphores[64];
-Lock* ProcessLocks[64];
+SynchConsole *synchConsole ; //User console
+FrameProvider* fprovider; 
+Semaphore* UserSemaphores[64]; //Usermode semaphores
+Lock* ProcessLocks[64]; //Locks to avoid concurrency issues when reading the array pids.
 Condition* ProcessConds[64];
-int pids[64];
-int nbpids;
+int pids[64]; //pids[i] = 1 if an active process has i as pid
+int maxpid; //the smallest value of pid that has not been provided to a process
 #endif
 
 #ifdef NETWORK
@@ -171,8 +171,8 @@ Initialize (int argc, char **argv)
 		ProcessLocks[k]=new Lock("Process Locks\n");
 		ProcessConds[k]=new Condition("Process Condition\n");
 		pids[k]=0;
-	}
-	nbpids=0;	
+	}	
+	maxpid=0;
 
 #endif
 

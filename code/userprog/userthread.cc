@@ -84,7 +84,11 @@ void do_UserThreadExit()
 int do_UserThreadJoin(int t) 
 {
 	AddrSpace *currentSpace = currentThread->space ;
-
+	
+	if(currentThread->getTid()==t){
+		return -1;
+	}
+	
 	currentSpace->ThreadIDLockAcquire() ;
 
 	if (! currentSpace->ContainThreadID(t))

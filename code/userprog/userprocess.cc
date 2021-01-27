@@ -108,6 +108,7 @@ void do_UserProcessExit()
 
 void do_WaitPid(int pid)
 {
+	if(pid==currentThread->space->pid) return;
 	ProcessLocks[pid]->Acquire();
 	while(pids[pid]){
 		ProcessConds[pid]->Wait(ProcessLocks[pid]);
