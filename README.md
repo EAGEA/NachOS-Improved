@@ -12,7 +12,7 @@ an user API or improvements for:
 |file system|✔️|
 |network|❌|  
 
-Here is the original description
+Here is the original description.
 
 ### Introduction
 
