@@ -322,6 +322,7 @@ ExceptionHandler (ExceptionType which)
 					int val = machine->ReadRegister(4) ;
 					int i, res = -1 ; // -> -1 if error.
 					// Execution.
+					//we find the first non initialized kernel semaphore
 					for (i = 0 ; i < 64 ; i ++)
 					{
 						if (! UserSemaphores[i])
@@ -337,13 +338,15 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_SemPost:
 				{
-					// Params.
+					// Params. sid is the semaphore identifier known by the user thread
 					int sid = machine->ReadRegister(4);
 					// Execution.
-					if(sid>64 || UserSemaphores[sid]==NULL){
+					//If sid is not a valid value
+					if(sid <0 || sid>64 || UserSemaphores[sid]==NULL){
 						machine->WriteRegister(2,-1);
 						break;
 					}
+					//
 					UserSemaphores[sid]->V();
 					machine->WriteRegister(2,1);
 					break ;
@@ -352,8 +355,15 @@ ExceptionHandler (ExceptionType which)
 				{
 					// Params.
 					int sid = machine->ReadRegister(4);
+					//If sid is not a valid value
+					if(sid <0 || sid>64 || UserSemaphores[sid]==NULL){
+						machine->WriteRegister(2,-1);
+						break;
+					}
+					//
 					// Execution.
 					UserSemaphores[sid]->P();
+					machine->WriteRegister(2,1);
 					break;
 				}
 			case SC_SemDelete:
