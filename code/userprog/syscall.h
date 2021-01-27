@@ -222,11 +222,11 @@ int SemCreate(int val);
 
 /*Semaphore->V()*/
 
-void SemPost(int sid);
+int SemPost(int sid);
 
 /*Semaphore->P()*/
 
-void SemWait(int sid);
+int SemWait(int sid);
 
 /*Deletes semaphore with id sid*/
 

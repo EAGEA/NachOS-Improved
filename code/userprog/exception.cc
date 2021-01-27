@@ -340,7 +340,12 @@ ExceptionHandler (ExceptionType which)
 					// Params.
 					int sid = machine->ReadRegister(4);
 					// Execution.
+					if(sid>64 || UserSemaphores[sid]==NULL){
+						machine->WriteRegister(2,-1);
+						break;
+					}
 					UserSemaphores[sid]->V();
+					machine->WriteRegister(2,1);
 					break ;
 				}
 			case SC_SemWait:
