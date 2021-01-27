@@ -1,17 +1,35 @@
+# NachOS
+
+## Improvements
+
+This is our final version of the given NachOS for our student projet. It includes
+an user API or improvements for:
+|Content|Done|
+|---|---|
+|console input/output|✔️| 
+|multithreading|✔️|
+|virtual memory|✔️|
+|file system|✔️|
+|network|❌|  
+
+Here is the original description
+
+### Introduction
+
 The provided Nachos sources are a modified version from the (very old) original
 nachos project. This is why there are some differences between the actual state
 and some information in old documents.
 
-Documentation
-=============
+### Documentation
+
 - README.old is the original README. It is a bit outdated nowadays, in
   particular about the way to get and compile Nachos.
 - nachos.ps.gz is the original Nachos documentation. Most of it is still valid,
   but the installation procedure and build system that have been totally
   modified.
 
-Build System
-============
+### Build System
+
 The Nachos kernel has several components/features that can be enabled or not.
 The build system allows one to compile different subset of features.
 
@@ -30,8 +48,8 @@ For each Nachos subset of features (this is called a flavor):
 More information about the build system is available in code/README.Makefiles
 (how to create your own flavors, how to add a source file to a flavor, etc.)
 
-Sources
-=======
+### Sources
+
 All source code is in the code/ subdirectory. Here are several subdirectories:
 - bin/: helper programs for the build system. Should not be modified.
 - build/: where build file are created
@@ -56,8 +74,8 @@ All source code is in the code/ subdirectory. Here are several subdirectories:
   compiled and linked to all user programs) or more complex programs (ie
   programs that link several object files, etc.)
 
-Git
-===
+### Git
+
 Nowadays, git is used to manage the sources.
 
   Before, no control version system where used and students were asked to put
