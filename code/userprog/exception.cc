@@ -312,7 +312,7 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_GetPid:
 				{
-				
+					//We return the value of the pid of the addrSpace of the currentThread
 					machine->WriteRegister(2,currentThread->space->pid);			
 					break;
 				}

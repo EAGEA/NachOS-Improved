@@ -94,9 +94,11 @@ void do_UserProcessExit()
 	}
 	else
 	{
+		/*We set pids[pid] to 0 to indicate the process is not active anymore*/
 		ProcessLocks[pid]->Acquire();
 		pids[pid]=0;
 		ProcessLocks[pid]->Release();
+		/*We wake up all the processes waiting for the process to end*/
 		ProcessConds[pid]->Broadcast(ProcessLocks[pid]);
 		// No needs to remove this thread from the living ones, and SP id. 
 		// Finish the thread.
@@ -105,7 +107,7 @@ void do_UserProcessExit()
 		delete currentThread->space ;
 	}
 }
-
+/*While pids[pid] is 1 (i.e while the process of id pid is active), we wait until the process exits*/
 void do_WaitPid(int pid)
 {
 	if(pid==currentThread->space->pid) return;
