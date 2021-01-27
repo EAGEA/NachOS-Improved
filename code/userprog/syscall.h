@@ -48,6 +48,8 @@
 #define SC_SemPost			27
 #define SC_SemWait			28
 #define SC_SemDelete		29
+#define SC_WaitPid 30
+#define SC_GetPid 31
 
 #ifdef IN_USER_MODE
 
@@ -206,14 +208,30 @@ int UserThreadId() ;
  */
 int ForkExec(char *s) ;
 
+/* Waits for process pid to finish*/
+
+void WaitPid(int pid);
+
+/* Return the pid of the current process */
+
+int GetPid();
+
+/*Creates a semaphore*/
 
 int SemCreate(int val);
 
+/*Semaphore->V()*/
+
 void SemPost(int sid);
+
+/*Semaphore->P()*/
 
 void SemWait(int sid);
 
+/*Deletes semaphore with id sid*/
+
 void SemDelete(int sid);
+
 
 #endif // IN_USER_MODE
 

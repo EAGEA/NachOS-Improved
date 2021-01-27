@@ -303,6 +303,19 @@ ExceptionHandler (ExceptionType which)
 					machine->WriteRegister(2, res) ;
 					break ;
 				}
+			case SC_WaitPid:
+				{
+				
+					int a = machine->ReadRegister(4);
+					do_WaitPid(a);				
+					break;
+				}
+			case SC_GetPid:
+				{
+				
+					machine->WriteRegister(2,currentThread->space->pid);			
+					break;
+				}
 			case SC_SemCreate:
 				{
 					// Params.

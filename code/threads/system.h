@@ -44,6 +44,11 @@ extern Machine *machine;	// user program memory and registers
 extern SynchConsole *synchConsole ;
 extern FrameProvider *fprovider;
 extern Semaphore* UserSemaphores[64];
+extern Lock* ProcessLocks[64];
+extern Condition* ProcessConds[64];
+extern int nbpids;
+extern int pids[64];
+
 #define MAX_EXEC_NAME_LEN 100
 
 #endif

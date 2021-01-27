@@ -152,6 +152,15 @@ AddrSpace::AddrSpace (OpenFile * executable)
 	maxTIDGiven = 1 ;
 	// Correctly created.
 	isCreated = true ;
+	int k;
+	for(k=0; k<64; k++){
+		ProcessLocks[k]->Acquire();
+		if(!pids[k]){
+			pid=k;
+			pids[k]=1;
+		}
+		ProcessLocks[k]->Release();
+	}
 }
 
 //----------------------------------------------------------------------

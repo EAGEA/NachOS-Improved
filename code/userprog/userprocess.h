@@ -8,5 +8,6 @@ void do_UserProcessHalt() ;
 
 void do_UserProcessExit() ;
 
+void do_WaitPid(int pid);
 
 #endif

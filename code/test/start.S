@@ -282,6 +282,22 @@ SemDelete:
 	syscall
 	j   $31
 	.end SemDelete
+	
+	.globl WaitPid
+	.ent   WaitPid
+WaitPid:
+	addiu $2,$0,SC_WaitPid
+	syscall
+	j   $31
+	.end WaitPid
+	
+	.globl GetPid
+	.ent   GetPid
+GetPid:
+	addiu $2,$0,SC_GetPid
+	syscall
+	j   $31
+	.end GetPid
 
 
 /* dummy function to keep gcc happy */

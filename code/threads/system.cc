@@ -32,6 +32,10 @@ Machine *machine;		// user program memory and registers
 SynchConsole *synchConsole ;
 FrameProvider* fprovider;
 Semaphore* UserSemaphores[64];
+Lock* ProcessLocks[64];
+Condition* ProcessConds[64];
+int pids[64];
+int nbpids;
 #endif
 
 #ifdef NETWORK
@@ -162,6 +166,14 @@ Initialize (int argc, char **argv)
     	machine = new Machine (debugUserProg);	// this must come first
 	synchConsole = new SynchConsole(NULL, NULL) ;
 	fprovider = new FrameProvider(NumPhysPages);
+	int k;
+	for(k=0;k<64;k++){
+		ProcessLocks[k]=new Lock("Process Locks\n");
+		ProcessConds[k]=new Condition("Process Condition\n");
+		pids[k]=0;
+	}
+	nbpids=0;	
+
 #endif
 
 #ifdef FILESYS

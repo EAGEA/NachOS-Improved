@@ -69,7 +69,7 @@ void do_UserProcessExit()
 {
 	// Wait for all the children.
 	AddrSpace *currentSpace = currentThread->space ;
-
+	int pid = currentSpace->pid;
 	currentSpace->ThreadIDLockAcquire() ;
 
 	while (currentSpace->GetTotalThreads() > 1)
@@ -94,12 +94,25 @@ void do_UserProcessExit()
 	}
 	else
 	{
+		ProcessLocks[pid]->Acquire();
+		pids[pid]=0;
+		ProcessLocks[pid]->Release();
+		ProcessConds[pid]->Broadcast(ProcessLocks[pid]);
 		// No needs to remove this thread from the living ones, and SP id. 
 		// Finish the thread.
 		currentThread->Finish();
 		// Clean it.
 		delete currentThread->space ;
 	}
+}
+
+void do_WaitPid(int pid)
+{
+	ProcessLocks[pid]->Acquire();
+	while(pids[pid]){
+		ProcessConds[pid]->Wait(ProcessLocks[pid]);
+	}
+	ProcessLocks[pid]->Release();
 }
 
 void do_UserProcessHalt()

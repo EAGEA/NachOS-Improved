@@ -68,6 +68,7 @@ class AddrSpace
 		void FreeFrames() ;
 		void RestoreFrames() ;
 		bool IsCreated() ;
+		int pid;
 
 	private:
 
