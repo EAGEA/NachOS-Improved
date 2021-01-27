@@ -10,7 +10,7 @@ an user API or improvements for:
 |multithreading|✔️|
 |virtual memory|✔️|
 |file system|✔️|
-|network|❌|  
+|network|✔️|  
 
 Here is the original description.
 
