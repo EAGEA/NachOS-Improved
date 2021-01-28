@@ -5,7 +5,7 @@
 #include "synchlist.h"
 #include "list.h"
 
-#include <strings.h> /* for bzero */
+#include <strings.h> 
 
 
 AcknoData::AcknoData(PostOffice *post,int b,PacketHeader *pktH, MailHeader *mailH)
@@ -16,8 +16,9 @@ AcknoData::AcknoData(PostOffice *post,int b,PacketHeader *pktH, MailHeader *mail
 	mailHdr = mailH ;
 }
 
+/* Function associated to a thread to send the auto-message */
 void
-DelayAck(int arg)
+DelayAck(int arg) 
 {
 	int i ;
 	PacketHeader outPktHdr;
@@ -72,12 +73,12 @@ ReliableSend(PostOffice *postOffice, PacketHeader ouPktHdr, MailHeader ouMailHdr
 
 		printf("Recu : %s\n",buffer);
 
-		if(strcmp(buffer,"Resend") == 0)
+		if(strcmp(buffer,"Resend") == 0) //If we got the auto-message
 		{
 			printf("Not sended ! Retry ... \n") ;
 		}
 
-		else
+		else //If it is the acknowledgment
 		{
 			sent = 1 ;
 			printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr->from,inMailHdr->from);
