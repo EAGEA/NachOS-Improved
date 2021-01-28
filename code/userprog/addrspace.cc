@@ -158,6 +158,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 		if(!pids[k]){
 			pid=k;
 			pids[k]=1;
+			ProcessLocks[k]->Release();
+			break;
 		}
 		ProcessLocks[k]->Release();
 	}

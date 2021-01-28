@@ -62,7 +62,7 @@ int do_UserProcessCreate(char *execFile)
 	thread->space = addrSpace ; 
 	thread->Fork(StartUserProcess, (int) params) ;
 
-	return 0 ;
+	return addrSpace->pid ;
 }
 
 void do_UserProcessExit()
