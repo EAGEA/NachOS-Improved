@@ -305,9 +305,13 @@ ExceptionHandler (ExceptionType which)
 				}
 			case SC_WaitPid:
 				{
-				
+					
 					int a = machine->ReadRegister(4);
-					do_WaitPid(a);				
+					if(a > 64 || a < 0 || a == currentThread->space->pid){
+						machine->WriteRegister(2,-1);
+					}
+					do_WaitPid(a);	
+					machine->WriteRegister(2,1);			
 					break;
 				}
 			case SC_GetPid:

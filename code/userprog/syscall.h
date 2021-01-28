@@ -210,7 +210,7 @@ int ForkExec(char *s) ;
 
 /* Waits for process pid to finish*/
 
-void WaitPid(int pid);
+int WaitPid(int pid);
 
 /* Return the pid of the current process */
 
