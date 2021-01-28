@@ -110,7 +110,7 @@ LogicCycle (int networkID)
 	    printf("Got \"%s\" from %d, box %d\n",buffer,inPktHdr.from,inMailHdr.from);
 	    fflush(stdout);
 
-	    if(id < 1)
+	    if(id < 5)
 	    {
 		    // construct packet, mail header for original message
 		    // To: destination machine, mailbox 0
