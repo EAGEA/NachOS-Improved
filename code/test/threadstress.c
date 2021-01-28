@@ -8,6 +8,7 @@ void print()
 	}
 
 	PutString("End thread\n") ;
+	UserThreadExit();
 }
 
 int main()
@@ -15,10 +16,11 @@ int main()
 	PutString("Starting main thread.\n") ;
 
 	int i ;
-
 	for (i = 0 ; i < 16 ; i ++)
 	{
 		PutString("Create thread.\n") ;
-		UserThreadCreate(print, 0) ;
+		if(UserThreadCreate(print, 0)==-1){ PutString("Not possible to create\n") ; break; }
+		
 	}
+	Exit(0);
 }

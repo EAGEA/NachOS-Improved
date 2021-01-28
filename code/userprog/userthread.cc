@@ -60,7 +60,6 @@ int do_UserThreadCreate(int fun, int arg, int returnFun)
 	Thread *thread = new Thread(name, tid, sp) ;
 	thread->space = currentSpace ; 
 	thread->Fork(StartUserThread, (int) params) ;
-
 	return tid ; 
 }
 
