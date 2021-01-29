@@ -4,6 +4,7 @@
 
 This is our final version of the given NachOS for our student projet. It includes
 an user API or improvements for:
+
 |Content|Done|
 |---|---|
 |console input/output|✔️| 
@@ -13,7 +14,10 @@ an user API or improvements for:
 |network|✔️|  
 
 ⚠️ : Since the file system is working, executable test should be copied into it
-to be executed.
+to be executed. Remember to format the system before copying the tests. 
+Warning, it is possible that the relative paths given in the tests provided do not 
+correspond with those of the NachOS file system; this will then give an error on 
+those tests, and they will not pass.
 
 Here is the original description.
 
