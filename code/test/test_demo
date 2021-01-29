@@ -50,6 +50,15 @@ Test waitPid d'un processus ( attente de fin de différents processus -> A poss�
 /!\ Se deplacer
 cd ../../../NachosOS2/NachOS-Improved/code/build
 
+/!\ Nettoyer le file system
+./nachos-filesys -f
+
+/!\ Copier les executable dans le file system
+./nachos-filesys -d -f -cp file file
+./nachos-filesys -d -f -cp directory directory
+./nachos-filesys -d -f -cp read read
+./nachos-filesys -d -f -cp ../test/testread.txt testread
+
 Test création/suppression fichier + fonction list current dir
 ./nachos-userprog -x file
 
