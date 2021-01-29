@@ -5,8 +5,9 @@ int main()
 {
 	char alphabet[26] ;
 
-	OpenFileId id = Open("test/testread.c", 'w') ;
+	OpenFileId id = Open("testread", 'r') ;
 	Read(alphabet, 26, id) ;
 
 	PutString(alphabet) ;
+	PutChar('\n') ;
 }

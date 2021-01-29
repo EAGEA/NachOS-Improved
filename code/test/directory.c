@@ -7,9 +7,13 @@ int main()
 	{
 		PutString("Dir created.\n") ;
 
+		List() ;
+
 		if (RemoveDir("cftest"))
 		{
 			PutString("Dir removed.\n") ;
+
+			List() ;
 		}
 		else
 		{

@@ -1,0 +1,68 @@
+***************
+****CONSOLE****
+***************
+
+Test putString : Print l'alphabet et rajoute une lettre à chaque fois
+./nachos-userprog -x ./putstring
+
+Test getString, putString, getInt, putInt  (appel de getChar via getString via getInt)
+./nachos-userprog -x ./getint 
+
+***************
+****THREADS****
+***************
+
+Test création d'un thread (print l'alphabet et termine son exécution)
+./nachos-userprog -rs -x ./thread
+
+Test création de deux threads (un qui print 4 'a' et un autre qui print 4 'b' -> interleaving)
+./nachos-userprog -rs -x ./create
+
+Test le join et donc de voir que les threads sont bien attendus (threads imbriqués)
+./nachos-userprog -rs -x ./join
+
+Test sur le join (autre exemple)
+./nachos-userprog -rs -x ./join2
+
+Test sémaphores : test un compteur avec ( A ) ou sans ( B ) sémaphores.
+./nachos-userprog -rs -x ./testsemaphoresA
+
+./nachos-userprog -rs -x ./testsemaphoresB
+
+*****************
+****PROCESSUS****
+*****************
+
+Test création d'un processus ( observation de l'interleaving des processus )
+./nachos-userprog -rs -x ./forkexec
+
+Test création de plusieurs processsus jusqu'à la limite ( normalement 10 ici )
+./nachos-userprog -rs -x ./testnbprocess
+
+Test waitPid d'un processus ( attente de fin de différents processus -> A possède les wait pid , B ne possède pas les wait pid )
+./nachos-userprog -rs -x ./mainprocA 
+./nachos-userprog -rs -x ./mainprocB 
+
+***********************
+****SYSTEME FICHIER****
+***********************
+
+/!\ Se deplacer
+cd ../../../NachosOS2/NachOS-Improved/code/build
+
+Test création/suppression fichier + fonction list current dir
+./nachos-userprog -x file
+
+Test création/suppression repertoire + fonction list current dir
+./nachos-userprog -x directory
+
+Test lecture fichier 
+./nachos-userprog -x read
+
+***************
+****RESEAU*****
+***************
+
+Test pour l'envoie fiable
+./nachos-network -m 0 -o 1 -l 0.5   - Emetteur
+./nachos-network -m 1 -o 0 -l 0.5   - Recepteur

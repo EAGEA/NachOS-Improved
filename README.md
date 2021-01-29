@@ -12,6 +12,9 @@ an user API or improvements for:
 |file system|✔️|
 |network|✔️|  
 
+⚠️ : Since the file system is working, executable test should be copied into it
+to be executed.
+
 Here is the original description.
 
 ### Introduction

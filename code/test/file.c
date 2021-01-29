@@ -7,9 +7,13 @@ int main()
 	{
 		PutString("File created.\n") ;
 
+		List() ;
+
 		if (RemoveFile("cftest"))
 		{
 			PutString("File removed.\n") ;
+
+			List() ;
 		}
 		else
 		{

@@ -54,11 +54,8 @@ extern int pids[64];
 
 #ifdef FILESYS_NEEDED		// FILESYS or FILESYS_STUB
 #include "filesys.h"
-extern FileSystem *fileSystem;
-#endif
-
-#ifdef FILESYS
 #include "synchdisk.h"
+extern FileSystem *fileSystem;
 extern SynchDisk *synchDisk;
 #endif
 

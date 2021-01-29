@@ -54,34 +54,7 @@
 #define PathLenMax          128
 
 
-#ifdef FILESYS_STUB 		// Temporarily implement file system calls as 
-// calls to UNIX, until the real file system
-// implementation is available
-class FileSystem {
-	public:
-		FileSystem(bool format) {}
 
-		bool Create(const char *name, int initialSize) { 
-			int fileDescriptor = OpenForWrite(name);
-
-			if (fileDescriptor == -1) return FALSE;
-			Close(fileDescriptor); 
-			return TRUE; 
-		}
-
-		OpenFile* Open(char *name) {
-			int fileDescriptor = OpenForReadWrite(name, FALSE);
-
-			if (fileDescriptor == -1) return NULL;
-			return new OpenFile(fileDescriptor);
-		}
-
-		bool Remove(char *name) { return Unlink(name) == 0; }
-
-		OpenFile *GetDirectoryFile() { return NULL ; }
-};
-
-#else // FILESYS
 
 #include "openfiletable.h"
 
@@ -119,6 +92,9 @@ class FileSystem
 		int Write(OpenFileId i, char *buf, int nbOctets) ;
 		OpenFile *GetOpenFile(OpenFileId i) ; // Should not be used...
 
+		// Getter.
+		OpenFile *GetDirectoryFile() ;
+
 	private :
 		// Bit map of free disk blocks, represented as a file.
 		OpenFile* freeMapFile;		
@@ -130,9 +106,7 @@ class FileSystem
 		// Getters, utilities..
 		void SetCurrentDir(const char *dirName) ;
 		void SplitPathAndName(const char* path, char* resPath, char* resName) ;
-		OpenFile *GetDirectoryFile() ;
 } ;
 
-#endif // FILESYS
 
 #endif // FS_H

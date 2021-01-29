@@ -27,19 +27,6 @@ StartProcess (char *filename)
 {
 	AddrSpace *space;
 
-#ifdef FILESYS_STUB
-	OpenFile* f = fileSystem->Open(filename);
-
-	if (! f)
-	{
-		printf ("Unable to open file %s\n", filename);
-		return;
-	}
-
-	space = new AddrSpace(f) ;
-	// Close file.
-	delete f ;
-#else // FILESYS
 	int i = fileSystem->Open(filename, 'r');
 
 	if (i == -1)
@@ -51,7 +38,6 @@ StartProcess (char *filename)
 	space = new AddrSpace(fileSystem->GetOpenFile(i));
 	// Close file.
 	fileSystem->Close(i) ;
-#endif
 
 	currentThread->space = space;
 

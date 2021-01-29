@@ -3,7 +3,7 @@
 void loopbillion()
 {
 	int i ;
-	for(i=0;i<1000000;i++)
+	for(i=0;i<300000;i++)
 	{
 		;
 	}

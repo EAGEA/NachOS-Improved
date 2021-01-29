@@ -132,13 +132,11 @@ FileSystem::FileSystem(bool format)
         freeMapFile = new OpenFile(FreeMapSector);
         directoryFile = new OpenFile(DirectorySector);
     }
-
 	// Init the open file table.
 	fileTable = new OpenFileTable() ;
-	// Save the current working directory for the main thread (otherwise
-	// the main directory is set dynamicaly depending on the current
-	// thread, and is init in the Thread constructor).
-	currentThread->setCurrentDirectory(directoryFile) ; 
+	// For the main thread (others are set in the thread constructor, when
+	// the file system is initialized).
+	currentThread->setCurrentDirectory(directoryFile) ;
 }
 
 //----------------------------------------------------------------------
@@ -574,6 +572,7 @@ FileSystem::Open(const char *path, char mode)
 	}
 
 	OpenFileId i = OpenInCurrentDirectory((const char *) name, mode) ;
+
 	currentThread->setCurrentDirectory(tmpDir) ;
 
 	return i ;
@@ -686,7 +685,15 @@ void FileSystem::SetCurrentDir(const char *dirName)
 {
 	// Get a current directory instance.
 	Directory *dir = new Directory(NumDirEntries) ;
-	dir->FetchFrom(currentThread->getCurrentDirectory()) ;
+
+	if (currentThread)
+	{
+		dir->FetchFrom(currentThread->getCurrentDirectory()) ;
+	}
+	else
+	{
+		dir->FetchFrom(directoryFile) ;
+	}
 	// Get the sector of the directory wanted.
 	int sector = dir->Find(dirName) ;
 

@@ -2,7 +2,7 @@
 
 int main()
 {
-	ForkExec("./userpages0") ;
+	ForkExec("userpage0") ;
 
 	int i;
 	for(i=0;i<15;i++){

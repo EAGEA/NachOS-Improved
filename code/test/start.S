@@ -105,6 +105,14 @@ RemoveDir:
 	j	$31
 	.end RemoveDir
 
+	.globl List
+	.ent	List
+List:
+	addiu $2,$0,SC_List
+	syscall
+	j	$31
+	.end List
+
 	.globl Open
 	.ent	Open
 Open:

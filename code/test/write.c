@@ -3,6 +3,6 @@
 
 int main()
 {
-	OpenFileId id = Open("test/testwrite.txt", 'w') ;
+	OpenFileId id = Open("testwrite", 'w') ;
 	Write("abcdefghijklmnopqrstuvwxyz", 26, id) ;
 }

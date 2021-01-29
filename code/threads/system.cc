@@ -21,9 +21,6 @@ Timer *timer;			// the hardware timer device,
 
 #ifdef FILESYS_NEEDED
 FileSystem *fileSystem;
-#endif
-
-#ifdef FILESYS
 SynchDisk *synchDisk;
 #endif
 
@@ -88,11 +85,11 @@ Initialize (int argc, char **argv)
     const char *debugArgs = "";
     bool randomYield = FALSE;
 
-#ifdef USER_PROGRAM
-    bool debugUserProg = FALSE;	// single step user program
-#endif
 #ifdef FILESYS_NEEDED
     bool format = FALSE;	// format disk
+#endif
+#ifdef USER_PROGRAM
+    bool debugUserProg = FALSE;	// single step user program
 #endif
 #ifdef NETWORK
     double rely = 1;		// network reliability
@@ -151,6 +148,7 @@ Initialize (int argc, char **argv)
     if (randomYield)		// start the timer (if needed)
 	timer = new Timer (TimerInterruptHandler, 0, randomYield);
 
+
     threadToBeDestroyed = NULL;
 
     // We didn't explicitly allocate the current thread we are running in.
@@ -176,11 +174,8 @@ Initialize (int argc, char **argv)
 
 #endif
 
-#ifdef FILESYS
-    synchDisk = new SynchDisk ("DISK");
-#endif
-
 #ifdef FILESYS_NEEDED
+    synchDisk = new SynchDisk ("DISK");
     fileSystem = new FileSystem (format);
 #endif
 
@@ -208,9 +203,6 @@ Cleanup ()
 
 #ifdef FILESYS_NEEDED
     delete fileSystem;
-#endif
-
-#ifdef FILESYS
     delete synchDisk;
 #endif
 
